@@ -6,6 +6,9 @@ clonar repositorio en Android Studio
 configuracion:
 
 Template: Empty Activity
+
 Language: Kotlin
+
 Minimum SDK: API 24 o superior
+
 UI: Jetpack Compose
