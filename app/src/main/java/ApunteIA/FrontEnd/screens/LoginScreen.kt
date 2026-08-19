@@ -15,6 +15,9 @@ import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
+
 
 private val BackgroundColor = Color(0xFFFBFAEF)
 private val DarkGreen = Color(0xFF0E3321)
@@ -41,6 +44,8 @@ fun LoginScreen(
         modifier = Modifier
             .fillMaxSize()
             .background(BackgroundColor)
+            .verticalScroll(rememberScrollState())
+            .navigationBarsPadding()
             .padding(horizontal = 32.dp),
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
@@ -340,6 +345,8 @@ fun LoginScreen(
 }
 
 
+
+
 @Composable
 private fun LanguageButton(
     text: String,
@@ -400,4 +407,5 @@ private fun RoleButton(
             }
         )
     }
+
 }

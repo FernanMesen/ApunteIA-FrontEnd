@@ -1,26 +1,26 @@
 package ApunteIA.FrontEnd.screens
 
-import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.padding
-import androidx.compose.material3.Button
-import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.OutlinedTextField
-import androidx.compose.material3.Text
-import androidx.compose.material3.TextButton
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
+import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.verticalScroll
+import androidx.compose.material3.*
+import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.PasswordVisualTransformation
+import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
+
+private val RegisterBackground = Color(0xFFFBFAEF)
+private val RegisterGreen = Color(0xFF0E3321)
+private val RegisterBorder = Color(0xFFE2E2E2)
+private val RegisterGray = Color(0xFF666666)
 
 @Composable
 fun RegisterScreen(
@@ -43,77 +43,183 @@ fun RegisterScreen(
     Column(
         modifier = Modifier
             .fillMaxSize()
-            .padding(24.dp),
-        verticalArrangement = Arrangement.Center,
+            .background(RegisterBackground)
+            .verticalScroll(rememberScrollState())
+            .navigationBarsPadding()
+            .padding(horizontal = 28.dp),
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
 
+        Spacer(modifier = Modifier.height(150.dp))
+
+        // Logo
+        Box(
+            modifier = Modifier
+                .size(76.dp)
+                .background(
+                    color = RegisterGreen,
+                    shape = RoundedCornerShape(22.dp)
+                ),
+            contentAlignment = Alignment.Center
+        ) {
+            Text(
+                text = "★",
+                color = Color.White,
+                fontSize = 34.sp
+            )
+        }
+
+        Spacer(modifier = Modifier.height(16.dp))
+
+        // Nombre de la aplicación
         Text(
-            text = "Crear cuenta",
-            style = MaterialTheme.typography.headlineLarge
+            text = "ApuntesIA",
+            color = RegisterGreen,
+            fontSize = 28.sp,
+            fontWeight = FontWeight.Bold
         )
 
-        Spacer(
-            modifier = Modifier.height(24.dp)
+        Spacer(modifier = Modifier.height(8.dp))
+
+        Text(
+            text = "Tu asistente de estudio con IA",
+            color = RegisterGray,
+            fontSize = 15.sp
         )
 
+        Spacer(modifier = Modifier.height(28.dp))
+
+        // Nombre completo
         OutlinedTextField(
             value = fullName,
             onValueChange = {
                 fullName = it
             },
-            label = {
-                Text("Nombre completo")
+            placeholder = {
+                Text(
+                    text = "Nombre completo",
+                    color = RegisterGray
+                )
             },
-            modifier = Modifier.fillMaxWidth()
+            singleLine = true,
+            shape = RoundedCornerShape(18.dp),
+            modifier = Modifier
+                .fillMaxWidth()
+                .height(62.dp),
+            colors = OutlinedTextFieldDefaults.colors(
+                focusedContainerColor = Color.White,
+                unfocusedContainerColor = Color.White,
+                focusedBorderColor = RegisterGreen,
+                unfocusedBorderColor = RegisterBorder,
+                cursorColor = RegisterGreen
+            )
         )
 
-        Spacer(
-            modifier = Modifier.height(12.dp)
-        )
+        Spacer(modifier = Modifier.height(14.dp))
 
+        // Correo
         OutlinedTextField(
             value = email,
             onValueChange = {
                 email = it
             },
-            label = {
-                Text("Correo electrónico")
+            placeholder = {
+                Text(
+                    text = "Correo electrónico",
+                    color = RegisterGray
+                )
             },
-            modifier = Modifier.fillMaxWidth()
+            singleLine = true,
+            shape = RoundedCornerShape(18.dp),
+            modifier = Modifier
+                .fillMaxWidth()
+                .height(62.dp),
+            colors = OutlinedTextFieldDefaults.colors(
+                focusedContainerColor = Color.White,
+                unfocusedContainerColor = Color.White,
+                focusedBorderColor = RegisterGreen,
+                unfocusedBorderColor = RegisterBorder,
+                cursorColor = RegisterGreen
+            )
         )
 
-        Spacer(
-            modifier = Modifier.height(12.dp)
-        )
+        Spacer(modifier = Modifier.height(14.dp))
 
+        // Contraseña
         OutlinedTextField(
             value = password,
             onValueChange = {
                 password = it
             },
-            label = {
-                Text("Contraseña")
+            placeholder = {
+                Text(
+                    text = "Contraseña",
+                    color = RegisterGray
+                )
             },
             visualTransformation = PasswordVisualTransformation(),
-            modifier = Modifier.fillMaxWidth()
+            singleLine = true,
+            shape = RoundedCornerShape(18.dp),
+            modifier = Modifier
+                .fillMaxWidth()
+                .height(62.dp),
+            colors = OutlinedTextFieldDefaults.colors(
+                focusedContainerColor = Color.White,
+                unfocusedContainerColor = Color.White,
+                focusedBorderColor = RegisterGreen,
+                unfocusedBorderColor = RegisterBorder,
+                cursorColor = RegisterGreen
+            )
         )
 
-        Spacer(
-            modifier = Modifier.height(24.dp)
-        )
+        Spacer(modifier = Modifier.height(26.dp))
 
+        // Crear cuenta
         Button(
-            onClick = onRegister,
-            modifier = Modifier.fillMaxWidth()
+            onClick = {
+                onRegister()
+            },
+            modifier = Modifier
+                .fillMaxWidth()
+                .height(62.dp),
+            shape = RoundedCornerShape(18.dp),
+            colors = ButtonDefaults.buttonColors(
+                containerColor = RegisterGreen
+            )
         ) {
-            Text("Registrarse")
+            Text(
+                text = "Crear cuenta",
+                color = Color.White,
+                fontSize = 16.sp,
+                fontWeight = FontWeight.Bold
+            )
         }
 
-        TextButton(
-            onClick = onBackToLogin
+        Spacer(modifier = Modifier.height(24.dp))
+
+        // Volver al login
+        Row(
+            verticalAlignment = Alignment.CenterVertically
         ) {
-            Text("Ya tengo una cuenta")
+
+            Text(
+                text = "¿Ya tienes cuenta? ",
+                color = RegisterGray,
+                fontSize = 14.sp
+            )
+
+            Text(
+                text = "Inicia sesión",
+                color = RegisterGreen,
+                fontSize = 14.sp,
+                fontWeight = FontWeight.Medium,
+                textDecoration = TextDecoration.Underline,
+                modifier = Modifier.clickable {
+                    onBackToLogin()
+                }
+            )
         }
+
+        Spacer(modifier = Modifier.height(32.dp))
     }
 }

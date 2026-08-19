@@ -6,4 +6,10 @@ object Routes {
     const val MAIN = "main"
     const val COURSES = "courses"
     const val NOTES = "notes"
+
+    const val PROFILE_SETUP = "profile_setup"
+    const val SUBJECTS = "subjects"
+    const val STUDY_GOAL = "study_goal"
+    const val LANGUAGE = "language"
+    const val PERMISSIONS = "permissions"
 }
