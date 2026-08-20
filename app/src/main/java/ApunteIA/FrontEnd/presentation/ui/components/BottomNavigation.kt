@@ -1,4 +1,4 @@
-package ApunteIA.FrontEnd.components
+package ApunteIA.FrontEnd.presentation.ui.components
 
 import androidx.compose.foundation.layout.*
 import androidx.compose.material.icons.Icons
@@ -15,8 +15,8 @@ import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import ApunteIA.FrontEnd.ui.theme.DarkGreen
-import ApunteIA.FrontEnd.ui.theme.TextGray
+import ApunteIA.FrontEnd.presentation.ui.theme.DarkGreen
+import ApunteIA.FrontEnd.presentation.ui.theme.TextGray
 
 @Composable
 fun CustomBottomNavigation(

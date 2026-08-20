@@ -8,8 +8,8 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.ui.Modifier
-import ApunteIA.FrontEnd.navigation.AppNavigation
-import ApunteIA.FrontEnd.ui.theme.ApunteIAFrontendTheme
+import ApunteIA.FrontEnd.presentation.navigation.AppNavigation
+import ApunteIA.FrontEnd.presentation.ui.theme.ApunteIAFrontendTheme
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {

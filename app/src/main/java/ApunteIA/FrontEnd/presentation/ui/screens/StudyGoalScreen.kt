@@ -1,4 +1,4 @@
-package ApunteIA.FrontEnd.screens
+package ApunteIA.FrontEnd.presentation.ui.screens
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border

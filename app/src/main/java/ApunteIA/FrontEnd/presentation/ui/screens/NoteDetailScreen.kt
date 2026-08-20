@@ -1,4 +1,4 @@
-package ApunteIA.FrontEnd.screens
+package ApunteIA.FrontEnd.presentation.ui.screens
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
@@ -16,7 +16,9 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import ApunteIA.FrontEnd.ui.theme.*
+import ApunteIA.FrontEnd.domain.model.NoteStatus
+import ApunteIA.FrontEnd.presentation.ui.components.StatusTag
+import ApunteIA.FrontEnd.presentation.ui.theme.*
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -70,7 +72,7 @@ fun NoteDetailScreen(
             Spacer(modifier = Modifier.height(8.dp))
             
             Row(verticalAlignment = Alignment.CenterVertically) {
-                StatusTag(status = if (noteTitle.contains("Estereoquímica")) "Débil" else "Sólido")
+                StatusTag(status = if (noteTitle.contains("Estereoquímica")) NoteStatus.WEAK else NoteStatus.SOLID)
                 Spacer(modifier = Modifier.width(12.dp))
                 Text(text = "Clase 5  ·  Química Orgánica", color = TextGray, fontSize = 14.sp)
             }

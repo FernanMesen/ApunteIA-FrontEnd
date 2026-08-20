@@ -1,10 +1,10 @@
-package ApunteIA.FrontEnd.navigation
+package ApunteIA.FrontEnd.presentation.navigation
 
 import androidx.compose.runtime.Composable
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
-import ApunteIA.FrontEnd.screens.*
+import ApunteIA.FrontEnd.presentation.ui.screens.*
 
 @Composable
 fun AppNavigation() {

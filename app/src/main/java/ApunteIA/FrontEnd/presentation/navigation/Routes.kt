@@ -1,4 +1,4 @@
-package ApunteIA.FrontEnd.navigation
+package ApunteIA.FrontEnd.presentation.navigation
 
 object Routes {
     const val LOGIN = "login"

@@ -1,4 +1,4 @@
-package ApunteIA.FrontEnd.screens
+package ApunteIA.FrontEnd.presentation.ui.screens
 
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.background
@@ -21,8 +21,8 @@ import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import ApunteIA.FrontEnd.ui.theme.*
-import ApunteIA.FrontEnd.components.CustomBottomNavigation
+import ApunteIA.FrontEnd.presentation.ui.theme.*
+import ApunteIA.FrontEnd.presentation.ui.layout.MainLayout
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -39,34 +39,14 @@ fun MainScreen(
     onReforzar: () -> Unit,
     onCameraClick: () -> Unit = {}
 ) {
-    Scaffold(
-        topBar = {
-            TopHeader()
-        },
-        bottomBar = {
-            CustomBottomNavigation(
-                currentRoute = "Inicio",
-                onInicio = onInicio,
-                onNotas = onNotas,
-                onAuditoria = onAuditoria,
-                onReforzar = onReforzar
-            )
-        },
-        floatingActionButton = {
-            FloatingActionButton(
-                onClick = onCameraClick,
-                containerColor = DarkGreen,
-                contentColor = Color.White,
-                shape = CircleShape,
-                modifier = Modifier
-                    .size(64.dp)
-                    .offset(y = 40.dp)
-            ) {
-                Icon(Icons.Default.CameraAlt, contentDescription = "Camera", modifier = Modifier.size(32.dp))
-            }
-        },
-        floatingActionButtonPosition = FabPosition.Center,
-        containerColor = BackgroundBeige
+    MainLayout(
+        currentRoute = "Inicio",
+        onInicio = onInicio,
+        onNotas = onNotas,
+        onAuditoria = onAuditoria,
+        onReforzar = onReforzar,
+        onCameraClick = onCameraClick,
+        topBar = { TopHeader() }
     ) { paddingValues ->
         LazyColumn(
             modifier = Modifier
