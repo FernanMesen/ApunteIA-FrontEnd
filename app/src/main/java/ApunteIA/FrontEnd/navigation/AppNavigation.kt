@@ -165,12 +165,17 @@ fun AppNavigation() {
         composable(Routes.MAIN) {
 
             MainScreen(
-                onCourses = {
-                    navController.navigate(Routes.COURSES)
-                },
+                onInicio = {
 
-                onNotes = {
+                },
+                onNotas = {
                     navController.navigate(Routes.NOTES)
+                },
+                onAuditoria = {
+                    navController.navigate(Routes.AUDITORIA)
+                },
+                onReforzar = {
+                    navController.navigate(Routes.REFORZAR)
                 }
             )
         }
@@ -190,7 +195,53 @@ fun AppNavigation() {
         // =========================
 
         composable(Routes.NOTES) {
-            NotesScreen()
+            NotesScreen(
+                onInicio = {
+                    navController.navigate(Routes.MAIN) {
+                        popUpTo(Routes.LOGIN) { inclusive = true }
+                    }
+                },
+                onNotas = {},
+                onAuditoria = {
+                    navController.navigate(Routes.AUDITORIA)
+                },
+                onReforzar = {
+                    navController.navigate(Routes.REFORZAR)
+                },
+                onNoteClick = { title ->
+                    navController.navigate("${Routes.NOTE_DETAIL}/$title")
+                }
+            )
+        }
+
+        // =========================
+        // NOTE DETAIL
+        // =========================
+
+        composable("${Routes.NOTE_DETAIL}/{title}") { backStackEntry ->
+            val title = backStackEntry.arguments?.getString("title") ?: ""
+            NoteDetailScreen(
+                noteTitle = title,
+                onBack = { navController.popBackStack() }
+            )
+        }
+
+        // =========================
+        // AUDITORIA
+        // =========================
+
+        composable(Routes.AUDITORIA) {
+
+            androidx.compose.material3.Text("Pantalla de Auditoría")
+        }
+
+        // =========================
+        // REFORZAR
+        // =========================
+
+        composable(Routes.REFORZAR) {
+
+            androidx.compose.material3.Text("Pantalla de Reforzar")
         }
     }
 }
