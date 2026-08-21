@@ -8,7 +8,6 @@ import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.*
-import androidx.compose.material.icons.outlined.Notifications
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
@@ -17,7 +16,6 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.StrokeCap
 import androidx.compose.ui.graphics.drawscope.Stroke
-import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -109,30 +107,30 @@ fun TopHeader() {
             )
         }
 
-        Row(verticalAlignment = Alignment.CenterVertically) {
-            Box(
-                modifier = Modifier
-                    .size(40.dp)
-                    .clip(CircleShape)
-                    .background(Color(0xFFEBEBE4)),
-                contentAlignment = Alignment.Center
-            ) {
-                Icon(
-                    Icons.Outlined.Notifications,
-                    contentDescription = "Notifications",
-                    tint = DarkGreen,
-                    modifier = Modifier.size(22.dp)
-                )
+//        Row(verticalAlignment = Alignment.CenterVertically) {
+//            Box(
+//                modifier = Modifier
+//                    .size(40.dp)
+//                    .clip(CircleShape)
+//                    .background(Color(0xFFEBEBE4)),
+//                contentAlignment = Alignment.Center
+//            ) {
+            //    Icon(
+                  //  Icons.Outlined.Notifications,
+                  //  contentDescription = "Notifications",
+                  //  tint = DarkGreen,
+                  //  modifier = Modifier.size(22.dp)
+             //   )
                 // Red badge
-                Box(
-                    modifier = Modifier
-                        .size(8.dp)
-                        .clip(CircleShape)
-                        .background(StatusRed)
-                        .align(Alignment.TopEnd)
-                        .offset(x = (-4).dp, y = 4.dp)
-                )
-            }
+//                Box(
+//                    modifier = Modifier
+//                        .size(8.dp)
+//                        .clip(CircleShape)
+//                        .background(StatusRed)
+//                        .align(Alignment.TopEnd)
+//                        .offset(x = (-4).dp, y = 4.dp)
+//                )
+         //  }
             Spacer(modifier = Modifier.width(12.dp))
             Box(
                 modifier = Modifier
@@ -146,11 +144,11 @@ fun TopHeader() {
                     color = Color.White,
                     fontWeight = FontWeight.Bold,
                     fontSize = 18.sp
-                )
-            }
-        }
+             )
+           }
     }
-}
+    }
+//}
 
 @Composable
 fun GreetingSection(userName: String, streakDays: Int) {
