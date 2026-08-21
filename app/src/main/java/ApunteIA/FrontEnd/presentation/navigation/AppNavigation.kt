@@ -231,8 +231,16 @@ fun AppNavigation() {
         // =========================
 
         composable(Routes.AUDITORIA) {
-
-            androidx.compose.material3.Text("Pantalla de Auditoría")
+            AuditScreen(
+                onInicio = {
+                    navController.navigate(Routes.MAIN) {
+                        popUpTo(Routes.LOGIN) { inclusive = true }
+                    }
+                },
+                onNotas = { navController.navigate(Routes.NOTES) },
+                onAuditoria = {},
+                onReforzar = { navController.navigate(Routes.REFORZAR) }
+            )
         }
 
         // =========================
