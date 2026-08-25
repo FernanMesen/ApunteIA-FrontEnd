@@ -16,6 +16,7 @@ import ApunteIA.FrontEnd.presentation.factory.AuditViewModelFactory
 import ApunteIA.FrontEnd.presentation.ui.components.AuditSummaryCard
 import ApunteIA.FrontEnd.presentation.ui.components.FilterChip
 import ApunteIA.FrontEnd.presentation.ui.components.TopicCard
+import ApunteIA.FrontEnd.presentation.ui.components.TopHeader
 import ApunteIA.FrontEnd.presentation.ui.layout.MainLayout
 import ApunteIA.FrontEnd.presentation.ui.theme.DarkGreen
 import ApunteIA.FrontEnd.presentation.ui.theme.TextGray
@@ -29,6 +30,7 @@ fun AuditScreen(
     onReforzar: () -> Unit = {},
     onCameraClick: () -> Unit = {},
     onPracticeClick: (String) -> Unit = {},
+    onProfileClick: () -> Unit = {},
     viewModel: AuditViewModel = viewModel(factory = AuditViewModelFactory())
 ) {
     val categories by viewModel.categories.collectAsState()
@@ -39,7 +41,8 @@ fun AuditScreen(
     MainLayout(
         currentRoute = "Auditoría",
         onInicio = onInicio, onNotas = onNotas, onAuditoria = onAuditoria, onReforzar = onReforzar,
-        onCameraClick = onCameraClick
+        onCameraClick = onCameraClick,
+        topBar = { TopHeader(onProfileClick = onProfileClick) }
     ) { paddingValues ->
         LazyColumn(
             modifier = Modifier.fillMaxSize().padding(paddingValues).padding(horizontal = 20.dp),

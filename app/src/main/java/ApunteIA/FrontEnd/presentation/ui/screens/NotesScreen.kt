@@ -19,6 +19,7 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import ApunteIA.FrontEnd.presentation.ui.theme.*
 import ApunteIA.FrontEnd.presentation.ui.components.FilterChip
 import ApunteIA.FrontEnd.presentation.ui.components.NoteCard
+import ApunteIA.FrontEnd.presentation.ui.components.TopHeader
 import ApunteIA.FrontEnd.presentation.ui.layout.MainLayout
 import ApunteIA.FrontEnd.presentation.factory.NotesViewModelFactory
 import ApunteIA.FrontEnd.presentation.viewmodel.NotesViewModel
@@ -31,6 +32,7 @@ fun NotesScreen(
     onReforzar: () -> Unit = {},
     onCameraClick: () -> Unit = {},
     onNoteClick: (String) -> Unit = {},
+    onProfileClick: () -> Unit = {},
     viewModel: NotesViewModel = viewModel(factory = NotesViewModelFactory())
 ) {
     val categories by viewModel.categories.collectAsState()
@@ -44,7 +46,8 @@ fun NotesScreen(
         onNotas = onNotas,
         onAuditoria = onAuditoria,
         onReforzar = onReforzar,
-        onCameraClick = onCameraClick
+        onCameraClick = onCameraClick,
+        topBar = { TopHeader(onProfileClick = onProfileClick) }
     ) { paddingValues ->
         LazyColumn(
             modifier = Modifier

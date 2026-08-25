@@ -6,16 +6,12 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.CameraAlt
-import androidx.compose.material3.FabPosition
-import androidx.compose.material3.FloatingActionButton
-import androidx.compose.material3.Icon
-import androidx.compose.material3.Scaffold
+import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import ApunteIA.FrontEnd.presentation.ui.components.CustomBottomNavigation
-import ApunteIA.FrontEnd.presentation.ui.theme.BackgroundBeige
 import ApunteIA.FrontEnd.presentation.ui.theme.DarkGreen
 
 /**
@@ -50,8 +46,8 @@ fun MainLayout(
             if (showFab) {
                 FloatingActionButton(
                     onClick = onCameraClick,
-                    containerColor = DarkGreen,
-                    contentColor = Color.White,
+                    containerColor = MaterialTheme.colorScheme.primary,
+                    contentColor = MaterialTheme.colorScheme.onPrimary,
                     shape = CircleShape,
                     modifier = Modifier
                         .size(64.dp)
@@ -62,7 +58,7 @@ fun MainLayout(
             }
         },
         floatingActionButtonPosition = FabPosition.Center,
-        containerColor = BackgroundBeige,
+        containerColor = MaterialTheme.colorScheme.background,
         content = content
     )
 }

@@ -25,6 +25,7 @@ import androidx.compose.ui.unit.sp
 import ApunteIA.FrontEnd.domain.model.RecentActivity
 import ApunteIA.FrontEnd.presentation.ui.theme.*
 import ApunteIA.FrontEnd.presentation.ui.layout.MainLayout
+import ApunteIA.FrontEnd.presentation.ui.components.TopHeader
 import ApunteIA.FrontEnd.presentation.viewmodel.MainViewModel
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -35,7 +36,8 @@ fun MainScreen(
     onNotas: () -> Unit,
     onAuditoria: () -> Unit,
     onReforzar: () -> Unit,
-    onCameraClick: () -> Unit = {}
+    onCameraClick: () -> Unit = {},
+    onProfileClick: () -> Unit = {}
 ) {
     val userStats by viewModel.userStats.collectAsState()
     val recentActivity by viewModel.recentActivity.collectAsState()
@@ -47,7 +49,7 @@ fun MainScreen(
         onAuditoria = onAuditoria,
         onReforzar = onReforzar,
         onCameraClick = onCameraClick,
-        topBar = { TopHeader() }
+        topBar = { TopHeader(onProfileClick = onProfileClick) }
     ) { paddingValues ->
         LazyColumn(
             modifier = Modifier
@@ -88,58 +90,6 @@ fun MainScreen(
             item {
                 Spacer(modifier = Modifier.height(80.dp)) // Extra space for FAB/Nav
             }
-        }
-    }
-}
-
-@Composable
-fun TopHeader() {
-    Row(
-        modifier = Modifier
-            .fillMaxWidth()
-            .statusBarsPadding()
-            .padding(horizontal = 20.dp, vertical = 16.dp),
-        verticalAlignment = Alignment.CenterVertically,
-        horizontalArrangement = Arrangement.SpaceBetween
-    ) {
-        Row(verticalAlignment = Alignment.CenterVertically) {
-            Box(
-                modifier = Modifier
-                    .size(28.dp)
-                    .clip(RoundedCornerShape(8.dp))
-                    .background(DarkGreen),
-                contentAlignment = Alignment.Center
-            ) {
-                Icon(
-                    Icons.Default.Star,
-                    contentDescription = null,
-                    tint = Color.White,
-                    modifier = Modifier.size(16.dp)
-                )
-            }
-            Spacer(modifier = Modifier.width(8.dp))
-            Text(
-                text = "ApuntesIA",
-                fontSize = 18.sp,
-                fontWeight = FontWeight.Bold,
-                color = DarkGreen
-            )
-        }
-
-        Spacer(modifier = Modifier.width(12.dp))
-        Box(
-            modifier = Modifier
-                .size(40.dp)
-                .clip(CircleShape)
-                .background(DarkGreen),
-            contentAlignment = Alignment.Center
-        ) {
-            Text(
-                text = "M",
-                color = Color.White,
-                fontWeight = FontWeight.Bold,
-                fontSize = 18.sp
-            )
         }
     }
 }

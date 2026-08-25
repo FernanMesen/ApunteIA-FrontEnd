@@ -14,6 +14,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import ApunteIA.FrontEnd.presentation.ui.layout.MainLayout
+import ApunteIA.FrontEnd.presentation.ui.components.TopHeader
 import ApunteIA.FrontEnd.presentation.ui.theme.DarkGreen
 import ApunteIA.FrontEnd.presentation.ui.theme.LightGreen
 import ApunteIA.FrontEnd.presentation.ui.theme.TextGray
@@ -33,7 +34,8 @@ fun ReinforcementScreen(
     onAuditoria: () -> Unit = {},
     onReforzar: () -> Unit = {},
     onCameraClick: () -> Unit = {},
-    onStartQuiz: () -> Unit = {}
+    onStartQuiz: () -> Unit = {},
+    onProfileClick: () -> Unit = {}
 ) {
     MainLayout(
         currentRoute = "Reforzar",
@@ -41,7 +43,8 @@ fun ReinforcementScreen(
         onNotas = onNotas,
         onAuditoria = onAuditoria,
         onReforzar = onReforzar,
-        onCameraClick = onCameraClick
+        onCameraClick = onCameraClick,
+        topBar = { TopHeader(onProfileClick = onProfileClick) }
     ) { paddingValues ->
         Column(
             modifier = Modifier

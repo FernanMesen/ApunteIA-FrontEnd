@@ -1,6 +1,8 @@
 package ApunteIA.FrontEnd.presentation.navigation
 
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
@@ -15,10 +17,12 @@ import ApunteIA.FrontEnd.presentation.factory.ScanViewModelFactory
 import ApunteIA.FrontEnd.presentation.viewmodel.MainViewModel
 import ApunteIA.FrontEnd.presentation.viewmodel.QuizViewModel
 import ApunteIA.FrontEnd.presentation.viewmodel.ScanViewModel
+import ApunteIA.FrontEnd.presentation.viewmodel.ThemeViewModel
 
 @Composable
-fun AppNavigation() {
+fun AppNavigation(themeViewModel: ThemeViewModel = viewModel()) {
 
+    val isDarkMode by themeViewModel.isDarkMode.collectAsState(false)
     val navController = rememberNavController()
 
     NavHost(
@@ -190,7 +194,30 @@ fun AppNavigation() {
                 },
                 onCameraClick = {
                     navController.navigate(Routes.SCAN_GRAPH)
+                },
+                onProfileClick = {
+                    navController.navigate(Routes.PROFILE)
                 }
+            )
+        }
+
+
+        // =========================
+        // PROFILE
+        // =========================
+
+        composable(Routes.PROFILE) {
+            ProfileScreen(
+                onBack = {
+                    navController.popBackStack()
+                },
+                onLogout = {
+                    navController.navigate(Routes.LOGIN) {
+                        popUpTo(Routes.MAIN) { inclusive = true }
+                    }
+                },
+                isDarkMode = isDarkMode,
+                onThemeToggle = { themeViewModel.toggleTheme(it) }
             )
         }
 
@@ -227,6 +254,9 @@ fun AppNavigation() {
                 },
                 onNoteClick = { title ->
                     navController.navigate("${Routes.NOTE_DETAIL}/$title")
+                },
+                onProfileClick = {
+                    navController.navigate(Routes.PROFILE)
                 }
             )
         }
@@ -256,7 +286,8 @@ fun AppNavigation() {
                 },
                 onNotas = { navController.navigate(Routes.NOTES) },
                 onAuditoria = {},
-                onReforzar = { navController.navigate(Routes.REFORZAR) }
+                onReforzar = { navController.navigate(Routes.REFORZAR) },
+                onProfileClick = { navController.navigate(Routes.PROFILE) }
             )
         }
 
@@ -274,7 +305,8 @@ fun AppNavigation() {
                 onNotas = { navController.navigate(Routes.NOTES) },
                 onAuditoria = { navController.navigate(Routes.AUDITORIA) },
                 onReforzar = {},
-                onStartQuiz = { navController.navigate(Routes.QUIZ) }
+                onStartQuiz = { navController.navigate(Routes.QUIZ) },
+                onProfileClick = { navController.navigate(Routes.PROFILE) }
             )
         }
 

@@ -10,6 +10,7 @@ object Routes {
     const val AUDITORIA = "auditoria"
     const val REFORZAR = "reforzar"
     const val QUIZ = "quiz"
+    const val PROFILE = "profile"
 
     const val PROFILE_SETUP = "profile_setup"
     const val SUBJECTS = "subjects"
