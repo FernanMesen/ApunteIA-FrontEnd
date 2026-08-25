@@ -6,6 +6,12 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import ApunteIA.FrontEnd.presentation.ui.screens.*
 
+import androidx.lifecycle.viewmodel.compose.viewModel
+import ApunteIA.FrontEnd.presentation.factory.QuizViewModelFactory
+import ApunteIA.FrontEnd.presentation.factory.MainViewModelFactory
+import ApunteIA.FrontEnd.presentation.viewmodel.MainViewModel
+import ApunteIA.FrontEnd.presentation.viewmodel.QuizViewModel
+
 @Composable
 fun AppNavigation() {
 
@@ -163,8 +169,9 @@ fun AppNavigation() {
         // =========================
 
         composable(Routes.MAIN) {
-
+            val mainViewModel: MainViewModel = viewModel(factory = MainViewModelFactory())
             MainScreen(
+                viewModel = mainViewModel,
                 onInicio = {
 
                 },
@@ -248,8 +255,39 @@ fun AppNavigation() {
         // =========================
 
         composable(Routes.REFORZAR) {
+            ReinforcementScreen(
+                onInicio = {
+                    navController.navigate(Routes.MAIN) {
+                        popUpTo(Routes.LOGIN) { inclusive = true }
+                    }
+                },
+                onNotas = { navController.navigate(Routes.NOTES) },
+                onAuditoria = { navController.navigate(Routes.AUDITORIA) },
+                onReforzar = {},
+                onStartQuiz = { navController.navigate(Routes.QUIZ) }
+            )
+        }
 
-            androidx.compose.material3.Text("Pantalla de Reforzar")
+        // =========================
+        // QUIZ
+        // =========================
+
+        composable(Routes.QUIZ) {
+            val quizViewModel: QuizViewModel = viewModel(factory = QuizViewModelFactory())
+            QuizScreen(
+                viewModel = quizViewModel,
+                onClose = { navController.popBackStack() },
+                onNavigateToMain = {
+                    navController.navigate(Routes.MAIN) {
+                        popUpTo(Routes.LOGIN) { inclusive = true }
+                    }
+                },
+                onScanMore = {
+                    navController.navigate(Routes.MAIN) {
+                        popUpTo(Routes.LOGIN) { inclusive = true }
+                    }
+                }
+            )
         }
     }
 }

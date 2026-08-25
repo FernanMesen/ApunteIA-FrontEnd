@@ -1,0 +1,37 @@
+package ApunteIA.FrontEnd.presentation.viewmodel
+
+import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
+import ApunteIA.FrontEnd.domain.model.RecentActivity
+import ApunteIA.FrontEnd.domain.model.UserStats
+import ApunteIA.FrontEnd.domain.usecase.GetMainDashboardUseCase
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.launch
+
+class MainViewModel(
+    private val getMainDashboardUseCase: GetMainDashboardUseCase
+) : ViewModel() {
+
+    private val _userStats = MutableStateFlow<UserStats?>(null)
+    val userStats: StateFlow<UserStats?> = _userStats.asStateFlow()
+
+    private val _recentActivity = MutableStateFlow<List<RecentActivity>>(emptyList())
+    val recentActivity: StateFlow<List<RecentActivity>> = _recentActivity.asStateFlow()
+
+    init {
+        loadDashboard()
+    }
+
+    private fun loadDashboard() {
+        viewModelScope.launch {
+            getMainDashboardUseCase.getUserStats().onSuccess {
+                _userStats.value = it
+            }
+            getMainDashboardUseCase.getRecentActivity().onSuccess {
+                _recentActivity.value = it
+            }
+        }
+    }
+}

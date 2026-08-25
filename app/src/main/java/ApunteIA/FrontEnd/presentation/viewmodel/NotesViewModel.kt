@@ -65,9 +65,7 @@ class NotesViewModel(
             getNotesUseCase()
                 .onSuccess { notes -> _notes.value = notes }
                 .onFailure {
-                    // Sin backend real todavía no hay UI de error; se deja
-                    // la lista vacía. Cuando exista, este es el lugar para
-                    // exponer un estado de error a la pantalla.
+
                     _notes.value = emptyList()
                 }
         }

@@ -9,6 +9,7 @@ object Routes {
     const val NOTE_DETAIL = "note_detail"
     const val AUDITORIA = "auditoria"
     const val REFORZAR = "reforzar"
+    const val QUIZ = "quiz"
 
     const val PROFILE_SETUP = "profile_setup"
     const val SUBJECTS = "subjects"

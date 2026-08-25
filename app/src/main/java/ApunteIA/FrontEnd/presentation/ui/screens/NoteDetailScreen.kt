@@ -26,7 +26,7 @@ fun NoteDetailScreen(
     noteTitle: String,
     onBack: () -> Unit
 ) {
-    // Datos de ejemplo extendidos para la nota
+
     val fullContent = "Los centros quirales surgen cuando un carbono se une a cuatro grupos diferentes. Los enantiómeros son imágenes especulares no superponibles, lo cual es fundamental para entender la reactividad biológica y la síntesis de fármacos. En química orgánica, la quiralidad es una propiedad geométrica de algunas moléculas e iones. Se dice que un objeto es quiral si no es superponible con su imagen especular."
     
     val keyPoints = listOf(

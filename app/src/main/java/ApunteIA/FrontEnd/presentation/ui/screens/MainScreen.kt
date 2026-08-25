@@ -2,6 +2,7 @@ package ApunteIA.FrontEnd.presentation.ui.screens
 
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.shape.CircleShape
@@ -10,6 +11,8 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.*
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -19,24 +22,24 @@ import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import ApunteIA.FrontEnd.domain.model.RecentActivity
 import ApunteIA.FrontEnd.presentation.ui.theme.*
 import ApunteIA.FrontEnd.presentation.ui.layout.MainLayout
+import ApunteIA.FrontEnd.presentation.viewmodel.MainViewModel
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun MainScreen(
-    userName: String = "Maya",
-    streakDays: Int = 12,
-    progress: Int = 53,
-    notesCount: Int = 6,
-    pendingTopics: Int = 6,
-    quizzesDone: Int = 9,
+    viewModel: MainViewModel,
     onInicio: () -> Unit,
     onNotas: () -> Unit,
     onAuditoria: () -> Unit,
     onReforzar: () -> Unit,
     onCameraClick: () -> Unit = {}
 ) {
+    val userStats by viewModel.userStats.collectAsState()
+    val recentActivity by viewModel.recentActivity.collectAsState()
+
     MainLayout(
         currentRoute = "Inicio",
         onInicio = onInicio,
@@ -55,17 +58,33 @@ fun MainScreen(
         ) {
             item {
                 Spacer(modifier = Modifier.height(8.dp))
-                GreetingSection(userName, streakDays)
+                userStats?.let { 
+                    GreetingSection(it.userName, it.streakDays)
+                }
             }
+            
             item {
-                StatsCard(progress, notesCount, pendingTopics, quizzesDone)
+                userStats?.let { stats ->
+                    StatsCard(
+                        progress = stats.progressPercent,
+                        notesCount = stats.notesCount,
+                        pendingTopics = stats.pendingTopicsCount,
+                        quizzesDone = stats.quizzesDoneCount
+                    )
+                }
             }
+            
             item {
-                CycleSection()
+                CycleSection(
+                    onOrganizarClick = onNotas,
+                    onReforzarClick = onReforzar
+                )
             }
+            
             item {
-                RecentActivitySection()
+                RecentActivitySection(recentActivity)
             }
+            
             item {
                 Spacer(modifier = Modifier.height(80.dp)) // Extra space for FAB/Nav
             }
@@ -107,48 +126,23 @@ fun TopHeader() {
             )
         }
 
-//        Row(verticalAlignment = Alignment.CenterVertically) {
-//            Box(
-//                modifier = Modifier
-//                    .size(40.dp)
-//                    .clip(CircleShape)
-//                    .background(Color(0xFFEBEBE4)),
-//                contentAlignment = Alignment.Center
-//            ) {
-            //    Icon(
-                  //  Icons.Outlined.Notifications,
-                  //  contentDescription = "Notifications",
-                  //  tint = DarkGreen,
-                  //  modifier = Modifier.size(22.dp)
-             //   )
-                // Red badge
-//                Box(
-//                    modifier = Modifier
-//                        .size(8.dp)
-//                        .clip(CircleShape)
-//                        .background(StatusRed)
-//                        .align(Alignment.TopEnd)
-//                        .offset(x = (-4).dp, y = 4.dp)
-//                )
-         //  }
-            Spacer(modifier = Modifier.width(12.dp))
-            Box(
-                modifier = Modifier
-                    .size(40.dp)
-                    .clip(CircleShape)
-                    .background(DarkGreen),
-                contentAlignment = Alignment.Center
-            ) {
-                Text(
-                    text = "M",
-                    color = Color.White,
-                    fontWeight = FontWeight.Bold,
-                    fontSize = 18.sp
-             )
-           }
+        Spacer(modifier = Modifier.width(12.dp))
+        Box(
+            modifier = Modifier
+                .size(40.dp)
+                .clip(CircleShape)
+                .background(DarkGreen),
+            contentAlignment = Alignment.Center
+        ) {
+            Text(
+                text = "M",
+                color = Color.White,
+                fontWeight = FontWeight.Bold,
+                fontSize = 18.sp
+            )
+        }
     }
-    }
-//}
+}
 
 @Composable
 fun GreetingSection(userName: String, streakDays: Int) {
@@ -251,7 +245,7 @@ fun StatLine(label: String, value: String, valueColor: Color) {
 }
 
 @Composable
-fun CycleSection() {
+fun CycleSection(onOrganizarClick: () -> Unit, onReforzarClick: () -> Unit) {
     Column {
         Text(text = "TU CICLO", style = MaterialTheme.typography.titleSmall, color = TextGray, fontWeight = FontWeight.Bold)
         Spacer(modifier = Modifier.height(16.dp))
@@ -261,18 +255,23 @@ fun CycleSection() {
         ) {
             CycleItem("1", "Capturar", false)
             CycleConnector(Modifier.weight(1f))
-            CycleItem("2", "Organizar", false)
+            CycleItem("2", "Organizar", false, onClick = onOrganizarClick)
             CycleConnector(Modifier.weight(1f))
             CycleItem("3", "Auditar", false)
             CycleConnector(Modifier.weight(1f))
-            CycleItem("4", "Reforzar", true)
+            CycleItem("4", "Reforzar", true, onClick = onReforzarClick)
         }
     }
 }
 
 @Composable
-fun CycleItem(number: String, label: String, isHighlighted: Boolean) {
-    Column(horizontalAlignment = Alignment.CenterHorizontally, modifier = Modifier.width(60.dp)) {
+fun CycleItem(number: String, label: String, isHighlighted: Boolean, onClick: () -> Unit = {}) {
+    Column(
+        horizontalAlignment = Alignment.CenterHorizontally,
+        modifier = Modifier
+            .width(60.dp)
+            .clickable { onClick() }
+    ) {
         Box(
             modifier = Modifier
                 .size(32.dp)
@@ -309,7 +308,7 @@ fun CycleConnector(modifier: Modifier = Modifier) {
 }
 
 @Composable
-fun RecentActivitySection() {
+fun RecentActivitySection(activities: List<RecentActivity>) {
     Column {
         Text(text = "ACTIVIDAD RECIENTE", style = MaterialTheme.typography.titleSmall, color = TextGray, fontWeight = FontWeight.Bold)
         Spacer(modifier = Modifier.height(12.dp))
@@ -319,14 +318,13 @@ fun RecentActivitySection() {
             colors = CardDefaults.cardColors(containerColor = Color.White),
             elevation = CardDefaults.cardElevation(defaultElevation = 2.dp)
         ) {
-            Column(modifier = Modifier.padding(16.dp), verticalArrangement = Arrangement.spacedBy(16.dp)) {
-                ActivityItem("Escaneadas 3 páginas", "Mecanismos de Reacción", "Hace 2h")
-                HorizontalDivider(color = Color(0xFFF5F5F5))
-                ActivityItem("Cuestionario completado", "Estereoquímica (4/5)", "Ayer")
-                HorizontalDivider(color = Color(0xFFF5F5F5))
-                ActivityItem("Auditoría actualizada", "2 brechas nuevas", "Hace 2 días")
-                HorizontalDivider(color = Color(0xFFF5F5F5))
-                ActivityItem("Escaneadas 2 páginas", "Transporte en la Membrana Celular", "Hace 3 días")
+            Column(modifier = Modifier.padding(16.dp)) {
+                activities.forEachIndexed { index, activity ->
+                    ActivityItem(activity.title, activity.subtitle, activity.time)
+                    if (index < activities.size - 1) {
+                        HorizontalDivider(color = Color(0xFFF5F5F5), modifier = Modifier.padding(vertical = 12.dp))
+                    }
+                }
             }
         }
     }
@@ -342,4 +340,3 @@ fun ActivityItem(title: String, subtitle: String, time: String) {
         Text(text = time, style = MaterialTheme.typography.bodySmall, color = TextGray)
     }
 }
-
