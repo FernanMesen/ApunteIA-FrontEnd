@@ -9,4 +9,6 @@ import ApunteIA.FrontEnd.data.datasource.model.NoteDto
 class NoteDataSourceImpl : NoteDataSource {
 
     override suspend fun getNotes(): List<NoteDto> = NoteProvider.notes
+
+    override suspend fun addNote(note: NoteDto) = NoteProvider.addNote(note)
 }

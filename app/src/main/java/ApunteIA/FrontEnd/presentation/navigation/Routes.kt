@@ -16,4 +16,14 @@ object Routes {
     const val STUDY_GOAL = "study_goal"
     const val LANGUAGE = "language"
     const val PERMISSIONS = "permissions"
+
+    // =========================
+    // Flujo de escaneo
+    // =========================
+    const val SCAN_GRAPH = "scan_graph"
+    const val SCAN_NEW = "scan_new"
+    const val SCAN_CAMERA = "scan_camera"
+    const val SCAN_PAGES = "scan_pages"
+    const val SCAN_PROCESSING = "scan_processing"
+    const val SCAN_REVIEW = "scan_review"
 }

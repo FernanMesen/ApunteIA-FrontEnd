@@ -12,4 +12,9 @@ import ApunteIA.FrontEnd.domain.model.Note
  */
 interface NoteRepository {
     suspend fun getNotes(): List<Note>
+
+    /**
+     * Guarda una nota nueva (p.ej. la generada por IA al final de un escaneo).
+     */
+    suspend fun addNote(note: Note)
 }

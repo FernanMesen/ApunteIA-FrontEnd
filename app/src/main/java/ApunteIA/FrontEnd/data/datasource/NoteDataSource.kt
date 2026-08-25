@@ -10,4 +10,5 @@ import ApunteIA.FrontEnd.data.datasource.model.NoteDto
  */
 interface NoteDataSource {
     suspend fun getNotes(): List<NoteDto>
+    suspend fun addNote(note: NoteDto)
 }

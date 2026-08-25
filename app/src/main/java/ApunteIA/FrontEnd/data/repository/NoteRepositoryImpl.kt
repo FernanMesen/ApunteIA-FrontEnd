@@ -2,6 +2,7 @@ package ApunteIA.FrontEnd.data.repository
 
 import ApunteIA.FrontEnd.data.datasource.NoteDataSource
 import ApunteIA.FrontEnd.data.mapper.toDomain
+import ApunteIA.FrontEnd.data.mapper.toDto
 import ApunteIA.FrontEnd.domain.model.Note
 import ApunteIA.FrontEnd.domain.repository.NoteRepository
 
@@ -15,4 +16,6 @@ class NoteRepositoryImpl(
 ) : NoteRepository {
 
     override suspend fun getNotes(): List<Note> = dataSource.getNotes().toDomain()
+
+    override suspend fun addNote(note: Note) = dataSource.addNote(note.toDto())
 }

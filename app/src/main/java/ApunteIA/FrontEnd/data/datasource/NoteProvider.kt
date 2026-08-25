@@ -9,7 +9,7 @@ import ApunteIA.FrontEnd.data.datasource.model.NoteDto
  */
 object NoteProvider {
 
-    val notes: List<NoteDto> = listOf(
+    private val _notes: MutableList<NoteDto> = mutableListOf(
         NoteDto(
             id = 1,
             title = "Estereoquímica",
@@ -56,4 +56,19 @@ object NoteProvider {
             status = "Sólido"
         )
     )
+
+    /**
+     * Lista de notas expuesta como inmutable; la única forma de agregar
+     * notas nuevas es a través de [addNote] (p.ej. desde el flujo de escaneo).
+     */
+    val notes: List<NoteDto>
+        get() = _notes
+
+    /**
+     * Agrega una nota nueva al principio de la lista (la más reciente primero).
+     * Usado por el flujo de "Nuevo escaneo" al guardar la nota generada por la IA.
+     */
+    fun addNote(note: NoteDto) {
+        _notes.add(0, note)
+    }
 }
