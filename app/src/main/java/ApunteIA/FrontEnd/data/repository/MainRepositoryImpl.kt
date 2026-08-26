@@ -5,6 +5,8 @@ import ApunteIA.FrontEnd.domain.model.RecentActivity
 import ApunteIA.FrontEnd.domain.model.UserStats
 import ApunteIA.FrontEnd.domain.repository.MainRepository
 
+// esta clase Delegan al datasource y aplican los mappers.
+
 class MainRepositoryImpl(
     private val dataSource: MainDataSource
 ) : MainRepository {
