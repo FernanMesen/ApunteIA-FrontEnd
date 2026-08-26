@@ -18,9 +18,13 @@ import ApunteIA.FrontEnd.presentation.viewmodel.MainViewModel
 import ApunteIA.FrontEnd.presentation.viewmodel.QuizViewModel
 import ApunteIA.FrontEnd.presentation.viewmodel.ScanViewModel
 import ApunteIA.FrontEnd.presentation.viewmodel.ThemeViewModel
+import ApunteIA.FrontEnd.presentation.viewmodel.NotificationViewModel
 
 @Composable
-fun AppNavigation(themeViewModel: ThemeViewModel = viewModel()) {
+fun AppNavigation(
+    themeViewModel: ThemeViewModel = viewModel(),
+    notificationViewModel: NotificationViewModel = viewModel()
+) {
 
     val isDarkMode by themeViewModel.isDarkMode.collectAsState(false)
     val navController = rememberNavController()
@@ -180,6 +184,7 @@ fun AppNavigation(themeViewModel: ThemeViewModel = viewModel()) {
             val mainViewModel: MainViewModel = viewModel(factory = MainViewModelFactory())
             MainScreen(
                 viewModel = mainViewModel,
+                notificationViewModel = notificationViewModel,
                 onInicio = {
 
                 },
@@ -197,6 +202,23 @@ fun AppNavigation(themeViewModel: ThemeViewModel = viewModel()) {
                 },
                 onProfileClick = {
                     navController.navigate(Routes.PROFILE)
+                },
+                onNotificationsClick = {
+                    navController.navigate(Routes.NOTIFICATIONS)
+                }
+            )
+        }
+
+
+        // =========================
+        // NOTIFICATIONS
+        // =========================
+
+        composable(Routes.NOTIFICATIONS) {
+            NotificationsScreen(
+                viewModel = notificationViewModel,
+                onBack = {
+                    navController.popBackStack()
                 }
             )
         }
@@ -217,7 +239,86 @@ fun AppNavigation(themeViewModel: ThemeViewModel = viewModel()) {
                     }
                 },
                 isDarkMode = isDarkMode,
-                onThemeToggle = { themeViewModel.toggleTheme(it) }
+                onThemeToggle = { themeViewModel.toggleTheme(it) },
+                onManageSubjects = {
+                    navController.navigate(Routes.MANAGE_SUBJECTS)
+                },
+                onStudyHistory = {
+                    navController.navigate(Routes.STUDY_HISTORY)
+                },
+                onNotificationsClick = {
+                    navController.navigate(Routes.NOTIFICATIONS)
+                },
+                onCameraAccess = {
+                    navController.navigate(Routes.CAMERA_ACCESS)
+                },
+                onPrivacy = {
+                    navController.navigate(Routes.PRIVACY)
+                },
+                onExportData = {
+                    navController.navigate(Routes.EXPORT_DATA)
+                },
+                onChangePassword = {
+                    navController.navigate(Routes.CHANGE_PASSWORD)
+                }
+            )
+        }
+
+
+        // =========================
+        // MANAGE SUBJECTS
+        // =========================
+
+        composable(Routes.MANAGE_SUBJECTS) {
+            ManageSubjectsScreen(
+                onBack = {
+                    navController.popBackStack()
+                },
+                onJoinCourse = {
+                    navController.navigate(Routes.JOIN_SUBJECT)
+                }
+            )
+        }
+
+        composable(Routes.JOIN_SUBJECT) {
+            JoinSubjectScreen(
+                onBack = {
+                    navController.popBackStack()
+                },
+                onJoinSuccess = {
+                    navController.popBackStack()
+                }
+            )
+        }
+
+        composable(Routes.STUDY_HISTORY) {
+            StudyHistoryScreen(
+                onBack = {
+                    navController.popBackStack()
+                }
+            )
+        }
+
+        composable(Routes.CAMERA_ACCESS) {
+            PlaceholderScreen(title = "Acceso a cámara", onBack = { navController.popBackStack() })
+        }
+
+        composable(Routes.PRIVACY) {
+            PlaceholderScreen(title = "Privacidad", onBack = { navController.popBackStack() })
+        }
+
+        composable(Routes.EXPORT_DATA) {
+            PlaceholderScreen(title = "Exportar mis datos", onBack = { navController.popBackStack() })
+        }
+
+        composable(Routes.CHANGE_PASSWORD) {
+            ChangePasswordScreen(
+                onBack = { navController.popBackStack() },
+                onFinish = {
+                    navController.navigate(Routes.LOGIN) {
+                        popUpTo(Routes.MAIN) { inclusive = true }
+                    }
+                }
             )
         }
 
@@ -257,7 +358,11 @@ fun AppNavigation(themeViewModel: ThemeViewModel = viewModel()) {
                 },
                 onProfileClick = {
                     navController.navigate(Routes.PROFILE)
-                }
+                },
+                onNotificationsClick = {
+                    navController.navigate(Routes.NOTIFICATIONS)
+                },
+                notificationViewModel = notificationViewModel
             )
         }
 
@@ -287,7 +392,9 @@ fun AppNavigation(themeViewModel: ThemeViewModel = viewModel()) {
                 onNotas = { navController.navigate(Routes.NOTES) },
                 onAuditoria = {},
                 onReforzar = { navController.navigate(Routes.REFORZAR) },
-                onProfileClick = { navController.navigate(Routes.PROFILE) }
+                onProfileClick = { navController.navigate(Routes.PROFILE) },
+                onNotificationsClick = { navController.navigate(Routes.NOTIFICATIONS) },
+                notificationViewModel = notificationViewModel
             )
         }
 
@@ -306,7 +413,9 @@ fun AppNavigation(themeViewModel: ThemeViewModel = viewModel()) {
                 onAuditoria = { navController.navigate(Routes.AUDITORIA) },
                 onReforzar = {},
                 onStartQuiz = { navController.navigate(Routes.QUIZ) },
-                onProfileClick = { navController.navigate(Routes.PROFILE) }
+                onProfileClick = { navController.navigate(Routes.PROFILE) },
+                onNotificationsClick = { navController.navigate(Routes.NOTIFICATIONS) },
+                notificationViewModel = notificationViewModel
             )
         }
 

@@ -15,6 +15,8 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 
+import ApunteIA.FrontEnd.presentation.ui.theme.SpaceCadet
+
 val ApuntesBackground = Color(0xFFFBFAEF)
 val ApuntesGreen = Color(0xFF0B3B27)
 val ApuntesBorder = Color(0xFFE1E3DE)
@@ -26,6 +28,9 @@ fun OnboardingHeader(
     showBack: Boolean = true,
     onBack: () -> Unit = {}
 ) {
+    val isDark = MaterialTheme.colorScheme.primary == SpaceCadet
+    val headerGreen = if (isDark) MaterialTheme.colorScheme.primary else ApuntesGreen
+    
     Row(
         modifier = Modifier
             .fillMaxWidth()
@@ -38,7 +43,7 @@ fun OnboardingHeader(
                 modifier = Modifier
                     .size(34.dp)
                     .clip(RoundedCornerShape(50))
-                    .background(Color(0xFFE6E9DF))
+                    .background(if (isDark) Color(0xFF252B3B) else Color(0xFFE6E9DF))
                     .clickable {
                         onBack()
                     },
@@ -46,7 +51,7 @@ fun OnboardingHeader(
             ) {
                 Text(
                     text = "‹",
-                    color = ApuntesGreen,
+                    color = headerGreen,
                     fontSize = 28.sp,
                     fontWeight = FontWeight.Bold
                 )
@@ -62,14 +67,14 @@ fun OnboardingHeader(
                 .weight(1f)
                 .height(4.dp)
                 .clip(RoundedCornerShape(50))
-                .background(Color(0xFFE1E5DC))
+                .background(if (isDark) Color(0xFF252B3B) else Color(0xFFE1E5DC))
         ) {
 
             Box(
                 modifier = Modifier
                     .fillMaxHeight()
                     .fillMaxWidth(progress.coerceIn(0f, 1f))
-                    .background(ApuntesGreen)
+                    .background(headerGreen)
             )
         }
     }
@@ -82,13 +87,15 @@ fun ApuntesTextField(
     placeholder: String,
     modifier: Modifier = Modifier
 ) {
+    val isDark = MaterialTheme.colorScheme.primary == SpaceCadet
+    
     OutlinedTextField(
         value = value,
         onValueChange = onValueChange,
         placeholder = {
             Text(
                 text = placeholder,
-                color = ApuntesGray
+                color = if (isDark) MaterialTheme.colorScheme.onSurfaceVariant else ApuntesGray
             )
         },
         singleLine = true,
@@ -97,11 +104,13 @@ fun ApuntesTextField(
             .fillMaxWidth()
             .height(58.dp),
         colors = OutlinedTextFieldDefaults.colors(
-            focusedContainerColor = Color.White,
-            unfocusedContainerColor = Color.White,
-            focusedBorderColor = ApuntesGreen,
-            unfocusedBorderColor = ApuntesBorder,
-            cursorColor = ApuntesGreen
+            focusedContainerColor = if (isDark) MaterialTheme.colorScheme.surfaceVariant else Color.White,
+            unfocusedContainerColor = if (isDark) MaterialTheme.colorScheme.surfaceVariant else Color.White,
+            focusedBorderColor = MaterialTheme.colorScheme.primary,
+            unfocusedBorderColor = if (isDark) Color(0xFF394867) else ApuntesBorder,
+            cursorColor = MaterialTheme.colorScheme.primary,
+            focusedTextColor = MaterialTheme.colorScheme.onSurface,
+            unfocusedTextColor = MaterialTheme.colorScheme.onSurface
         )
     )
 }
@@ -118,7 +127,8 @@ fun ApuntesPrimaryButton(
             .height(54.dp),
         shape = RoundedCornerShape(28.dp),
         colors = ButtonDefaults.buttonColors(
-            containerColor = ApuntesGreen
+            containerColor = MaterialTheme.colorScheme.primary,
+            contentColor = Color.White
         )
     ) {
         Text(
@@ -136,15 +146,18 @@ fun EducationOption(
     selected: Boolean,
     onClick: () -> Unit
 ) {
+    val isDark = MaterialTheme.colorScheme.primary == SpaceCadet
+    val color = MaterialTheme.colorScheme.primary
+    
     Box(
         modifier = Modifier
             .border(
                 width = 1.dp,
-                color = ApuntesGreen,
+                color = color,
                 shape = RoundedCornerShape(25.dp)
             )
             .background(
-                color = if (selected) ApuntesGreen else Color.Transparent,
+                color = if (selected) color else Color.Transparent,
                 shape = RoundedCornerShape(25.dp)
             )
             .clickable {
@@ -158,7 +171,7 @@ fun EducationOption(
     ) {
         Text(
             text = text,
-            color = if (selected) Color.White else ApuntesGreen,
+            color = if (selected) Color.White else color,
             fontSize = 13.sp
         )
     }

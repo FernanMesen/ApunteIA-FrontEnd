@@ -21,6 +21,7 @@ import ApunteIA.FrontEnd.presentation.ui.layout.MainLayout
 import ApunteIA.FrontEnd.presentation.ui.theme.DarkGreen
 import ApunteIA.FrontEnd.presentation.ui.theme.TextGray
 import ApunteIA.FrontEnd.presentation.viewmodel.AuditViewModel
+import ApunteIA.FrontEnd.presentation.viewmodel.NotificationViewModel
 
 @Composable
 fun AuditScreen(
@@ -31,18 +32,29 @@ fun AuditScreen(
     onCameraClick: () -> Unit = {},
     onPracticeClick: (String) -> Unit = {},
     onProfileClick: () -> Unit = {},
+    onNotificationsClick: () -> Unit = {},
+    notificationViewModel: NotificationViewModel,
     viewModel: AuditViewModel = viewModel(factory = AuditViewModelFactory())
 ) {
     val categories by viewModel.categories.collectAsState()
     val selectedCategory by viewModel.selectedCategory.collectAsState()
     val summary by viewModel.summary.collectAsState()
     val filteredTopics by viewModel.filteredTopics.collectAsState()
+    
+    val notifications by notificationViewModel.notifications.collectAsState()
+    val hasUnread = notifications.any { !it.isRead }
 
     MainLayout(
         currentRoute = "Auditoría",
         onInicio = onInicio, onNotas = onNotas, onAuditoria = onAuditoria, onReforzar = onReforzar,
         onCameraClick = onCameraClick,
-        topBar = { TopHeader(onProfileClick = onProfileClick) }
+        topBar = { 
+            TopHeader(
+                onProfileClick = onProfileClick, 
+                onNotificationsClick = onNotificationsClick,
+                hasNotifications = hasUnread
+            ) 
+        }
     ) { paddingValues ->
         LazyColumn(
             modifier = Modifier.fillMaxSize().padding(paddingValues).padding(horizontal = 20.dp),

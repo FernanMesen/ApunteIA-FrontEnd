@@ -16,18 +16,16 @@ import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-
-private val RegisterBackground = Color(0xFFFBFAEF)
-private val RegisterGreen = Color(0xFF0E3321)
-private val RegisterBorder = Color(0xFFE2E2E2)
-private val RegisterGray = Color(0xFF666666)
+import ApunteIA.FrontEnd.presentation.ui.theme.SpaceCadet
 
 @Composable
 fun RegisterScreen(
     onRegister: () -> Unit,
     onBackToLogin: () -> Unit
 ) {
-
+    val primaryColor = MaterialTheme.colorScheme.primary
+    val isDark = primaryColor == SpaceCadet
+    
     var fullName by remember {
         mutableStateOf("")
     }
@@ -43,7 +41,7 @@ fun RegisterScreen(
     Column(
         modifier = Modifier
             .fillMaxSize()
-            .background(RegisterBackground)
+            .background(MaterialTheme.colorScheme.background)
             .verticalScroll(rememberScrollState())
             .navigationBarsPadding()
             .padding(horizontal = 28.dp),
@@ -57,14 +55,14 @@ fun RegisterScreen(
             modifier = Modifier
                 .size(76.dp)
                 .background(
-                    color = RegisterGreen,
+                    color = primaryColor,
                     shape = RoundedCornerShape(22.dp)
                 ),
             contentAlignment = Alignment.Center
         ) {
             Text(
                 text = "★",
-                color = Color.White,
+                color = MaterialTheme.colorScheme.onPrimary,
                 fontSize = 34.sp
             )
         }
@@ -74,7 +72,7 @@ fun RegisterScreen(
         // Nombre de la aplicación
         Text(
             text = "ApuntesIA",
-            color = RegisterGreen,
+            color = primaryColor,
             fontSize = 28.sp,
             fontWeight = FontWeight.Bold
         )
@@ -83,7 +81,7 @@ fun RegisterScreen(
 
         Text(
             text = "Tu asistente de estudio con IA",
-            color = RegisterGray,
+            color = MaterialTheme.colorScheme.onSurfaceVariant,
             fontSize = 15.sp
         )
 
@@ -98,7 +96,7 @@ fun RegisterScreen(
             placeholder = {
                 Text(
                     text = "Nombre completo",
-                    color = RegisterGray
+                    color = MaterialTheme.colorScheme.onSurfaceVariant
                 )
             },
             singleLine = true,
@@ -107,11 +105,13 @@ fun RegisterScreen(
                 .fillMaxWidth()
                 .height(62.dp),
             colors = OutlinedTextFieldDefaults.colors(
-                focusedContainerColor = Color.White,
-                unfocusedContainerColor = Color.White,
-                focusedBorderColor = RegisterGreen,
-                unfocusedBorderColor = RegisterBorder,
-                cursorColor = RegisterGreen
+                focusedContainerColor = if (isDark) MaterialTheme.colorScheme.surfaceVariant else Color.White,
+                unfocusedContainerColor = if (isDark) MaterialTheme.colorScheme.surfaceVariant else Color.White,
+                focusedBorderColor = primaryColor,
+                unfocusedBorderColor = if (isDark) Color(0xFF394867) else Color(0xFFE2E2E2),
+                cursorColor = primaryColor,
+                focusedTextColor = MaterialTheme.colorScheme.onSurface,
+                unfocusedTextColor = MaterialTheme.colorScheme.onSurface
             )
         )
 
@@ -126,7 +126,7 @@ fun RegisterScreen(
             placeholder = {
                 Text(
                     text = "Correo electrónico",
-                    color = RegisterGray
+                    color = MaterialTheme.colorScheme.onSurfaceVariant
                 )
             },
             singleLine = true,
@@ -135,11 +135,13 @@ fun RegisterScreen(
                 .fillMaxWidth()
                 .height(62.dp),
             colors = OutlinedTextFieldDefaults.colors(
-                focusedContainerColor = Color.White,
-                unfocusedContainerColor = Color.White,
-                focusedBorderColor = RegisterGreen,
-                unfocusedBorderColor = RegisterBorder,
-                cursorColor = RegisterGreen
+                focusedContainerColor = if (isDark) MaterialTheme.colorScheme.surfaceVariant else Color.White,
+                unfocusedContainerColor = if (isDark) MaterialTheme.colorScheme.surfaceVariant else Color.White,
+                focusedBorderColor = primaryColor,
+                unfocusedBorderColor = if (isDark) Color(0xFF394867) else Color(0xFFE2E2E2),
+                cursorColor = primaryColor,
+                focusedTextColor = MaterialTheme.colorScheme.onSurface,
+                unfocusedTextColor = MaterialTheme.colorScheme.onSurface
             )
         )
 
@@ -154,7 +156,7 @@ fun RegisterScreen(
             placeholder = {
                 Text(
                     text = "Contraseña",
-                    color = RegisterGray
+                    color = MaterialTheme.colorScheme.onSurfaceVariant
                 )
             },
             visualTransformation = PasswordVisualTransformation(),
@@ -164,11 +166,13 @@ fun RegisterScreen(
                 .fillMaxWidth()
                 .height(62.dp),
             colors = OutlinedTextFieldDefaults.colors(
-                focusedContainerColor = Color.White,
-                unfocusedContainerColor = Color.White,
-                focusedBorderColor = RegisterGreen,
-                unfocusedBorderColor = RegisterBorder,
-                cursorColor = RegisterGreen
+                focusedContainerColor = if (isDark) MaterialTheme.colorScheme.surfaceVariant else Color.White,
+                unfocusedContainerColor = if (isDark) MaterialTheme.colorScheme.surfaceVariant else Color.White,
+                focusedBorderColor = primaryColor,
+                unfocusedBorderColor = if (isDark) Color(0xFF394867) else Color(0xFFE2E2E2),
+                cursorColor = primaryColor,
+                focusedTextColor = MaterialTheme.colorScheme.onSurface,
+                unfocusedTextColor = MaterialTheme.colorScheme.onSurface
             )
         )
 
@@ -184,12 +188,12 @@ fun RegisterScreen(
                 .height(62.dp),
             shape = RoundedCornerShape(18.dp),
             colors = ButtonDefaults.buttonColors(
-                containerColor = RegisterGreen
+                containerColor = primaryColor
             )
         ) {
             Text(
                 text = "Crear cuenta",
-                color = Color.White,
+                color = MaterialTheme.colorScheme.onPrimary,
                 fontSize = 16.sp,
                 fontWeight = FontWeight.Bold
             )
@@ -204,13 +208,13 @@ fun RegisterScreen(
 
             Text(
                 text = "¿Ya tienes cuenta? ",
-                color = RegisterGray,
+                color = MaterialTheme.colorScheme.onSurfaceVariant,
                 fontSize = 14.sp
             )
 
             Text(
                 text = "Inicia sesión",
-                color = RegisterGreen,
+                color = primaryColor,
                 fontSize = 14.sp,
                 fontWeight = FontWeight.Medium,
                 textDecoration = TextDecoration.Underline,
