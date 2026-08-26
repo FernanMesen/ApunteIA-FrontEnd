@@ -32,17 +32,12 @@ fun AuditScreen(
     onCameraClick: () -> Unit = {},
     onPracticeClick: (String) -> Unit = {},
     onProfileClick: () -> Unit = {},
-    onNotificationsClick: () -> Unit = {},
-    notificationViewModel: NotificationViewModel,
     viewModel: AuditViewModel = viewModel(factory = AuditViewModelFactory())
 ) {
     val categories by viewModel.categories.collectAsState()
     val selectedCategory by viewModel.selectedCategory.collectAsState()
     val summary by viewModel.summary.collectAsState()
     val filteredTopics by viewModel.filteredTopics.collectAsState()
-    
-    val notifications by notificationViewModel.notifications.collectAsState()
-    val hasUnread = notifications.any { !it.isRead }
 
     MainLayout(
         currentRoute = "Auditoría",
@@ -50,9 +45,7 @@ fun AuditScreen(
         onCameraClick = onCameraClick,
         topBar = { 
             TopHeader(
-                onProfileClick = onProfileClick, 
-                onNotificationsClick = onNotificationsClick,
-                hasNotifications = hasUnread
+                onProfileClick = onProfileClick
             ) 
         }
     ) { paddingValues ->

@@ -37,12 +37,8 @@ fun ReinforcementScreen(
     onReforzar: () -> Unit = {},
     onCameraClick: () -> Unit = {},
     onStartQuiz: () -> Unit = {},
-    onProfileClick: () -> Unit = {},
-    onNotificationsClick: () -> Unit = {},
-    notificationViewModel: NotificationViewModel
+    onProfileClick: () -> Unit = {}
 ) {
-    val notifications by notificationViewModel.notifications.collectAsState()
-    val hasUnread = notifications.any { !it.isRead }
     val isDark = MaterialTheme.colorScheme.primary == SpaceCadet
 
     MainLayout(
@@ -54,9 +50,7 @@ fun ReinforcementScreen(
         onCameraClick = onCameraClick,
         topBar = { 
             TopHeader(
-                onProfileClick = onProfileClick, 
-                onNotificationsClick = onNotificationsClick,
-                hasNotifications = hasUnread
+                onProfileClick = onProfileClick
             ) 
         }
     ) { paddingValues ->

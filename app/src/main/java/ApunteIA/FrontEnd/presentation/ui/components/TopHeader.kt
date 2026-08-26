@@ -22,9 +22,7 @@ import androidx.compose.ui.unit.sp
 
 @Composable
 fun TopHeader(
-    onProfileClick: () -> Unit = {},
-    onNotificationsClick: () -> Unit = {},
-    hasNotifications: Boolean = false
+    onProfileClick: () -> Unit = {}
 ) {
     Row(
         modifier = Modifier
@@ -62,37 +60,6 @@ fun TopHeader(
         }
 
         Row(verticalAlignment = Alignment.CenterVertically) {
-            Box(
-                modifier = Modifier
-                    .size(40.dp)
-                    .clip(CircleShape)
-                    .background(MaterialTheme.colorScheme.primary.copy(alpha = 0.1f))
-                    .clickable { onNotificationsClick() },
-                contentAlignment = Alignment.Center
-            ) {
-                Box {
-                    Icon(
-                        imageVector = Icons.Default.Notifications,
-                        contentDescription = "Notificaciones",
-                        tint = MaterialTheme.colorScheme.primary,
-                        modifier = Modifier.size(20.dp)
-                    )
-                    
-                    if (hasNotifications) {
-                        Box(
-                            modifier = Modifier
-                                .size(8.dp)
-                                .clip(CircleShape)
-                                .background(Color(0xFFC07B7B)) // Mismo color de alerta que en la imagen
-                                .align(Alignment.TopEnd)
-                                .offset(x = 2.dp, y = (-2).dp)
-                        )
-                    }
-                }
-            }
-            
-            Spacer(modifier = Modifier.width(8.dp))
-
             Box(
                 modifier = Modifier
                     .size(40.dp)

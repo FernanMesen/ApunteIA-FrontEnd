@@ -34,17 +34,12 @@ fun NotesScreen(
     onCameraClick: () -> Unit = {},
     onNoteClick: (String) -> Unit = {},
     onProfileClick: () -> Unit = {},
-    onNotificationsClick: () -> Unit = {},
-    notificationViewModel: NotificationViewModel,
     viewModel: NotesViewModel = viewModel(factory = NotesViewModelFactory())
 ) {
     val categories by viewModel.categories.collectAsState()
     val selectedCategory by viewModel.selectedCategory.collectAsState()
     val searchQuery by viewModel.searchQuery.collectAsState()
     val filteredNotes by viewModel.filteredNotes.collectAsState()
-    
-    val notifications by notificationViewModel.notifications.collectAsState()
-    val hasUnread = notifications.any { !it.isRead }
 
     MainLayout(
         currentRoute = "Notas",
@@ -55,9 +50,7 @@ fun NotesScreen(
         onCameraClick = onCameraClick,
         topBar = { 
             TopHeader(
-                onProfileClick = onProfileClick, 
-                onNotificationsClick = onNotificationsClick,
-                hasNotifications = hasUnread
+                onProfileClick = onProfileClick
             ) 
         }
     ) { paddingValues ->
