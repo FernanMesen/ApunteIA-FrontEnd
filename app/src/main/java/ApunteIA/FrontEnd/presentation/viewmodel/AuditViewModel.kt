@@ -1,15 +1,20 @@
 package ApunteIA.FrontEnd.presentation.viewmodel
 
-import androidx.lifecycle.ViewModel
-import androidx.lifecycle.viewModelScope
 import ApunteIA.FrontEnd.domain.model.AuditSummary
 import ApunteIA.FrontEnd.domain.model.Topic
 import ApunteIA.FrontEnd.domain.usecase.CalculateAuditSummaryUseCase
 import ApunteIA.FrontEnd.domain.usecase.FilterTopicsUseCase
 import ApunteIA.FrontEnd.domain.usecase.GetTopicsUseCase
-import kotlinx.coroutines.flow.*
+import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.SharingStarted
+import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.combine
+import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
-
 class AuditViewModel(
     private val getTopicsUseCase: GetTopicsUseCase,
     private val filterTopicsUseCase: FilterTopicsUseCase,
@@ -30,7 +35,10 @@ class AuditViewModel(
         .map { calculateAuditSummaryUseCase(it) }
         .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5_000), AuditSummary(0, 0, 0, 0))
 
-    val filteredTopics: StateFlow<List<Topic>> = combine(_topics, _selectedCategory) { topics, category ->
+    val filteredTopics: StateFlow<List<Topic>> = combine(
+        _topics,
+        _selectedCategory
+    ) { topics, category ->
         filterTopicsUseCase(topics, category)
     }.stateIn(viewModelScope, SharingStarted.WhileSubscribed(5_000), emptyList())
 
