@@ -4,6 +4,7 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
@@ -18,7 +19,6 @@ import ApunteIA.FrontEnd.presentation.ui.components.FilterChip
 import ApunteIA.FrontEnd.presentation.ui.components.TopicCard
 import ApunteIA.FrontEnd.presentation.ui.components.TopHeader
 import ApunteIA.FrontEnd.presentation.ui.layout.MainLayout
-import ApunteIA.FrontEnd.presentation.ui.theme.DarkGreen
 import ApunteIA.FrontEnd.presentation.ui.theme.TextGray
 import ApunteIA.FrontEnd.presentation.viewmodel.AuditViewModel
 import ApunteIA.FrontEnd.presentation.viewmodel.NotificationViewModel
@@ -55,7 +55,7 @@ fun AuditScreen(
         ) {
             item {
                 Spacer(modifier = Modifier.height(24.dp))
-                Text(text = "Auditoría", fontSize = 32.sp, fontWeight = FontWeight.Bold, color = DarkGreen)
+                Text(text = "Auditoría", fontSize = 32.sp, fontWeight = FontWeight.Bold, color = MaterialTheme.colorScheme.onBackground)
                 Text(text = "Comparado con el programa de tu curso", fontSize = 14.sp, color = TextGray)
             }
             item {
