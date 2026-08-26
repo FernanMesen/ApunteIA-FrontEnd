@@ -67,7 +67,7 @@ fun NotesScreen(
                     text = "Notas",
                     fontSize = 32.sp,
                     fontWeight = FontWeight.Bold,
-                    color = DarkGreen
+                    color = MaterialTheme.colorScheme.onBackground
                 )
                 Text(
                     text = "Estructuradas por IA a partir de tus escaneos",
