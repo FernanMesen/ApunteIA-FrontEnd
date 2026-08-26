@@ -18,12 +18,10 @@ import ApunteIA.FrontEnd.presentation.viewmodel.MainViewModel
 import ApunteIA.FrontEnd.presentation.viewmodel.QuizViewModel
 import ApunteIA.FrontEnd.presentation.viewmodel.ScanViewModel
 import ApunteIA.FrontEnd.presentation.viewmodel.ThemeViewModel
-import ApunteIA.FrontEnd.presentation.viewmodel.NotificationViewModel
 
 @Composable
 fun AppNavigation(
-    themeViewModel: ThemeViewModel = viewModel(),
-    notificationViewModel: NotificationViewModel = viewModel()
+    themeViewModel: ThemeViewModel = viewModel()
 ) {
 
     val isDarkMode by themeViewModel.isDarkMode.collectAsState(false)
@@ -207,20 +205,6 @@ fun AppNavigation(
 
 
         // =========================
-        // NOTIFICATIONS
-        // =========================
-
-        composable(Routes.NOTIFICATIONS) {
-            NotificationsScreen(
-                viewModel = notificationViewModel,
-                onBack = {
-                    navController.popBackStack()
-                }
-            )
-        }
-
-
-        // =========================
         // PROFILE
         // =========================
 
@@ -241,9 +225,6 @@ fun AppNavigation(
                 },
                 onStudyHistory = {
                     navController.navigate(Routes.STUDY_HISTORY)
-                },
-                onNotificationsClick = {
-                    navController.navigate(Routes.NOTIFICATIONS)
                 },
                 onCameraAccess = {
                     navController.navigate(Routes.CAMERA_ACCESS)

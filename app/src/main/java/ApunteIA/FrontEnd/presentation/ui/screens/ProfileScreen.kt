@@ -33,7 +33,6 @@ fun ProfileScreen(
     onThemeToggle: (Boolean) -> Unit = {},
     onManageSubjects: () -> Unit = {},
     onStudyHistory: () -> Unit = {},
-    onNotificationsClick: () -> Unit = {},
     onCameraAccess: () -> Unit = {},
     onPrivacy: () -> Unit = {},
     onExportData: () -> Unit = {},
@@ -121,7 +120,6 @@ fun ProfileScreen(
                     onThemeToggle = onThemeToggle,
                     onManageSubjects = onManageSubjects,
                     onStudyHistory = onStudyHistory,
-                    onNotificationsClick = onNotificationsClick,
                     onCameraAccess = onCameraAccess,
                     onPrivacy = onPrivacy,
                     onExportData = onExportData,
@@ -258,7 +256,6 @@ fun ConfigSection(
     onThemeToggle: (Boolean) -> Unit,
     onManageSubjects: () -> Unit,
     onStudyHistory: () -> Unit,
-    onNotificationsClick: () -> Unit,
     onCameraAccess: () -> Unit,
     onPrivacy: () -> Unit,
     onExportData: () -> Unit,
@@ -291,12 +288,6 @@ fun ConfigSection(
                 ConfigItem(
                     label = "Historial de estudio",
                     onClick = onStudyHistory,
-                    trailing = { Icon(Icons.Default.KeyboardArrowRight, null, tint = MaterialTheme.colorScheme.onSurfaceVariant, modifier = Modifier.size(14.dp)) }
-                )
-                HorizontalDivider(color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.08f), thickness = 0.5.dp)
-                ConfigItem(
-                    label = "Notificaciones",
-                    onClick = onNotificationsClick,
                     trailing = { Icon(Icons.Default.KeyboardArrowRight, null, tint = MaterialTheme.colorScheme.onSurfaceVariant, modifier = Modifier.size(14.dp)) }
                 )
                 HorizontalDivider(color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.08f), thickness = 0.5.dp)

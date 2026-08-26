@@ -17,7 +17,6 @@ object Routes {
     const val PRIVACY = "privacy"
     const val EXPORT_DATA = "export_data"
     const val CHANGE_PASSWORD = "change_password"
-    const val NOTIFICATIONS = "notifications"
     const val JOIN_SUBJECT = "join_subject"
 
     const val PROFILE_SETUP = "profile_setup"
