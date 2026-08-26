@@ -184,7 +184,6 @@ fun AppNavigation(
             val mainViewModel: MainViewModel = viewModel(factory = MainViewModelFactory())
             MainScreen(
                 viewModel = mainViewModel,
-                notificationViewModel = notificationViewModel,
                 onInicio = {
 
                 },
@@ -202,9 +201,6 @@ fun AppNavigation(
                 },
                 onProfileClick = {
                     navController.navigate(Routes.PROFILE)
-                },
-                onNotificationsClick = {
-                    navController.navigate(Routes.NOTIFICATIONS)
                 }
             )
         }
@@ -358,11 +354,7 @@ fun AppNavigation(
                 },
                 onProfileClick = {
                     navController.navigate(Routes.PROFILE)
-                },
-                onNotificationsClick = {
-                    navController.navigate(Routes.NOTIFICATIONS)
-                },
-                notificationViewModel = notificationViewModel
+                }
             )
         }
 
@@ -392,9 +384,7 @@ fun AppNavigation(
                 onNotas = { navController.navigate(Routes.NOTES) },
                 onAuditoria = {},
                 onReforzar = { navController.navigate(Routes.REFORZAR) },
-                onProfileClick = { navController.navigate(Routes.PROFILE) },
-                onNotificationsClick = { navController.navigate(Routes.NOTIFICATIONS) },
-                notificationViewModel = notificationViewModel
+                onProfileClick = { navController.navigate(Routes.PROFILE) }
             )
         }
 
@@ -413,9 +403,7 @@ fun AppNavigation(
                 onAuditoria = { navController.navigate(Routes.AUDITORIA) },
                 onReforzar = {},
                 onStartQuiz = { navController.navigate(Routes.QUIZ) },
-                onProfileClick = { navController.navigate(Routes.PROFILE) },
-                onNotificationsClick = { navController.navigate(Routes.NOTIFICATIONS) },
-                notificationViewModel = notificationViewModel
+                onProfileClick = { navController.navigate(Routes.PROFILE) }
             )
         }
 

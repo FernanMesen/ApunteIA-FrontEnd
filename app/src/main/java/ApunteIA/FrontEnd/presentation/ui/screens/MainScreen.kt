@@ -33,19 +33,15 @@ import ApunteIA.FrontEnd.presentation.viewmodel.NotificationViewModel
 @Composable
 fun MainScreen(
     viewModel: MainViewModel,
-    notificationViewModel: NotificationViewModel,
     onInicio: () -> Unit,
     onNotas: () -> Unit,
     onAuditoria: () -> Unit,
     onReforzar: () -> Unit,
     onCameraClick: () -> Unit = {},
-    onProfileClick: () -> Unit = {},
-    onNotificationsClick: () -> Unit = {}
+    onProfileClick: () -> Unit = {}
 ) {
     val userStats by viewModel.userStats.collectAsState()
     val recentActivity by viewModel.recentActivity.collectAsState()
-    val notifications by notificationViewModel.notifications.collectAsState()
-    val hasUnread = notifications.any { !it.isRead }
 
     MainLayout(
         currentRoute = "Inicio",
@@ -56,9 +52,7 @@ fun MainScreen(
         onCameraClick = onCameraClick,
         topBar = { 
             TopHeader(
-                onProfileClick = onProfileClick, 
-                onNotificationsClick = onNotificationsClick,
-                hasNotifications = hasUnread
+                onProfileClick = onProfileClick
             ) 
         }
     ) { paddingValues ->
