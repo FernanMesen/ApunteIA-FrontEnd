@@ -13,7 +13,7 @@ object TopicProvider {
         TopicDto(7, "Ciclo Celular", "Biología Celular", "Sólido", 94),
         TopicDto(8, "Transporte en la Membrana Celular", "Biología Celular", "Débil", 45),
         TopicDto(9, "División Celular (Mitosis y Meiosis)", "Biología Celular", "Faltante", 0),
-        TopicDto(10, "Límites e Infinito", "Cálculo", "Faltante", 0)
+        TopicDto(10, "Límites e Infinito", "Cálculo II", "Faltante", 0)
     )
 
     fun addCourse(name: String) {

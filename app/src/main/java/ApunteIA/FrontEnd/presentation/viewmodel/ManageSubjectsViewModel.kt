@@ -31,7 +31,7 @@ class ManageSubjectsViewModel(
                     val professor = when (className) {
                         "Química Orgánica" -> "Dr. Alan Reyes"
                         "Biología Celular" -> "Dr. Elena Vidal"
-                        "Cálculo" -> "Prof. Sam Kessler"
+                        "Cálculo II" -> "Prof. Sam Kessler"
                         else -> "Profesor Asignado"
                     }
                     
@@ -39,7 +39,7 @@ class ManageSubjectsViewModel(
                     val colorHex = when (className) {
                         "Química Orgánica" -> "#0A3326"
                         "Biología Celular" -> "#006064"
-                        "Cálculo" -> "#C07B7B"
+                        "Cálculo II" -> "#C07B7B"
                         else -> "#757575"
                     }
                     
