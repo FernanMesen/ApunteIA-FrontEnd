@@ -13,6 +13,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import ApunteIA.FrontEnd.presentation.ui.components.CustomBottomNavigation
 import ApunteIA.FrontEnd.presentation.ui.theme.DarkGreen
+import ApunteIA.FrontEnd.presentation.ui.theme.SpaceCadet
 
 /**
  * Layout compartido por las pantallas principales de la app (Inicio, Notas, ...):
@@ -31,6 +32,8 @@ fun MainLayout(
     topBar: @Composable () -> Unit = {},
     content: @Composable (PaddingValues) -> Unit
 ) {
+    val isDark = MaterialTheme.colorScheme.primary == SpaceCadet
+
     Scaffold(
         topBar = topBar,
         bottomBar = {
@@ -46,7 +49,7 @@ fun MainLayout(
             if (showFab) {
                 FloatingActionButton(
                     onClick = onCameraClick,
-                    containerColor = MaterialTheme.colorScheme.primary,
+                    containerColor = if (isDark) Color(0xFF394867) else MaterialTheme.colorScheme.primary,
                     contentColor = MaterialTheme.colorScheme.onPrimary,
                     shape = CircleShape,
                     modifier = Modifier

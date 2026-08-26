@@ -19,3 +19,5 @@ class NoteRepositoryImpl(
 
     override suspend fun addNote(note: Note) = dataSource.addNote(note.toDto())
 }
+
+// esta clase Delegan al datasource y aplican los mappers.

@@ -23,6 +23,7 @@ import ApunteIA.FrontEnd.presentation.ui.components.TopHeader
 import ApunteIA.FrontEnd.presentation.ui.layout.MainLayout
 import ApunteIA.FrontEnd.presentation.factory.NotesViewModelFactory
 import ApunteIA.FrontEnd.presentation.viewmodel.NotesViewModel
+import ApunteIA.FrontEnd.presentation.viewmodel.NotificationViewModel
 
 @Composable
 fun NotesScreen(
@@ -33,12 +34,17 @@ fun NotesScreen(
     onCameraClick: () -> Unit = {},
     onNoteClick: (String) -> Unit = {},
     onProfileClick: () -> Unit = {},
+    onNotificationsClick: () -> Unit = {},
+    notificationViewModel: NotificationViewModel,
     viewModel: NotesViewModel = viewModel(factory = NotesViewModelFactory())
 ) {
     val categories by viewModel.categories.collectAsState()
     val selectedCategory by viewModel.selectedCategory.collectAsState()
     val searchQuery by viewModel.searchQuery.collectAsState()
     val filteredNotes by viewModel.filteredNotes.collectAsState()
+    
+    val notifications by notificationViewModel.notifications.collectAsState()
+    val hasUnread = notifications.any { !it.isRead }
 
     MainLayout(
         currentRoute = "Notas",
@@ -47,7 +53,13 @@ fun NotesScreen(
         onAuditoria = onAuditoria,
         onReforzar = onReforzar,
         onCameraClick = onCameraClick,
-        topBar = { TopHeader(onProfileClick = onProfileClick) }
+        topBar = { 
+            TopHeader(
+                onProfileClick = onProfileClick, 
+                onNotificationsClick = onNotificationsClick,
+                hasNotifications = hasUnread
+            ) 
+        }
     ) { paddingValues ->
         LazyColumn(
             modifier = Modifier
@@ -72,21 +84,24 @@ fun NotesScreen(
             }
 
             item {
+                val isDark = MaterialTheme.colorScheme.primary == SpaceCadet
+                
                 OutlinedTextField(
                     value = searchQuery,
                     onValueChange = { viewModel.onSearchQueryChange(it) },
-                    placeholder = { Text("Buscar notas", color = TextGray) },
+                    placeholder = { Text("Buscar notas", color = MaterialTheme.colorScheme.onSurfaceVariant) },
                     modifier = Modifier
                         .fillMaxWidth()
                         .padding(vertical = 8.dp),
                     shape = RoundedCornerShape(16.dp),
                     colors = OutlinedTextFieldDefaults.colors(
-                        focusedContainerColor = Color.White,
-                        unfocusedContainerColor = Color.White,
-                        focusedBorderColor = Color.Transparent,
-                        unfocusedBorderColor = Color.Transparent
+                        focusedContainerColor = if (isDark) Color(0xFF1E2532) else Color.White,
+                        unfocusedContainerColor = if (isDark) Color(0xFF1E2532) else Color.White,
+                        focusedBorderColor = if (isDark) Color(0xFF394867) else Color.Transparent,
+                        unfocusedBorderColor = if (isDark) Color(0xFF394867) else Color.Transparent,
+                        cursorColor = MaterialTheme.colorScheme.primary
                     ),
-                    leadingIcon = { Icon(Icons.Default.Search, contentDescription = null, tint = TextGray) },
+                    leadingIcon = { Icon(Icons.Default.Search, contentDescription = null, tint = MaterialTheme.colorScheme.onSurfaceVariant) },
                     singleLine = true
                 )
             }

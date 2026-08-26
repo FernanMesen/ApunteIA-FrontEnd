@@ -27,20 +27,25 @@ import ApunteIA.FrontEnd.presentation.ui.theme.*
 import ApunteIA.FrontEnd.presentation.ui.layout.MainLayout
 import ApunteIA.FrontEnd.presentation.ui.components.TopHeader
 import ApunteIA.FrontEnd.presentation.viewmodel.MainViewModel
+import ApunteIA.FrontEnd.presentation.viewmodel.NotificationViewModel
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun MainScreen(
     viewModel: MainViewModel,
+    notificationViewModel: NotificationViewModel,
     onInicio: () -> Unit,
     onNotas: () -> Unit,
     onAuditoria: () -> Unit,
     onReforzar: () -> Unit,
     onCameraClick: () -> Unit = {},
-    onProfileClick: () -> Unit = {}
+    onProfileClick: () -> Unit = {},
+    onNotificationsClick: () -> Unit = {}
 ) {
     val userStats by viewModel.userStats.collectAsState()
     val recentActivity by viewModel.recentActivity.collectAsState()
+    val notifications by notificationViewModel.notifications.collectAsState()
+    val hasUnread = notifications.any { !it.isRead }
 
     MainLayout(
         currentRoute = "Inicio",
@@ -49,7 +54,13 @@ fun MainScreen(
         onAuditoria = onAuditoria,
         onReforzar = onReforzar,
         onCameraClick = onCameraClick,
-        topBar = { TopHeader(onProfileClick = onProfileClick) }
+        topBar = { 
+            TopHeader(
+                onProfileClick = onProfileClick, 
+                onNotificationsClick = onNotificationsClick,
+                hasNotifications = hasUnread
+            ) 
+        }
     ) { paddingValues ->
         LazyColumn(
             modifier = Modifier
@@ -96,11 +107,13 @@ fun MainScreen(
 
 @Composable
 fun GreetingSection(userName: String, streakDays: Int) {
+    val isDark = MaterialTheme.colorScheme.primary == SpaceCadet
+    
     Column(modifier = Modifier.fillMaxWidth()) {
         Text(
             text = "Buenas tardes",
             fontSize = 16.sp,
-            color = TextGray
+            color = MaterialTheme.colorScheme.onSurfaceVariant
         )
         Row(
             modifier = Modifier.fillMaxWidth(),
@@ -111,13 +124,13 @@ fun GreetingSection(userName: String, streakDays: Int) {
                 text = userName,
                 fontSize = 32.sp,
                 fontWeight = FontWeight.Bold,
-                color = DarkGreen
+                color = MaterialTheme.colorScheme.onSurface
             )
 
             Surface(
-                color = Color.White,
+                color = if (isDark) Color(0xFF252B3B) else Color.White,
                 shape = RoundedCornerShape(24.dp),
-                border = androidx.compose.foundation.BorderStroke(1.dp, Color(0xFFEEEEEE))
+                border = androidx.compose.foundation.BorderStroke(1.dp, if (isDark) Color.Transparent else Color(0xFFEEEEEE))
             ) {
                 Row(
                     verticalAlignment = Alignment.CenterVertically,
@@ -127,14 +140,14 @@ fun GreetingSection(userName: String, streakDays: Int) {
                         modifier = Modifier
                             .size(6.dp)
                             .clip(CircleShape)
-                            .background(DarkGreen)
+                            .background(if (isDark) Color(0xFF9BA4B5) else DarkGreen)
                     )
                     Spacer(modifier = Modifier.width(8.dp))
                     Text(
                         text = "Racha de $streakDays días",
                         fontSize = 14.sp,
                         fontWeight = FontWeight.Medium,
-                        color = TextGray
+                        color = if (isDark) Color.White else TextGray
                     )
                 }
             }
@@ -144,10 +157,12 @@ fun GreetingSection(userName: String, streakDays: Int) {
 
 @Composable
 fun StatsCard(progress: Int, notesCount: Int, pendingTopics: Int, quizzesDone: Int) {
+    val isDark = MaterialTheme.colorScheme.primary == SpaceCadet
+    
     Card(
         modifier = Modifier.fillMaxWidth(),
         shape = RoundedCornerShape(24.dp),
-        colors = CardDefaults.cardColors(containerColor = Color.White),
+        colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surfaceVariant),
         elevation = CardDefaults.cardElevation(defaultElevation = 2.dp)
     ) {
         Row(
@@ -157,14 +172,14 @@ fun StatsCard(progress: Int, notesCount: Int, pendingTopics: Int, quizzesDone: I
             Box(contentAlignment = Alignment.Center, modifier = Modifier.size(80.dp)) {
                 Canvas(modifier = Modifier.fillMaxSize()) {
                     drawArc(
-                        color = Color(0xFFEEEEEE),
+                        color = if (isDark) Color(0xFF394867) else Color(0xFFEEEEEE),
                         startAngle = 0f,
                         sweepAngle = 360f,
                         useCenter = false,
                         style = Stroke(width = 8.dp.toPx(), cap = StrokeCap.Round)
                     )
                     drawArc(
-                        color = DarkGreen,
+                        color = if (isDark) Color.White else DarkGreen,
                         startAngle = -90f,
                         sweepAngle = (progress / 100f) * 360f,
                         useCenter = false,
@@ -172,15 +187,24 @@ fun StatsCard(progress: Int, notesCount: Int, pendingTopics: Int, quizzesDone: I
                     )
                 }
                 Column(horizontalAlignment = Alignment.CenterHorizontally) {
-                    Text(text = "$progress%", fontWeight = FontWeight.Bold, fontSize = 18.sp, color = DarkGreen)
-                    Text(text = "cubierto", fontSize = 10.sp, color = TextGray)
+                    Text(
+                        text = "$progress%", 
+                        fontWeight = FontWeight.Bold, 
+                        fontSize = 18.sp, 
+                        color = if (isDark) Color.White else DarkGreen
+                    )
+                    Text(
+                        text = "cubierto", 
+                        fontSize = 10.sp, 
+                        color = MaterialTheme.colorScheme.onSurfaceVariant
+                    )
                 }
             }
             Spacer(modifier = Modifier.width(24.dp))
             Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
-                StatLine("Notas capturadas", notesCount.toString(), DarkGreen)
+                StatLine("Notas capturadas", notesCount.toString(), if (isDark) Color.White else DarkGreen)
                 StatLine("Temas pendientes", pendingTopics.toString(), StatusRed)
-                StatLine("Cuestionarios hechos", quizzesDone.toString(), DarkGreen)
+                StatLine("Cuestionarios hechos", quizzesDone.toString(), if (isDark) Color.White else DarkGreen)
             }
         }
     }
@@ -189,7 +213,7 @@ fun StatsCard(progress: Int, notesCount: Int, pendingTopics: Int, quizzesDone: I
 @Composable
 fun StatLine(label: String, value: String, valueColor: Color) {
     Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween) {
-        Text(text = label, style = MaterialTheme.typography.bodyMedium, color = TextGray)
+        Text(text = label, style = MaterialTheme.typography.bodyMedium, color = MaterialTheme.colorScheme.onSurfaceVariant)
         Text(text = value, style = MaterialTheme.typography.bodyMedium, fontWeight = FontWeight.Bold, color = valueColor)
     }
 }
@@ -197,7 +221,12 @@ fun StatLine(label: String, value: String, valueColor: Color) {
 @Composable
 fun CycleSection(onOrganizarClick: () -> Unit, onReforzarClick: () -> Unit) {
     Column {
-        Text(text = "TU CICLO", style = MaterialTheme.typography.titleSmall, color = TextGray, fontWeight = FontWeight.Bold)
+        Text(
+            text = "TU CICLO", 
+            style = MaterialTheme.typography.titleSmall, 
+            color = MaterialTheme.colorScheme.onSurfaceVariant, 
+            fontWeight = FontWeight.Bold
+        )
         Spacer(modifier = Modifier.height(16.dp))
         Row(
             modifier = Modifier.fillMaxWidth(),
@@ -216,6 +245,8 @@ fun CycleSection(onOrganizarClick: () -> Unit, onReforzarClick: () -> Unit) {
 
 @Composable
 fun CycleItem(number: String, label: String, isHighlighted: Boolean, onClick: () -> Unit = {}) {
+    val isDark = MaterialTheme.colorScheme.primary == SpaceCadet
+    
     Column(
         horizontalAlignment = Alignment.CenterHorizontally,
         modifier = Modifier
@@ -226,13 +257,13 @@ fun CycleItem(number: String, label: String, isHighlighted: Boolean, onClick: ()
             modifier = Modifier
                 .size(32.dp)
                 .clip(CircleShape)
-                .background(if (isHighlighted) DarkGreen else Color(0xFFE0E0E0)),
+                .background(if (isHighlighted) (if (isDark) Color(0xFF394867) else DarkGreen) else (if (isDark) Color(0xFF252B3B) else Color(0xFFE0E0E0))),
             contentAlignment = Alignment.Center
         ) {
             Text(
                 text = number,
                 fontWeight = FontWeight.Bold,
-                color = if (isHighlighted) Color.White else DarkGreen,
+                color = if (isHighlighted) Color.White else (if (isDark) Color(0xFF9BA4B5) else DarkGreen),
                 fontSize = 14.sp
             )
         }
@@ -240,7 +271,7 @@ fun CycleItem(number: String, label: String, isHighlighted: Boolean, onClick: ()
         Text(
             text = label,
             fontSize = 10.sp,
-            color = if (isHighlighted) DarkGreen else TextGray,
+            color = if (isHighlighted) (if (isDark) Color.White else DarkGreen) else MaterialTheme.colorScheme.onSurfaceVariant,
             fontWeight = if (isHighlighted) FontWeight.Bold else FontWeight.Normal,
             maxLines = 1
         )
@@ -249,10 +280,11 @@ fun CycleItem(number: String, label: String, isHighlighted: Boolean, onClick: ()
 
 @Composable
 fun CycleConnector(modifier: Modifier = Modifier) {
+    val isDark = MaterialTheme.colorScheme.primary == SpaceCadet
     Box(
         modifier = modifier
             .height(1.dp)
-            .background(Color(0xFFE0E0E0))
+            .background(if (isDark) Color(0xFF252B3B) else Color(0xFFE0E0E0))
             .offset(y = (-8).dp)
     )
 }
@@ -260,19 +292,27 @@ fun CycleConnector(modifier: Modifier = Modifier) {
 @Composable
 fun RecentActivitySection(activities: List<RecentActivity>) {
     Column {
-        Text(text = "ACTIVIDAD RECIENTE", style = MaterialTheme.typography.titleSmall, color = TextGray, fontWeight = FontWeight.Bold)
+        Text(
+            text = "ACTIVIDAD RECIENTE", 
+            style = MaterialTheme.typography.titleSmall, 
+            color = MaterialTheme.colorScheme.onSurfaceVariant, 
+            fontWeight = FontWeight.Bold
+        )
         Spacer(modifier = Modifier.height(12.dp))
         Card(
             modifier = Modifier.fillMaxWidth(),
             shape = RoundedCornerShape(24.dp),
-            colors = CardDefaults.cardColors(containerColor = Color.White),
+            colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surfaceVariant),
             elevation = CardDefaults.cardElevation(defaultElevation = 2.dp)
         ) {
             Column(modifier = Modifier.padding(16.dp)) {
                 activities.forEachIndexed { index, activity ->
                     ActivityItem(activity.title, activity.subtitle, activity.time)
                     if (index < activities.size - 1) {
-                        HorizontalDivider(color = Color(0xFFF5F5F5), modifier = Modifier.padding(vertical = 12.dp))
+                        HorizontalDivider(
+                            color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.05f), 
+                            modifier = Modifier.padding(vertical = 12.dp)
+                        )
                     }
                 }
             }
@@ -282,11 +322,36 @@ fun RecentActivitySection(activities: List<RecentActivity>) {
 
 @Composable
 fun ActivityItem(title: String, subtitle: String, time: String) {
+    val isDark = MaterialTheme.colorScheme.primary == SpaceCadet
+    
     Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween, verticalAlignment = Alignment.Top) {
         Column(modifier = Modifier.weight(1f)) {
-            Text(text = title, style = MaterialTheme.typography.bodyMedium, fontWeight = FontWeight.Bold, color = DarkGreen)
-            Text(text = subtitle, style = MaterialTheme.typography.bodySmall, color = TextGray)
+            Row(verticalAlignment = Alignment.CenterVertically) {
+                Box(
+                    modifier = Modifier
+                        .size(8.dp)
+                        .clip(CircleShape)
+                        .background(if (isDark) Color(0xFF394867) else Color(0xFFE0E0E0))
+                )
+                Spacer(modifier = Modifier.width(8.dp))
+                Text(
+                    text = title, 
+                    style = MaterialTheme.typography.bodyMedium, 
+                    fontWeight = FontWeight.Bold, 
+                    color = MaterialTheme.colorScheme.onSurface
+                )
+            }
+            Text(
+                text = subtitle, 
+                style = MaterialTheme.typography.bodySmall, 
+                color = MaterialTheme.colorScheme.onSurfaceVariant,
+                modifier = Modifier.padding(start = 16.dp)
+            )
         }
-        Text(text = time, style = MaterialTheme.typography.bodySmall, color = TextGray)
+        Text(
+            text = time, 
+            style = MaterialTheme.typography.bodySmall, 
+            color = MaterialTheme.colorScheme.onSurfaceVariant
+        )
     }
 }

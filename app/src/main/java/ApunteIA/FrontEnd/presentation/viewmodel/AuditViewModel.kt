@@ -15,7 +15,6 @@ import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
-
 class AuditViewModel(
     private val getTopicsUseCase: GetTopicsUseCase,
     private val filterTopicsUseCase: FilterTopicsUseCase,

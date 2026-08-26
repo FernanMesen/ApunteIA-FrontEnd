@@ -2,6 +2,7 @@ package ApunteIA.FrontEnd.presentation.ui.screens
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
@@ -30,7 +31,7 @@ fun SubjectsScreen(
     Column(
         modifier = Modifier
             .fillMaxSize()
-            .background(ApuntesBackground)
+            .background(MaterialTheme.colorScheme.background)
             .padding(horizontal = 24.dp)
     ) {
 
@@ -43,7 +44,7 @@ fun SubjectsScreen(
 
         Text(
             text = "Materias que estudias",
-            color = ApuntesGreen,
+            color = MaterialTheme.colorScheme.primary,
             fontSize = 22.sp,
             fontWeight = FontWeight.Bold
         )

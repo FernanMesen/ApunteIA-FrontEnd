@@ -1,6 +1,8 @@
 package ApunteIA.FrontEnd.presentation.ui.screens
 
+import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
+import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
@@ -28,50 +30,120 @@ fun ProfileScreen(
     onBack: () -> Unit = {},
     onLogout: () -> Unit = {},
     isDarkMode: Boolean = false,
-    onThemeToggle: (Boolean) -> Unit = {}
+    onThemeToggle: (Boolean) -> Unit = {},
+    onManageSubjects: () -> Unit = {},
+    onStudyHistory: () -> Unit = {},
+    onNotificationsClick: () -> Unit = {},
+    onCameraAccess: () -> Unit = {},
+    onPrivacy: () -> Unit = {},
+    onExportData: () -> Unit = {},
+    onChangePassword: () -> Unit = {}
 ) {
+    var showDeleteDialog by remember { mutableStateOf(false) }
+    val isThemeDark = MaterialTheme.colorScheme.primary == SpaceCadet
+
+    if (showDeleteDialog) {
+        AlertDialog(
+            onDismissRequest = { showDeleteDialog = false },
+            containerColor = if (isThemeDark) Color(0xFF252E3E) else Color.White,
+            title = {
+                Text(
+                    text = "¿Eliminar tu cuenta?",
+                    fontSize = 20.sp,
+                    fontWeight = FontWeight.Bold,
+                    color = MaterialTheme.colorScheme.onSurface
+                )
+            },
+            text = {
+                Text(
+                    text = "Todas las notas, materias y progreso se eliminarán permanentemente.",
+                    fontSize = 15.sp,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant
+                )
+            },
+            confirmButton = {
+                Button(
+                    onClick = {
+                        showDeleteDialog = false
+                        onLogout()
+                    },
+                    colors = ButtonDefaults.buttonColors(
+                        containerColor = if (isThemeDark) Color(0xFF3B2525) else StatusRed,
+                        contentColor = Color.White
+                    ),
+                    shape = RoundedCornerShape(12.dp)
+                ) {
+                    Text("Confirmar", fontWeight = FontWeight.Bold)
+                }
+            },
+            dismissButton = {
+                OutlinedButton(
+                    onClick = { showDeleteDialog = false },
+                    border = BorderStroke(1.dp, if (isThemeDark) Color(0xFF394867) else Color(0xFFEEEEEE)),
+                    shape = RoundedCornerShape(12.dp)
+                ) {
+                    Text(
+                        "Cancelar", 
+                        color = MaterialTheme.colorScheme.onSurface,
+                        fontWeight = FontWeight.Bold
+                    )
+                }
+            },
+            shape = RoundedCornerShape(24.dp)
+        )
+    }
+
     Scaffold(
         containerColor = MaterialTheme.colorScheme.background,
         topBar = {
             ProfileTopBar(onBack = onBack)
         }
     ) { paddingValues ->
-        Box(
+        LazyColumn(
             modifier = Modifier
                 .fillMaxSize()
                 .padding(paddingValues)
+                .padding(horizontal = 24.dp),
+            horizontalAlignment = Alignment.CenterHorizontally,
+            verticalArrangement = Arrangement.spacedBy(24.dp)
         ) {
-            LazyColumn(
-                modifier = Modifier
-                    .fillMaxSize()
-                    .padding(horizontal = 24.dp),
-                horizontalAlignment = Alignment.CenterHorizontally,
-                verticalArrangement = Arrangement.spacedBy(24.dp)
-            ) {
-                item {
-                    ProfileHeader()
-                }
-
-                item {
-                    StatsSection()
-                }
-
-                item {
-                    ConfigSection(isDarkMode = isDarkMode, onThemeToggle = onThemeToggle)
-                }
-
-                item {
-                    Spacer(modifier = Modifier.height(100.dp)) // Espacio para el botón de abajo
-                }
+            item {
+                ProfileHeader()
             }
 
-            Box(
-                modifier = Modifier
-                    .align(Alignment.BottomCenter)
-                    .fillMaxWidth()
-                    .padding(24.dp)
-            ) {
+            item {
+                StatsSection()
+            }
+
+            item {
+                ConfigSection(
+                    isDarkMode = isDarkMode,
+                    onThemeToggle = onThemeToggle,
+                    onManageSubjects = onManageSubjects,
+                    onStudyHistory = onStudyHistory,
+                    onNotificationsClick = onNotificationsClick,
+                    onCameraAccess = onCameraAccess,
+                    onPrivacy = onPrivacy,
+                    onExportData = onExportData,
+                    onChangePassword = onChangePassword
+                )
+            }
+
+            item {
+                Spacer(modifier = Modifier.height(8.dp))
                 LogoutButton(onClick = onLogout)
+            }
+
+            item {
+                Text(
+                    text = "Eliminar cuenta",
+                    color = if (MaterialTheme.colorScheme.primary == SpaceCadet) Color(0xFFC07B7B) else MaterialTheme.colorScheme.onSurfaceVariant,
+                    fontSize = 14.sp,
+                    fontWeight = FontWeight.Medium,
+                    modifier = Modifier
+                        .padding(bottom = 32.dp)
+                        .clickable { showDeleteDialog = true }
+                )
             }
         }
     }
@@ -155,12 +227,12 @@ fun StatsSection() {
     Card(
         modifier = Modifier.fillMaxWidth(),
         shape = RoundedCornerShape(20.dp),
-        colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface),
+        colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surfaceVariant),
         elevation = CardDefaults.cardElevation(defaultElevation = 0.dp)
     ) {
         Column {
             StatItem("Notas capturadas", "6")
-            HorizontalDivider(color = Color(0xFFF5F5F5).copy(alpha = 0.1f), modifier = Modifier.padding(horizontal = 16.dp))
+            HorizontalDivider(color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.05f), modifier = Modifier.padding(horizontal = 16.dp))
             StatItem("Cuestionarios hechos", "9")
         }
     }
@@ -181,93 +253,146 @@ fun StatItem(label: String, value: String) {
 }
 
 @Composable
-fun ConfigSection(isDarkMode: Boolean, onThemeToggle: (Boolean) -> Unit) {
-    Column(verticalArrangement = Arrangement.spacedBy(12.dp)) {
+fun ConfigSection(
+    isDarkMode: Boolean,
+    onThemeToggle: (Boolean) -> Unit,
+    onManageSubjects: () -> Unit,
+    onStudyHistory: () -> Unit,
+    onNotificationsClick: () -> Unit,
+    onCameraAccess: () -> Unit,
+    onPrivacy: () -> Unit,
+    onExportData: () -> Unit,
+    onChangePassword: () -> Unit
+) {
+    val isThemeDark = MaterialTheme.colorScheme.primary == SpaceCadet
+    
+    Column {
         Text(
             text = "CONFIGURACIÓN",
-            fontSize = 14.sp,
+            fontSize = 13.sp,
             fontWeight = FontWeight.Bold,
-            color = TextGray,
-            modifier = Modifier.padding(start = 4.dp)
+            color = if (isThemeDark) Color(0xFF9BA4B5) else TextGray,
+            modifier = Modifier.padding(start = 4.dp, bottom = 12.dp)
         )
         
-        Card(
+        Surface(
             modifier = Modifier.fillMaxWidth(),
             shape = RoundedCornerShape(20.dp),
-            colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface),
-            elevation = CardDefaults.cardElevation(defaultElevation = 0.dp)
+            color = MaterialTheme.colorScheme.surfaceVariant,
+            border = if (isThemeDark) BorderStroke(1.dp, Color(0xFF394867)) else null
         ) {
             Column {
-                ConfigItem("Administrar materias", trailing = { Icon(Icons.Default.KeyboardArrowRight, null, tint = TextGray, modifier = Modifier.size(20.dp)) })
-                HorizontalDivider(color = Color(0xFFF5F5F5).copy(alpha = 0.1f), modifier = Modifier.padding(horizontal = 16.dp))
-                ConfigItem("Historial de estudio", trailing = { Icon(Icons.Default.KeyboardArrowRight, null, tint = TextGray, modifier = Modifier.size(20.dp)) })
-                HorizontalDivider(color = Color(0xFFF5F5F5).copy(alpha = 0.1f), modifier = Modifier.padding(horizontal = 16.dp))
-                ConfigItem("Apariencia", trailing = { AppearanceToggle(isDarkMode, onThemeToggle) })
-                HorizontalDivider(color = Color(0xFFF5F5F5).copy(alpha = 0.1f), modifier = Modifier.padding(horizontal = 16.dp))
-                ConfigItem("Acceso a cámara", trailing = { Icon(Icons.Default.Check, null, tint = DarkGreen, modifier = Modifier.size(20.dp)) })
-                HorizontalDivider(color = Color(0xFFF5F5F5).copy(alpha = 0.1f), modifier = Modifier.padding(horizontal = 16.dp))
-                ConfigItem("Privacidad", trailing = { Icon(Icons.Default.KeyboardArrowRight, null, tint = TextGray, modifier = Modifier.size(20.dp)) })
-                HorizontalDivider(color = Color(0xFFF5F5F5).copy(alpha = 0.1f), modifier = Modifier.padding(horizontal = 16.dp))
-                ConfigItem("Exportar mis datos", trailing = { Icon(Icons.Default.KeyboardArrowRight, null, tint = TextGray, modifier = Modifier.size(20.dp)) })
-                HorizontalDivider(color = Color(0xFFF5F5F5).copy(alpha = 0.1f), modifier = Modifier.padding(horizontal = 16.dp))
-                ConfigItem("Cambiar contraseña", trailing = { Icon(Icons.Default.KeyboardArrowRight, null, tint = TextGray, modifier = Modifier.size(20.dp)) })
+                ConfigItem(
+                    label = "Administrar materias",
+                    onClick = onManageSubjects,
+                    trailing = { Icon(Icons.Default.KeyboardArrowRight, null, tint = MaterialTheme.colorScheme.onSurfaceVariant, modifier = Modifier.size(14.dp)) }
+                )
+                HorizontalDivider(color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.08f), thickness = 0.5.dp)
+                ConfigItem(
+                    label = "Historial de estudio",
+                    onClick = onStudyHistory,
+                    trailing = { Icon(Icons.Default.KeyboardArrowRight, null, tint = MaterialTheme.colorScheme.onSurfaceVariant, modifier = Modifier.size(14.dp)) }
+                )
+                HorizontalDivider(color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.08f), thickness = 0.5.dp)
+                ConfigItem(
+                    label = "Notificaciones",
+                    onClick = onNotificationsClick,
+                    trailing = { Icon(Icons.Default.KeyboardArrowRight, null, tint = MaterialTheme.colorScheme.onSurfaceVariant, modifier = Modifier.size(14.dp)) }
+                )
+                HorizontalDivider(color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.08f), thickness = 0.5.dp)
+                ConfigItem(
+                    label = "Apariencia",
+                    trailing = { AppearanceToggle(isDarkMode, onThemeToggle) }
+                )
+                HorizontalDivider(color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.08f), thickness = 0.5.dp)
+                ConfigItem(
+                    label = "Acceso a cámara",
+                    onClick = onCameraAccess,
+                    trailing = { Icon(Icons.Default.Check, null, tint = MaterialTheme.colorScheme.onSurfaceVariant, modifier = Modifier.size(16.dp)) }
+                )
+                HorizontalDivider(color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.08f), thickness = 0.5.dp)
+                ConfigItem(
+                    label = "Privacidad",
+                    onClick = onPrivacy,
+                    trailing = { Icon(Icons.Default.KeyboardArrowRight, null, tint = MaterialTheme.colorScheme.onSurfaceVariant, modifier = Modifier.size(14.dp)) }
+                )
+                HorizontalDivider(color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.08f), thickness = 0.5.dp)
+                ConfigItem(
+                    label = "Exportar mis datos",
+                    onClick = onExportData,
+                    trailing = { Icon(Icons.Default.KeyboardArrowRight, null, tint = MaterialTheme.colorScheme.onSurfaceVariant, modifier = Modifier.size(14.dp)) }
+                )
+                HorizontalDivider(color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.08f), thickness = 0.5.dp)
+                ConfigItem(
+                    label = "Cambiar contraseña",
+                    onClick = onChangePassword,
+                    trailing = { Icon(Icons.Default.KeyboardArrowRight, null, tint = MaterialTheme.colorScheme.onSurfaceVariant, modifier = Modifier.size(14.dp)) }
+                )
             }
         }
     }
 }
 
 @Composable
-fun ConfigItem(label: String, trailing: @Composable () -> Unit) {
+fun ConfigItem(label: String, onClick: () -> Unit = {}, trailing: @Composable () -> Unit) {
     Row(
         modifier = Modifier
             .fillMaxWidth()
-            .clickable { /* TODO */ }
-            .padding(16.dp),
+            .clickable { onClick() }
+            .padding(horizontal = 20.dp, vertical = 18.dp),
         horizontalArrangement = Arrangement.SpaceBetween,
         verticalAlignment = Alignment.CenterVertically
     ) {
-        Text(text = label, fontSize = 16.sp, color = MaterialTheme.colorScheme.onSurface)
+        Text(
+            text = label, 
+            fontSize = 15.sp, 
+            fontWeight = FontWeight.Medium,
+            color = MaterialTheme.colorScheme.onSurface
+        )
         trailing()
     }
 }
 
 @Composable
 fun AppearanceToggle(isDarkMode: Boolean, onThemeToggle: (Boolean) -> Unit) {
+    val isThemeDark = MaterialTheme.colorScheme.primary == SpaceCadet
+    
     Row(
         modifier = Modifier
-            .background(Color(0xFFF5F5F5).copy(alpha = 0.2f), RoundedCornerShape(20.dp))
+            .background(if (isThemeDark) Color(0xFF1E2532) else Color(0xFFF5F5F5), RoundedCornerShape(20.dp))
+            .border(0.5.dp, if (isThemeDark) Color(0xFF394867) else Color.Transparent, RoundedCornerShape(20.dp))
             .padding(4.dp),
         verticalAlignment = Alignment.CenterVertically
     ) {
         Box(
             modifier = Modifier
                 .clip(RoundedCornerShape(16.dp))
-                .background(if (!isDarkMode) DarkGreen else Color.Transparent)
+                .background(if (!isDarkMode) (if (isThemeDark) Color(0xFF394867) else DarkGreen) else Color.Transparent)
                 .clickable { onThemeToggle(false) }
-                .padding(horizontal = 12.dp, vertical = 6.dp),
+                .padding(horizontal = 16.dp, vertical = 6.dp),
             contentAlignment = Alignment.Center
         ) {
             Text(
                 text = "Claro",
-                color = if (!isDarkMode) Color.White else TextGray,
+                color = if (!isDarkMode) Color.White else (if (isThemeDark) Color(0xFF9BA4B5) else TextGray),
                 fontSize = 12.sp,
-                fontWeight = FontWeight.Medium
+                fontWeight = FontWeight.Bold
             )
         }
         
         Box(
             modifier = Modifier
                 .clip(RoundedCornerShape(16.dp))
-                .background(if (isDarkMode) DarkGreen else Color.Transparent)
+                .background(if (isDarkMode) (if (isThemeDark) Color(0xFF394867) else DarkGreen) else Color.Transparent)
                 .clickable { onThemeToggle(true) }
-                .padding(horizontal = 12.dp, vertical = 6.dp),
+                .padding(horizontal = 16.dp, vertical = 6.dp),
             contentAlignment = Alignment.Center
         ) {
             Text(
                 text = "Oscuro",
-                color = if (isDarkMode) Color.White else TextGray,
+                color = if (isDarkMode) Color.White else (if (isThemeDark) Color(0xFF9BA4B5) else TextGray),
                 fontSize = 12.sp,
-                fontWeight = FontWeight.Medium
+                fontWeight = FontWeight.Bold
             )
         }
     }
@@ -275,6 +400,8 @@ fun AppearanceToggle(isDarkMode: Boolean, onThemeToggle: (Boolean) -> Unit) {
 
 @Composable
 fun LogoutButton(onClick: () -> Unit) {
+    val isDark = MaterialTheme.colorScheme.primary == SpaceCadet
+    
     Button(
         onClick = onClick,
         modifier = Modifier
@@ -282,8 +409,8 @@ fun LogoutButton(onClick: () -> Unit) {
             .height(56.dp),
         shape = RoundedCornerShape(28.dp),
         colors = ButtonDefaults.buttonColors(
-            containerColor = LightRed,
-            contentColor = StatusRed
+            containerColor = if (isDark) Color(0xFF3B2525) else LightRed,
+            contentColor = if (isDark) Color(0xFFC07B7B) else StatusRed
         ),
         elevation = ButtonDefaults.buttonElevation(defaultElevation = 0.dp)
     ) {

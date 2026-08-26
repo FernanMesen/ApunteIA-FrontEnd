@@ -4,9 +4,7 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.*
 import androidx.compose.material3.BottomAppBar
-import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
-import androidx.compose.material3.Text
+import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -15,8 +13,6 @@ import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import ApunteIA.FrontEnd.presentation.ui.theme.DarkGreen
-import ApunteIA.FrontEnd.presentation.ui.theme.TextGray
 
 @Composable
 fun CustomBottomNavigation(
@@ -27,8 +23,8 @@ fun CustomBottomNavigation(
     onReforzar: () -> Unit
 ) {
     BottomAppBar(
-        containerColor = Color.White,
-        contentColor = DarkGreen,
+        containerColor = MaterialTheme.colorScheme.surface,
+        contentColor = MaterialTheme.colorScheme.primary,
         tonalElevation = 8.dp,
         modifier = Modifier.height(70.dp)
     ) {
@@ -50,18 +46,28 @@ fun CustomBottomNavigation(
 
 @Composable
 fun NavItem(icon: ImageVector, label: String, isSelected: Boolean, onClick: () -> Unit) {
+    val isDark = MaterialTheme.colorScheme.primary == Color(0xFF25344F) // SpaceCadet
+    
     IconButton(onClick = onClick, modifier = Modifier.size(48.dp)) {
         Column(horizontalAlignment = Alignment.CenterHorizontally) {
             Icon(
                 icon,
                 contentDescription = label,
-                tint = if (isSelected) DarkGreen else TextGray,
+                tint = if (isSelected) {
+                    if (isDark) Color.White else MaterialTheme.colorScheme.primary
+                } else {
+                    MaterialTheme.colorScheme.onSurfaceVariant
+                },
                 modifier = Modifier.size(24.dp)
             )
             Text(
                 text = label,
-                fontSize = 8.sp,
-                color = if (isSelected) DarkGreen else TextGray,
+                fontSize = 10.sp,
+                color = if (isSelected) {
+                    if (isDark) Color.White else MaterialTheme.colorScheme.primary
+                } else {
+                    MaterialTheme.colorScheme.onSurfaceVariant
+                },
                 fontWeight = if (isSelected) FontWeight.Bold else FontWeight.Normal
             )
         }

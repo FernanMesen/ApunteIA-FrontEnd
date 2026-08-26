@@ -17,18 +17,16 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
-
-
-private val BackgroundColor = Color(0xFFFBFAEF)
-private val DarkGreen = Color(0xFF0E3321)
-private val BorderColor = Color(0xFFE2E2E2)
-private val TextGray = Color(0xFF666666)
+import ApunteIA.FrontEnd.presentation.ui.theme.SpaceCadet
 
 @Composable
 fun LoginScreen(
     onLogin: () -> Unit,
     onRegister: () -> Unit
 ) {
+    val isDark = MaterialTheme.colorScheme.primary == SpaceCadet
+    val primaryColor = MaterialTheme.colorScheme.primary
+    
     var email by remember { mutableStateOf("") }
     var password by remember { mutableStateOf("") }
 
@@ -43,7 +41,7 @@ fun LoginScreen(
     Column(
         modifier = Modifier
             .fillMaxSize()
-            .background(BackgroundColor)
+            .background(MaterialTheme.colorScheme.background)
             .verticalScroll(rememberScrollState())
             .navigationBarsPadding()
             .padding(horizontal = 32.dp),
@@ -57,7 +55,7 @@ fun LoginScreen(
         Row(
             modifier = Modifier
                 .background(
-                    color = Color.White,
+                    color = if (isDark) MaterialTheme.colorScheme.surfaceVariant else Color.White,
                     shape = RoundedCornerShape(30.dp)
                 )
                 .padding(4.dp)
@@ -88,14 +86,14 @@ fun LoginScreen(
             modifier = Modifier
                 .size(76.dp)
                 .background(
-                    color = DarkGreen,
+                    color = primaryColor,
                     shape = RoundedCornerShape(22.dp)
                 ),
             contentAlignment = Alignment.Center
         ) {
             Text(
                 text = "★",
-                color = Color.White,
+                color = MaterialTheme.colorScheme.onPrimary,
                 fontSize = 34.sp
             )
         }
@@ -106,7 +104,7 @@ fun LoginScreen(
 
         Text(
             text = "ApuntesIA",
-            color = DarkGreen,
+            color = primaryColor,
             fontSize = 30.sp,
             fontWeight = FontWeight.Bold
         )
@@ -115,7 +113,7 @@ fun LoginScreen(
 
         Text(
             text = "Tu asistente de estudio con IA",
-            color = TextGray,
+            color = MaterialTheme.colorScheme.onSurfaceVariant,
             fontSize = 16.sp
         )
 
@@ -128,12 +126,12 @@ fun LoginScreen(
                 .fillMaxWidth()
                 .height(54.dp)
                 .background(
-                    Color.White,
+                    if (isDark) MaterialTheme.colorScheme.surfaceVariant else Color.White,
                     RoundedCornerShape(30.dp)
                 )
                 .border(
                     width = 1.dp,
-                    color = BorderColor,
+                    color = if (isDark) Color(0xFF394867) else Color(0xFFE2E2E2),
                     shape = RoundedCornerShape(30.dp)
                 )
                 .padding(5.dp)
@@ -170,7 +168,7 @@ fun LoginScreen(
             placeholder = {
                 Text(
                     text = "Correo electrónico",
-                    color = TextGray
+                    color = MaterialTheme.colorScheme.onSurfaceVariant
                 )
             },
             singleLine = true,
@@ -179,11 +177,13 @@ fun LoginScreen(
                 .fillMaxWidth()
                 .height(62.dp),
             colors = OutlinedTextFieldDefaults.colors(
-                focusedContainerColor = Color.White,
-                unfocusedContainerColor = Color.White,
-                focusedBorderColor = DarkGreen,
-                unfocusedBorderColor = BorderColor,
-                cursorColor = DarkGreen
+                focusedContainerColor = if (isDark) MaterialTheme.colorScheme.surfaceVariant else Color.White,
+                unfocusedContainerColor = if (isDark) MaterialTheme.colorScheme.surfaceVariant else Color.White,
+                focusedBorderColor = primaryColor,
+                unfocusedBorderColor = if (isDark) Color(0xFF394867) else Color(0xFFE2E2E2),
+                cursorColor = primaryColor,
+                focusedTextColor = MaterialTheme.colorScheme.onSurface,
+                unfocusedTextColor = MaterialTheme.colorScheme.onSurface
             )
         )
 
@@ -199,7 +199,7 @@ fun LoginScreen(
             placeholder = {
                 Text(
                     text = "Contraseña",
-                    color = TextGray
+                    color = MaterialTheme.colorScheme.onSurfaceVariant
                 )
             },
             visualTransformation = PasswordVisualTransformation(),
@@ -209,11 +209,13 @@ fun LoginScreen(
                 .fillMaxWidth()
                 .height(62.dp),
             colors = OutlinedTextFieldDefaults.colors(
-                focusedContainerColor = Color.White,
-                unfocusedContainerColor = Color.White,
-                focusedBorderColor = DarkGreen,
-                unfocusedBorderColor = BorderColor,
-                cursorColor = DarkGreen
+                focusedContainerColor = if (isDark) MaterialTheme.colorScheme.surfaceVariant else Color.White,
+                unfocusedContainerColor = if (isDark) MaterialTheme.colorScheme.surfaceVariant else Color.White,
+                focusedBorderColor = primaryColor,
+                unfocusedBorderColor = if (isDark) Color(0xFF394867) else Color(0xFFE2E2E2),
+                cursorColor = primaryColor,
+                focusedTextColor = MaterialTheme.colorScheme.onSurface,
+                unfocusedTextColor = MaterialTheme.colorScheme.onSurface
             )
         )
 
@@ -228,12 +230,12 @@ fun LoginScreen(
                 .height(62.dp),
             shape = RoundedCornerShape(18.dp),
             colors = ButtonDefaults.buttonColors(
-                containerColor = DarkGreen
+                containerColor = primaryColor
             )
         ) {
             Text(
                 text = "Iniciar sesión",
-                color = Color.White,
+                color = MaterialTheme.colorScheme.onPrimary,
                 fontWeight = FontWeight.Bold,
                 fontSize = 17.sp
             )
@@ -245,7 +247,7 @@ fun LoginScreen(
 
         Text(
             text = "¿Olvidaste tu contraseña?",
-            color = DarkGreen,
+            color = primaryColor,
             fontSize = 14.sp,
             textDecoration = TextDecoration.Underline,
             modifier = Modifier.clickable {
@@ -264,18 +266,18 @@ fun LoginScreen(
 
             HorizontalDivider(
                 modifier = Modifier.weight(1f),
-                color = BorderColor
+                color = if (isDark) Color(0xFF394867) else Color(0xFFE2E2E2)
             )
 
             Text(
                 text = "o",
-                color = TextGray,
+                color = MaterialTheme.colorScheme.onSurfaceVariant,
                 modifier = Modifier.padding(horizontal = 14.dp)
             )
 
             HorizontalDivider(
                 modifier = Modifier.weight(1f),
-                color = BorderColor
+                color = if (isDark) Color(0xFF394867) else Color(0xFFE2E2E2)
             )
         }
 
@@ -292,12 +294,12 @@ fun LoginScreen(
                 .height(60.dp),
             shape = RoundedCornerShape(18.dp),
             colors = ButtonDefaults.outlinedButtonColors(
-                containerColor = Color.White,
-                contentColor = DarkGreen
+                containerColor = if (isDark) MaterialTheme.colorScheme.surfaceVariant else Color.White,
+                contentColor = primaryColor
             ),
             border = androidx.compose.foundation.BorderStroke(
                 1.dp,
-                BorderColor
+                if (isDark) Color(0xFF394867) else Color(0xFFE2E2E2)
             )
         ) {
 
@@ -324,13 +326,13 @@ fun LoginScreen(
 
             Text(
                 text = "¿No tienes cuenta? ",
-                color = TextGray,
+                color = MaterialTheme.colorScheme.onSurfaceVariant,
                 fontSize = 14.sp
             )
 
             Text(
                 text = "Regístrate",
-                color = DarkGreen,
+                color = primaryColor,
                 fontSize = 14.sp,
                 fontWeight = FontWeight.Medium,
                 textDecoration = TextDecoration.Underline,
@@ -353,11 +355,13 @@ private fun LanguageButton(
     selected: Boolean,
     onClick: () -> Unit
 ) {
+    val primaryColor = MaterialTheme.colorScheme.primary
+    val isDark = primaryColor == SpaceCadet
 
     Box(
         modifier = Modifier
             .background(
-                color = if (selected) DarkGreen else Color.Transparent,
+                color = if (selected) primaryColor else Color.Transparent,
                 shape = RoundedCornerShape(24.dp)
             )
             .clickable {
@@ -372,7 +376,7 @@ private fun LanguageButton(
 
         Text(
             text = text,
-            color = if (selected) Color.White else TextGray,
+            color = if (selected) MaterialTheme.colorScheme.onPrimary else MaterialTheme.colorScheme.onSurfaceVariant,
             fontWeight = FontWeight.SemiBold
         )
     }
@@ -385,11 +389,14 @@ private fun RoleButton(
     onClick: () -> Unit,
     modifier: Modifier = Modifier
 ) {
+    val primaryColor = MaterialTheme.colorScheme.primary
+    val isDark = primaryColor == SpaceCadet
+
     Box(
         modifier = modifier
             .fillMaxHeight()
             .background(
-                color = if (selected) DarkGreen else Color.Transparent,
+                color = if (selected) primaryColor else Color.Transparent,
                 shape = RoundedCornerShape(25.dp)
             )
             .clickable {
@@ -399,7 +406,7 @@ private fun RoleButton(
     ) {
         Text(
             text = text,
-            color = if (selected) Color.White else DarkGreen,
+            color = if (selected) MaterialTheme.colorScheme.onPrimary else primaryColor,
             fontWeight = if (selected) {
                 FontWeight.Bold
             } else {
