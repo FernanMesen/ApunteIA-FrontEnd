@@ -18,4 +18,4 @@ class QuizRepositoryImpl(
 }
 
 
-// esta clase Delegan al datasource y aplican los mappers.
+

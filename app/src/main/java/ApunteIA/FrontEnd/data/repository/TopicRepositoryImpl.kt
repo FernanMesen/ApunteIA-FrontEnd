@@ -11,4 +11,3 @@ class TopicRepositoryImpl(
     override suspend fun getTopics(): List<Topic> = dataSource.getTopics().toDomain()
 }
 
-// esta clase Delegan al datasource y aplican los mappers.

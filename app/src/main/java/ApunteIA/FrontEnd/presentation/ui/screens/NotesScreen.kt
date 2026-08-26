@@ -23,7 +23,6 @@ import ApunteIA.FrontEnd.presentation.ui.components.TopHeader
 import ApunteIA.FrontEnd.presentation.ui.layout.MainLayout
 import ApunteIA.FrontEnd.presentation.factory.NotesViewModelFactory
 import ApunteIA.FrontEnd.presentation.viewmodel.NotesViewModel
-import ApunteIA.FrontEnd.presentation.viewmodel.NotificationViewModel
 
 @Composable
 fun NotesScreen(
@@ -72,7 +71,7 @@ fun NotesScreen(
                 Text(
                     text = "Estructuradas por IA a partir de tus escaneos",
                     fontSize = 14.sp,
-                    color = TextGray
+                    color = MaterialTheme.colorScheme.onSurfaceVariant
                 )
             }
 
@@ -82,19 +81,30 @@ fun NotesScreen(
                 OutlinedTextField(
                     value = searchQuery,
                     onValueChange = { viewModel.onSearchQueryChange(it) },
-                    placeholder = { Text("Buscar notas", color = MaterialTheme.colorScheme.onSurfaceVariant) },
+                    placeholder = { 
+                        Text(
+                            "Buscar notas", 
+                            color = MaterialTheme.colorScheme.onSurfaceVariant
+                        ) 
+                    },
                     modifier = Modifier
                         .fillMaxWidth()
                         .padding(vertical = 8.dp),
                     shape = RoundedCornerShape(16.dp),
                     colors = OutlinedTextFieldDefaults.colors(
-                        focusedContainerColor = if (isDark) Color(0xFF1E2532) else Color.White,
-                        unfocusedContainerColor = if (isDark) Color(0xFF1E2532) else Color.White,
-                        focusedBorderColor = if (isDark) Color(0xFF394867) else Color.Transparent,
-                        unfocusedBorderColor = if (isDark) Color(0xFF394867) else Color.Transparent,
+                        focusedContainerColor = MaterialTheme.colorScheme.surfaceVariant,
+                        unfocusedContainerColor = MaterialTheme.colorScheme.surfaceVariant,
+                        focusedBorderColor = if (isDark) MaterialTheme.colorScheme.outline else Color.Transparent,
+                        unfocusedBorderColor = if (isDark) MaterialTheme.colorScheme.outline else Color.Transparent,
                         cursorColor = MaterialTheme.colorScheme.primary
                     ),
-                    leadingIcon = { Icon(Icons.Default.Search, contentDescription = null, tint = MaterialTheme.colorScheme.onSurfaceVariant) },
+                    leadingIcon = { 
+                        Icon(
+                            Icons.Default.Search, 
+                            contentDescription = null, 
+                            tint = MaterialTheme.colorScheme.onSurfaceVariant
+                        ) 
+                    },
                     singleLine = true
                 )
             }
@@ -116,8 +126,16 @@ fun NotesScreen(
 
             if (filteredNotes.isEmpty()) {
                 item {
-                    Box(modifier = Modifier.fillMaxWidth().padding(top = 40.dp), contentAlignment = Alignment.Center) {
-                        Text("No se encontraron notas", color = TextGray)
+                    Box(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(top = 40.dp), 
+                        contentAlignment = Alignment.Center
+                    ) {
+                        Text(
+                            "No se encontraron notas", 
+                            color = MaterialTheme.colorScheme.onSurfaceVariant
+                        )
                     }
                 }
             } else {
@@ -132,4 +150,3 @@ fun NotesScreen(
         }
     }
 }
-

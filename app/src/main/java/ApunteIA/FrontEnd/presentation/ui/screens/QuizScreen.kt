@@ -37,11 +37,15 @@ fun QuizScreen(
     val isAnswered by viewModel.isAnswered.collectAsState()
     val showResults by viewModel.showResults.collectAsState()
     val userAnswers = viewModel.userAnswers
+    
+    // Detectamos modo oscuro de forma más robusta
+    val isDark = MaterialTheme.colorScheme.background != BackgroundBeige
 
     if (showResults) {
         ResultsScreen(
             questions = questions,
             userAnswers = userAnswers.filterNotNull(),
+            isDarkMode = isDark,
             onNavigateToMain = onNavigateToMain,
             onScanMore = onScanMore,
             onRepeatIncorrects = { viewModel.repeatIncorrects() }
@@ -50,7 +54,7 @@ fun QuizScreen(
         val currentQuestion = questions[currentQuestionIndex]
 
         Scaffold(
-            containerColor = BackgroundBeige,
+            containerColor = MaterialTheme.colorScheme.background,
             bottomBar = {
                 if (isAnswered) {
                     Box(
@@ -61,11 +65,17 @@ fun QuizScreen(
                     ) {
                         Button(
                             onClick = { viewModel.nextQuestion() },
-                            colors = ButtonDefaults.buttonColors(containerColor = DarkGreen),
+                            colors = ButtonDefaults.buttonColors(
+                                containerColor = MaterialTheme.colorScheme.primary
+                            ),
                             shape = RoundedCornerShape(24.dp),
                             contentPadding = PaddingValues(horizontal = 32.dp, vertical = 12.dp)
                         ) {
-                            Text("Siguiente", color = Color.White, fontWeight = FontWeight.Bold)
+                            Text(
+                                "Siguiente", 
+                                color = MaterialTheme.colorScheme.onPrimary, 
+                                fontWeight = FontWeight.Bold
+                            )
                         }
                     }
                 }
@@ -87,9 +97,13 @@ fun QuizScreen(
                         modifier = Modifier
                             .size(40.dp)
                             .clip(CircleShape)
-                            .background(Color(0xFFEBEBE4))
+                            .background(MaterialTheme.colorScheme.surfaceVariant)
                     ) {
-                        Icon(Icons.Default.Close, contentDescription = "Cerrar", tint = DarkGreen)
+                        Icon(
+                            Icons.Default.Close, 
+                            contentDescription = "Cerrar", 
+                            tint = MaterialTheme.colorScheme.primary
+                        )
                     }
 
                     Spacer(modifier = Modifier.width(16.dp))
@@ -100,8 +114,8 @@ fun QuizScreen(
                             .weight(1f)
                             .height(8.dp)
                             .clip(RoundedCornerShape(4.dp)),
-                        color = DarkGreen,
-                        trackColor = Color(0xFFEBEBE4)
+                        color = MaterialTheme.colorScheme.primary,
+                        trackColor = MaterialTheme.colorScheme.surfaceVariant
                     )
 
                     Spacer(modifier = Modifier.width(12.dp))
@@ -109,7 +123,7 @@ fun QuizScreen(
                     Text(
                         text = "${currentQuestionIndex + 1}/${questions.size}",
                         fontSize = 14.sp,
-                        color = TextGray
+                        color = MaterialTheme.colorScheme.onSurfaceVariant
                     )
                 }
 
@@ -120,7 +134,7 @@ fun QuizScreen(
                     text = currentQuestion.text,
                     fontSize = 20.sp,
                     fontWeight = FontWeight.Bold,
-                    color = DarkGreen,
+                    color = MaterialTheme.colorScheme.onBackground,
                     lineHeight = 28.sp
                 )
 
@@ -136,6 +150,7 @@ fun QuizScreen(
                         isSelected = isSelected,
                         isCorrect = isCorrect,
                         isAnswered = isAnswered,
+                        isDark = isDark,
                         onClick = { viewModel.onOptionSelected(index) }
                     )
                     Spacer(modifier = Modifier.height(12.dp))
@@ -146,7 +161,7 @@ fun QuizScreen(
                     Text(
                         text = currentQuestion.explanation,
                         fontSize = 14.sp,
-                        color = TextGray,
+                        color = MaterialTheme.colorScheme.onSurfaceVariant,
                         lineHeight = 20.sp
                     )
                 }
@@ -159,6 +174,7 @@ fun QuizScreen(
 fun ResultsScreen(
     questions: List<Question>,
     userAnswers: List<UserAnswer>,
+    isDarkMode: Boolean,
     onNavigateToMain: () -> Unit,
     onScanMore: () -> Unit,
     onRepeatIncorrects: () -> Unit
@@ -168,7 +184,7 @@ fun ResultsScreen(
     val score = (correctCount.toFloat() / questions.size * 100).toInt()
 
     Scaffold(
-        containerColor = BackgroundBeige,
+        containerColor = MaterialTheme.colorScheme.background,
         bottomBar = {
             Column(
                 modifier = Modifier
@@ -185,13 +201,15 @@ fun ResultsScreen(
                         Button(
                             onClick = onRepeatIncorrects,
                             modifier = Modifier.weight(1f),
-                            colors = ButtonDefaults.buttonColors(containerColor = LightRed),
+                            colors = ButtonDefaults.buttonColors(
+                                containerColor = if (isDarkMode) Color(0xFF3B2E2E) else LightRed
+                            ),
                             shape = RoundedCornerShape(24.dp),
                             contentPadding = PaddingValues(vertical = 12.dp)
                         ) {
                             Text(
                                 text = "Repetir incorrectas ($incorrectCount)",
-                                color = StatusRed,
+                                color = if (isDarkMode) Color(0xFFF44336) else StatusRed,
                                 fontWeight = FontWeight.Bold,
                                 fontSize = 14.sp
                             )
@@ -202,14 +220,19 @@ fun ResultsScreen(
                     Button(
                         onClick = onScanMore,
                         modifier = Modifier.weight(1f),
-                        colors = ButtonDefaults.buttonColors(containerColor = Color.White),
+                        colors = ButtonDefaults.buttonColors(
+                            containerColor = MaterialTheme.colorScheme.surfaceVariant
+                        ),
                         shape = RoundedCornerShape(24.dp),
-                        border = androidx.compose.foundation.BorderStroke(1.dp, Color(0xFFEEEEEE)),
+                        border = androidx.compose.foundation.BorderStroke(
+                            1.dp, 
+                            MaterialTheme.colorScheme.onSurface.copy(alpha = 0.1f)
+                        ),
                         contentPadding = PaddingValues(vertical = 12.dp)
                     ) {
                         Text(
                             text = "Escanear más notas",
-                            color = TextDark,
+                            color = MaterialTheme.colorScheme.onSurface,
                             fontWeight = FontWeight.Medium,
                             fontSize = 14.sp
                         )
@@ -222,13 +245,15 @@ fun ResultsScreen(
                 Button(
                     onClick = onNavigateToMain,
                     modifier = Modifier.width(200.dp),
-                    colors = ButtonDefaults.buttonColors(containerColor = DarkGreen),
+                    colors = ButtonDefaults.buttonColors(
+                        containerColor = MaterialTheme.colorScheme.primary
+                    ),
                     shape = RoundedCornerShape(24.dp),
                     contentPadding = PaddingValues(vertical = 12.dp)
                 ) {
                     Text(
                         text = "Volver al inicio",
-                        color = Color.White,
+                        color = MaterialTheme.colorScheme.onPrimary,
                         fontWeight = FontWeight.Bold
                     )
                 }
@@ -249,7 +274,7 @@ fun ResultsScreen(
                     text = "¡Quiz Finalizado!",
                     fontSize = 24.sp,
                     fontWeight = FontWeight.Bold,
-                    color = DarkGreen,
+                    color = MaterialTheme.colorScheme.primary,
                     modifier = Modifier.fillMaxWidth(),
                     textAlign = androidx.compose.ui.text.style.TextAlign.Center
                 )
@@ -259,7 +284,7 @@ fun ResultsScreen(
                 Surface(
                     modifier = Modifier.fillMaxWidth(),
                     shape = RoundedCornerShape(16.dp),
-                    color = Color.White,
+                    color = MaterialTheme.colorScheme.surfaceVariant,
                     shadowElevation = 2.dp
                 ) {
                     Column(
@@ -269,18 +294,18 @@ fun ResultsScreen(
                         Text(
                             text = "Tu nota",
                             fontSize = 16.sp,
-                            color = TextGray
+                            color = MaterialTheme.colorScheme.onSurfaceVariant
                         )
                         Text(
                             text = "$score%",
                             fontSize = 48.sp,
                             fontWeight = FontWeight.Bold,
-                            color = DarkGreen
+                            color = MaterialTheme.colorScheme.primary
                         )
                         Text(
                             text = "$correctCount de ${questions.size} correctas",
                             fontSize = 14.sp,
-                            color = TextGray
+                            color = MaterialTheme.colorScheme.onSurfaceVariant
                         )
                     }
                 }
@@ -290,7 +315,7 @@ fun ResultsScreen(
                     text = "Revisión",
                     fontSize = 18.sp,
                     fontWeight = FontWeight.Bold,
-                    color = DarkGreen
+                    color = MaterialTheme.colorScheme.primary
                 )
                 Spacer(modifier = Modifier.height(16.dp))
             }
@@ -300,7 +325,8 @@ fun ResultsScreen(
                 ReviewItem(
                     question = question,
                     userAnswer = userAnswer,
-                    index = index + 1
+                    index = index + 1,
+                    isDark = isDarkMode
                 )
                 Spacer(modifier = Modifier.height(16.dp))
             }
@@ -316,26 +342,30 @@ fun ResultsScreen(
 fun ReviewItem(
     question: Question,
     userAnswer: UserAnswer?,
-    index: Int
+    index: Int,
+    isDark: Boolean
 ) {
     Surface(
         modifier = Modifier.fillMaxWidth(),
         shape = RoundedCornerShape(12.dp),
-        color = Color.White,
-        border = androidx.compose.foundation.BorderStroke(1.dp, Color(0xFFEEEEEE))
+        color = MaterialTheme.colorScheme.surfaceVariant,
+        border = androidx.compose.foundation.BorderStroke(
+            1.dp, 
+            MaterialTheme.colorScheme.onSurface.copy(alpha = 0.1f)
+        )
     ) {
         Column(modifier = Modifier.padding(16.dp)) {
             Row {
                 Text(
                     text = "$index.",
                     fontWeight = FontWeight.Bold,
-                    color = DarkGreen
+                    color = if (isDark) Color.White else MaterialTheme.colorScheme.primary
                 )
                 Spacer(modifier = Modifier.width(8.dp))
                 Text(
                     text = question.text,
                     fontWeight = FontWeight.Medium,
-                    color = TextDark
+                    color = MaterialTheme.colorScheme.onSurface
                 )
             }
             Spacer(modifier = Modifier.height(12.dp))
@@ -354,8 +384,8 @@ fun ReviewItem(
                         imageVector = if (isCorrect) Icons.Default.Check else Icons.Default.Close,
                         contentDescription = null,
                         tint = when {
-                            isCorrect -> DarkGreen
-                            isSelected -> StatusRed
+                            isCorrect -> if (isDark) LimeGreen else DarkGreen
+                            isSelected -> if (isDark) Color(0xFFFF8A80) else StatusRed
                             else -> Color.Transparent
                         },
                         modifier = Modifier.size(16.dp)
@@ -365,9 +395,9 @@ fun ReviewItem(
                         text = option,
                         fontSize = 14.sp,
                         color = when {
-                            isCorrect -> DarkGreen
-                            isSelected && !isCorrect -> StatusRed
-                            else -> TextGray
+                            isCorrect -> if (isDark) LimeGreen else DarkGreen
+                            isSelected && !isCorrect -> if (isDark) Color(0xFFFF8A80) else StatusRed
+                            else -> MaterialTheme.colorScheme.onSurfaceVariant
                         },
                         fontWeight = if (isCorrect || isSelected) FontWeight.Bold else FontWeight.Normal
                     )
@@ -383,27 +413,28 @@ fun QuizOptionCard(
     isSelected: Boolean,
     isCorrect: Boolean,
     isAnswered: Boolean,
+    isDark: Boolean,
     onClick: () -> Unit
 ) {
     val backgroundColor = when {
-        !isAnswered && isSelected -> Color.White
-        isAnswered && isCorrect -> LightGreen
-        isAnswered && isSelected && !isCorrect -> LightRed
-        else -> Color.White
+        !isAnswered && isSelected -> MaterialTheme.colorScheme.surfaceVariant
+        isAnswered && isCorrect -> if (isDark) Color(0xFF1B311B) else LightGreen
+        isAnswered && isSelected && !isCorrect -> if (isDark) Color(0xFF3B1F1F) else LightRed
+        else -> MaterialTheme.colorScheme.surfaceVariant
     }
 
     val borderColor = when {
-        !isAnswered && isSelected -> DarkGreen
-        isAnswered && isCorrect -> DarkGreen
-        isAnswered && isSelected && !isCorrect -> StatusRed
-        else -> Color(0xFFEEEEEE)
+        !isAnswered && isSelected -> MaterialTheme.colorScheme.primary
+        isAnswered && isCorrect -> if (isDark) LimeGreen else DarkGreen
+        isAnswered && isSelected && !isCorrect -> if (isDark) Color(0xFFFF8A80) else StatusRed
+        else -> MaterialTheme.colorScheme.onSurface.copy(alpha = 0.1f)
     }
 
     val textColor = when {
-        isAnswered && isCorrect -> DarkGreen
-        isAnswered && isSelected && !isCorrect -> StatusRed
-        isSelected -> DarkGreen
-        else -> TextDark
+        isAnswered && isCorrect -> if (isDark) LimeGreen else DarkGreen
+        isAnswered && isSelected && !isCorrect -> if (isDark) Color(0xFFFF8A80) else StatusRed
+        isSelected -> if (isDark) Color.White else MaterialTheme.colorScheme.primary
+        else -> MaterialTheme.colorScheme.onSurface
     }
 
     Surface(

@@ -26,7 +26,6 @@ fun NoteDetailScreen(
     noteTitle: String,
     onBack: () -> Unit
 ) {
-
     val fullContent = "Los centros quirales surgen cuando un carbono se une a cuatro grupos diferentes. Los enantiómeros son imágenes especulares no superponibles, lo cual es fundamental para entender la reactividad biológica y la síntesis de fármacos. En química orgánica, la quiralidad es una propiedad geométrica de algunas moléculas e iones. Se dice que un objeto es quiral si no es superponible con su imagen especular."
     
     val keyPoints = listOf(
@@ -39,21 +38,38 @@ fun NoteDetailScreen(
     Scaffold(
         topBar = {
             TopAppBar(
-                title = { Text("Apunte", fontSize = 18.sp, color = DarkGreen, fontWeight = FontWeight.Bold) },
+                title = { 
+                    Text(
+                        "Apunte", 
+                        fontSize = 18.sp, 
+                        color = MaterialTheme.colorScheme.primary, 
+                        fontWeight = FontWeight.Bold
+                    ) 
+                },
                 navigationIcon = {
                     IconButton(onClick = onBack) {
-                        Icon(Icons.Default.ArrowBack, contentDescription = "Atrás", tint = DarkGreen)
+                        Icon(
+                            Icons.Default.ArrowBack, 
+                            contentDescription = "Atrás", 
+                            tint = MaterialTheme.colorScheme.primary
+                        )
                     }
                 },
                 actions = {
                     IconButton(onClick = { /* Compartir */ }) {
-                        Icon(Icons.Default.Share, contentDescription = "Compartir", tint = DarkGreen)
+                        Icon(
+                            Icons.Default.Share, 
+                            contentDescription = "Compartir", 
+                            tint = MaterialTheme.colorScheme.primary
+                        )
                     }
                 },
-                colors = TopAppBarDefaults.topAppBarColors(containerColor = BackgroundBeige)
+                colors = TopAppBarDefaults.topAppBarColors(
+                    containerColor = MaterialTheme.colorScheme.background
+                )
             )
         },
-        containerColor = BackgroundBeige
+        containerColor = MaterialTheme.colorScheme.background
     ) { paddingValues ->
         Column(
             modifier = Modifier
@@ -66,7 +82,7 @@ fun NoteDetailScreen(
                 text = noteTitle,
                 fontSize = 28.sp,
                 fontWeight = FontWeight.Bold,
-                color = DarkGreen
+                color = MaterialTheme.colorScheme.primary
             )
             
             Spacer(modifier = Modifier.height(8.dp))
@@ -74,7 +90,11 @@ fun NoteDetailScreen(
             Row(verticalAlignment = Alignment.CenterVertically) {
                 StatusTag(status = if (noteTitle.contains("Estereoquímica")) NoteStatus.WEAK else NoteStatus.SOLID)
                 Spacer(modifier = Modifier.width(12.dp))
-                Text(text = "Clase 5  ·  Química Orgánica", color = TextGray, fontSize = 14.sp)
+                Text(
+                    text = "Clase 5  ·  Química Orgánica", 
+                    color = MaterialTheme.colorScheme.onSurfaceVariant, 
+                    fontSize = 14.sp
+                )
             }
             
             Spacer(modifier = Modifier.height(24.dp))
@@ -83,21 +103,24 @@ fun NoteDetailScreen(
                 text = "Resumen de la IA",
                 fontSize = 18.sp,
                 fontWeight = FontWeight.Bold,
-                color = DarkGreen
+                color = MaterialTheme.colorScheme.primary
             )
             
             Spacer(modifier = Modifier.height(12.dp))
             
             Surface(
-                color = Color.White,
+                color = MaterialTheme.colorScheme.surfaceVariant,
                 shape = RoundedCornerShape(16.dp),
-                border = androidx.compose.foundation.BorderStroke(1.dp, Color(0xFFEEEEEE))
+                border = androidx.compose.foundation.BorderStroke(
+                    1.dp, 
+                    MaterialTheme.colorScheme.onSurface.copy(alpha = 0.1f)
+                )
             ) {
                 Text(
                     text = fullContent,
                     modifier = Modifier.padding(16.dp),
                     fontSize = 16.sp,
-                    color = TextDark,
+                    color = MaterialTheme.colorScheme.onSurface,
                     lineHeight = 24.sp
                 )
             }
@@ -108,7 +131,7 @@ fun NoteDetailScreen(
                 text = "Conceptos clave",
                 fontSize = 18.sp,
                 fontWeight = FontWeight.Bold,
-                color = DarkGreen
+                color = MaterialTheme.colorScheme.primary
             )
             
             Spacer(modifier = Modifier.height(12.dp))
@@ -121,10 +144,17 @@ fun NoteDetailScreen(
                     Box(
                         modifier = Modifier
                             .size(6.dp)
-                            .background(DarkGreen, RoundedCornerShape(2.dp))
+                            .background(
+                                MaterialTheme.colorScheme.primary, 
+                                RoundedCornerShape(2.dp)
+                            )
                     )
                     Spacer(modifier = Modifier.width(12.dp))
-                    Text(text = point, color = TextDark, fontSize = 16.sp)
+                    Text(
+                        text = point, 
+                        color = MaterialTheme.colorScheme.onSurface, 
+                        fontSize = 16.sp
+                    )
                 }
             }
             
@@ -134,9 +164,15 @@ fun NoteDetailScreen(
                 onClick = { /* Generar cuestionario */ },
                 modifier = Modifier.fillMaxWidth().height(56.dp),
                 shape = RoundedCornerShape(16.dp),
-                colors = ButtonDefaults.buttonColors(containerColor = DarkGreen)
+                colors = ButtonDefaults.buttonColors(
+                    containerColor = MaterialTheme.colorScheme.primary
+                )
             ) {
-                Text("Practicar con Cuestionario", color = Color.White, fontWeight = FontWeight.Bold)
+                Text(
+                    "Practicar con Cuestionario", 
+                    color = MaterialTheme.colorScheme.onPrimary, 
+                    fontWeight = FontWeight.Bold
+                )
             }
         }
     }
