@@ -2,8 +2,9 @@ package ApunteIA.FrontEnd.domain.repository
 
 import ApunteIA.FrontEnd.domain.model.RecentActivity
 import ApunteIA.FrontEnd.domain.model.UserStats
+import ApunteIA.FrontEnd.domain.util.Resource
 
 interface MainRepository {
-    suspend fun getUserStats(): Result<UserStats>
-    suspend fun getRecentActivity(): Result<List<RecentActivity>>
+    suspend fun getUserStats(): Resource<UserStats>
+    suspend fun getRecentActivity(): Resource<List<RecentActivity>>
 }

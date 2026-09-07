@@ -3,9 +3,9 @@ package ApunteIA.FrontEnd.presentation.viewmodel
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import ApunteIA.FrontEnd.domain.model.Note
-import ApunteIA.FrontEnd.domain.error.NoteError
 import ApunteIA.FrontEnd.domain.usecase.FilterNotesUseCase
 import ApunteIA.FrontEnd.domain.usecase.GetNotesUseCase
+import ApunteIA.FrontEnd.domain.util.Resource
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
@@ -20,7 +20,7 @@ import javax.inject.Inject
 data class NotesUiState(
     val isLoading: Boolean = false,
     val notes: List<Note> = emptyList(),
-    val error: NoteError? = null
+    val error: String? = null
 )
 
 /**
@@ -70,16 +70,24 @@ class NotesViewModel @Inject constructor(
     fun loadNotes() {
         viewModelScope.launch {
             _uiState.value = _uiState.value.copy(isLoading = true, error = null)
-            getNotesUseCase()
-                .onSuccess { notes -> 
-                    _uiState.value = _uiState.value.copy(isLoading = false, notes = notes, error = null)
-                }
-                .onFailure { error ->
+            when (val resource = getNotesUseCase()) {
+                is Resource.Success -> {
                     _uiState.value = _uiState.value.copy(
-                        isLoading = false, 
-                        error = error as? NoteError ?: NoteError.Unknown
+                        isLoading = false,
+                        notes = resource.data,
+                        error = null
                     )
                 }
+                is Resource.Error -> {
+                    _uiState.value = _uiState.value.copy(
+                        isLoading = false,
+                        error = resource.message
+                    )
+                }
+                is Resource.Loading -> {
+                    _uiState.value = _uiState.value.copy(isLoading = true)
+                }
+            }
         }
     }
 

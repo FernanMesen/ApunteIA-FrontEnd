@@ -6,6 +6,7 @@ import androidx.lifecycle.viewModelScope
 import ApunteIA.FrontEnd.domain.model.Question
 import ApunteIA.FrontEnd.domain.model.UserAnswer
 import ApunteIA.FrontEnd.domain.usecase.GetQuizUseCase
+import ApunteIA.FrontEnd.domain.util.Resource
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -42,15 +43,18 @@ class QuizViewModel @Inject constructor(
 
     private fun loadQuestions() {
         viewModelScope.launch {
-            getQuizUseCase()
-                .onSuccess {
-                    _questions.value = it
+            when (val result = getQuizUseCase()) {
+                is Resource.Success -> {
+                    val questionsList = result.data
+                    _questions.value = questionsList
                     _userAnswers.clear()
-                    repeat(it.size) { _userAnswers.add(null) }
+                    repeat(questionsList.size) { _userAnswers.add(null) }
                 }
-                .onFailure {
+                is Resource.Error -> {
                     _questions.value = emptyList()
                 }
+                is Resource.Loading -> { }
+            }
         }
     }
 

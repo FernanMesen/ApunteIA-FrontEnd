@@ -1,6 +1,7 @@
 package ApunteIA.FrontEnd.domain.repository
 
 import ApunteIA.FrontEnd.domain.model.Note
+import ApunteIA.FrontEnd.domain.util.Resource
 
 /**
  * Contrato que expone el dominio para obtener notas, sin importar si detrás
@@ -11,10 +12,10 @@ import ApunteIA.FrontEnd.domain.model.Note
  * conocen esta interfaz.
  */
 interface NoteRepository {
-    suspend fun getNotes(): List<Note>
+    suspend fun getNotes(): Resource<List<Note>>
 
     /**
      * Guarda una nota nueva (p.ej. la generada por IA al final de un escaneo).
      */
-    suspend fun addNote(note: Note)
+    suspend fun addNote(note: Note): Resource<Unit>
 }

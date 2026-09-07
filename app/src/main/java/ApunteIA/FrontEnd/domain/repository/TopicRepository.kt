@@ -1,7 +1,8 @@
 package ApunteIA.FrontEnd.domain.repository
 
 import ApunteIA.FrontEnd.domain.model.Topic
+import ApunteIA.FrontEnd.domain.util.Resource
 
 interface TopicRepository {
-    suspend fun getTopics(): List<Topic>
+    suspend fun getTopics(): Resource<List<Topic>>
 }

@@ -5,6 +5,7 @@ import ApunteIA.FrontEnd.domain.model.Topic
 import ApunteIA.FrontEnd.domain.usecase.CalculateAuditSummaryUseCase
 import ApunteIA.FrontEnd.domain.usecase.FilterTopicsUseCase
 import ApunteIA.FrontEnd.domain.usecase.GetTopicsUseCase
+import ApunteIA.FrontEnd.domain.util.Resource
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -50,9 +51,15 @@ class AuditViewModel @Inject constructor(
 
     private fun loadTopics() {
         viewModelScope.launch {
-            getTopicsUseCase()
-                .onSuccess { topics -> _topics.value = topics }
-                .onFailure { _topics.value = emptyList() }
+            when (val result = getTopicsUseCase()) {
+                is Resource.Success -> {
+                    _topics.value = result.data
+                }
+                is Resource.Error -> {
+                    _topics.value = emptyList()
+                }
+                is Resource.Loading -> { }
+            }
         }
     }
 

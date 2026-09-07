@@ -6,6 +6,7 @@ import ApunteIA.FrontEnd.data.mapper.toDto
 import ApunteIA.FrontEnd.domain.error.NoteError
 import ApunteIA.FrontEnd.domain.model.Note
 import ApunteIA.FrontEnd.domain.repository.NoteRepository
+import ApunteIA.FrontEnd.domain.util.Resource
 import retrofit2.HttpException
 import java.io.IOException
 import javax.inject.Inject
@@ -19,26 +20,28 @@ class NoteRepositoryImpl @Inject constructor(
     private val dataSource: NoteDataSource
 ) : NoteRepository {
 
-    override suspend fun getNotes(): List<Note> = wrapExceptions {
+    override suspend fun getNotes(): Resource<List<Note>> = wrapExceptions {
         dataSource.getNotes().toDomain()
     }
 
-    override suspend fun addNote(note: Note) = wrapExceptions {
+    override suspend fun addNote(note: Note): Resource<Unit> = wrapExceptions {
         dataSource.addNote(note.toDto())
+        Unit
     }
 
-    private suspend fun <T> wrapExceptions(block: suspend () -> T): T {
+    private suspend fun <T> wrapExceptions(block: suspend () -> T): Resource<T> {
         return try {
-            block()
+            Resource.Success(block())
         } catch (e: IOException) {
-            throw NoteError.NoConnection
+            Resource.Error("No hay conexión a internet", e)
         } catch (e: HttpException) {
-            when (e.code()) {
-                in 400..499 -> throw NoteError.ClientError(e.code())
-                else -> throw NoteError.ServerError(e.code())
+            val message = when (e.code()) {
+                in 400..499 -> "Error del cliente (${e.code()})"
+                else -> "Error del servidor (${e.code()})"
             }
+            Resource.Error(message, e)
         } catch (e: Exception) {
-            throw NoteError.Unknown
+            Resource.Error("Error desconocido", e)
         }
     }
 }

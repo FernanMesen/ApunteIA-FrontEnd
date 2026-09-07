@@ -5,6 +5,7 @@ import androidx.lifecycle.viewModelScope
 import ApunteIA.FrontEnd.domain.model.Note
 import ApunteIA.FrontEnd.domain.model.NoteStatus
 import ApunteIA.FrontEnd.domain.usecase.AddNoteUseCase
+import ApunteIA.FrontEnd.domain.util.Resource
 import ApunteIA.FrontEnd.presentation.model.CapturedPage
 import ApunteIA.FrontEnd.presentation.model.MaterialType
 import ApunteIA.FrontEnd.presentation.model.NoteBullet
@@ -277,13 +278,15 @@ class ScanViewModel @Inject constructor(
 
         viewModelScope.launch {
             _uiState.update { it.copy(isSaving = true, saveError = null) }
-            addNoteUseCase(note)
-                .onSuccess {
+            when (val result = addNoteUseCase(note)) {
+                is Resource.Success -> {
                     _uiState.update { it.copy(isSaving = false, saved = true) }
                 }
-                .onFailure { error ->
-                    _uiState.update { it.copy(isSaving = false, saveError = error.message ?: "Error desconocido al guardar") }
+                is Resource.Error -> {
+                    _uiState.update { it.copy(isSaving = false, saveError = result.message) }
                 }
+                is Resource.Loading -> { }
+            }
         }
     }
 
