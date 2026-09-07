@@ -1,8 +1,9 @@
 package ApunteIA.FrontEnd.domain.usecase
 
 import ApunteIA.FrontEnd.domain.model.Topic
+import javax.inject.Inject
 
-class FilterTopicsUseCase {
+class FilterTopicsUseCase @Inject constructor() {
 
     companion object {
         const val CATEGORY_ALL = "Todos"

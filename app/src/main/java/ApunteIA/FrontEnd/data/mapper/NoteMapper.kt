@@ -8,7 +8,7 @@ import ApunteIA.FrontEnd.domain.model.Note
  * dominio ([Note]). El `status` se delega a [toNoteStatus].
  */
 fun NoteDto.toDomain(): Note = Note(
-    id = id,
+    id = id?.toIntOrNull() ?: 0,
     title = title,
     className = className,
     classNumber = classNumber,
@@ -25,7 +25,7 @@ fun List<NoteDto>.toDomain(): List<Note> = map { it.toDomain() }
  * flujo de escaneo) hacia la fuente de datos.
  */
 fun Note.toDto(): NoteDto = NoteDto(
-    id = id,
+    id = id.toString(),
     title = title,
     className = className,
     classNumber = classNumber,

@@ -19,7 +19,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.lifecycle.viewmodel.compose.viewModel
+import androidx.hilt.navigation.compose.hiltViewModel
 import ApunteIA.FrontEnd.domain.model.Notification
 import ApunteIA.FrontEnd.presentation.ui.theme.*
 import ApunteIA.FrontEnd.presentation.viewmodel.NotificationViewModel
@@ -27,7 +27,7 @@ import ApunteIA.FrontEnd.presentation.viewmodel.NotificationViewModel
 @Composable
 fun NotificationsScreen(
     onBack: () -> Unit,
-    viewModel: NotificationViewModel = viewModel()
+    viewModel: NotificationViewModel = hiltViewModel()
 ) {
     val notifications by viewModel.notifications.collectAsState()
 

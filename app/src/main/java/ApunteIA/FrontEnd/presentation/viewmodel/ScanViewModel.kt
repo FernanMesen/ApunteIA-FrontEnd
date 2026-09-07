@@ -11,6 +11,7 @@ import ApunteIA.FrontEnd.presentation.model.NoteBullet
 import ApunteIA.FrontEnd.presentation.model.NoteSection
 import ApunteIA.FrontEnd.presentation.model.ProcessingError
 import ApunteIA.FrontEnd.presentation.model.ProcessingStep
+import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -18,6 +19,7 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
+import javax.inject.Inject
 
 /**
  * Materias disponibles para clasificar el escaneo. En un backend real esto
@@ -46,6 +48,8 @@ data class ScanUiState(
     val isProcessing: Boolean = false,
     val completedSteps: Int = 0,
     val processingError: ProcessingError? = null,
+    val isSaving: Boolean = false,
+    val saveError: String? = null,
     val saved: Boolean = false
 ) {
     val canContinueFromNewScan: Boolean
@@ -65,7 +69,8 @@ data class ScanUiState(
  * del flujo comparten la misma instancia sin tener que pasarse datos por
  * argumentos de navegación.
  */
-class ScanViewModel(
+@HiltViewModel
+class ScanViewModel @Inject constructor(
     private val addNoteUseCase: AddNoteUseCase
 ) : ViewModel() {
 
@@ -265,14 +270,20 @@ class ScanViewModel(
             title = state.title.ifBlank { "Nota sin título" },
             className = state.subject,
             classNumber = state.className.filter { it.isDigit() }.toIntOrNull() ?: 1,
-            date = "Escaneado hoy",
+            date = "hoy",
             preview = preview,
             status = NoteStatus.WEAK
         )
 
         viewModelScope.launch {
+            _uiState.update { it.copy(isSaving = true, saveError = null) }
             addNoteUseCase(note)
-            _uiState.update { it.copy(saved = true) }
+                .onSuccess {
+                    _uiState.update { it.copy(isSaving = false, saved = true) }
+                }
+                .onFailure { error ->
+                    _uiState.update { it.copy(isSaving = false, saveError = error.message ?: "Error desconocido al guardar") }
+                }
         }
     }
 

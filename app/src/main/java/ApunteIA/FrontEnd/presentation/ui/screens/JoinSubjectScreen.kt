@@ -19,7 +19,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.lifecycle.viewmodel.compose.viewModel
+import androidx.hilt.navigation.compose.hiltViewModel
 import ApunteIA.FrontEnd.presentation.ui.theme.SpaceCadet
 import ApunteIA.FrontEnd.presentation.viewmodel.JoinSubjectViewModel
 
@@ -27,7 +27,7 @@ import ApunteIA.FrontEnd.presentation.viewmodel.JoinSubjectViewModel
 fun JoinSubjectScreen(
     onBack: () -> Unit,
     onJoinSuccess: () -> Unit = {},
-    viewModel: JoinSubjectViewModel = viewModel()
+    viewModel: JoinSubjectViewModel = hiltViewModel()
 ) {
     var courseCode by remember { mutableStateOf("") }
     val availableCourses by viewModel.availableCourses.collectAsState()

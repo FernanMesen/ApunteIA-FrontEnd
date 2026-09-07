@@ -15,13 +15,12 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.lifecycle.viewmodel.compose.viewModel
+import androidx.hilt.navigation.compose.hiltViewModel
 import ApunteIA.FrontEnd.presentation.ui.theme.*
 import ApunteIA.FrontEnd.presentation.ui.components.FilterChip
 import ApunteIA.FrontEnd.presentation.ui.components.NoteCard
 import ApunteIA.FrontEnd.presentation.ui.components.TopHeader
 import ApunteIA.FrontEnd.presentation.ui.layout.MainLayout
-import ApunteIA.FrontEnd.presentation.factory.NotesViewModelFactory
 import ApunteIA.FrontEnd.presentation.viewmodel.NotesViewModel
 
 @Composable
@@ -33,8 +32,9 @@ fun NotesScreen(
     onCameraClick: () -> Unit = {},
     onNoteClick: (String) -> Unit = {},
     onProfileClick: () -> Unit = {},
-    viewModel: NotesViewModel = viewModel(factory = NotesViewModelFactory())
+    viewModel: NotesViewModel = hiltViewModel()
 ) {
+    val uiState by viewModel.uiState.collectAsState()
     val categories by viewModel.categories.collectAsState()
     val selectedCategory by viewModel.selectedCategory.collectAsState()
     val searchQuery by viewModel.searchQuery.collectAsState()
@@ -73,6 +73,28 @@ fun NotesScreen(
                     fontSize = 14.sp,
                     color = MaterialTheme.colorScheme.onSurfaceVariant
                 )
+            }
+
+            if (uiState.isLoading) {
+                item {
+                    Box(modifier = Modifier.fillMaxWidth().padding(top = 40.dp), contentAlignment = Alignment.Center) {
+                        CircularProgressIndicator()
+                    }
+                }
+            }
+
+            if (uiState.error != null) {
+                item {
+                    Column(
+                        modifier = Modifier.fillMaxWidth().padding(top = 40.dp),
+                        horizontalAlignment = Alignment.CenterHorizontally
+                    ) {
+                        Text("Error: ${uiState.error}", color = MaterialTheme.colorScheme.error)
+                        Button(onClick = { viewModel.loadNotes() }) {
+                            Text("Reintentar")
+                        }
+                    }
+                }
             }
 
             item {

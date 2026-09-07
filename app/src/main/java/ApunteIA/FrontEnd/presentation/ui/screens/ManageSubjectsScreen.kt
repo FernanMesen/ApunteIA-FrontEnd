@@ -19,9 +19,8 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.lifecycle.viewmodel.compose.viewModel
+import androidx.hilt.navigation.compose.hiltViewModel
 import ApunteIA.FrontEnd.domain.model.Course
-import ApunteIA.FrontEnd.presentation.factory.ManageSubjectsViewModelFactory
 import ApunteIA.FrontEnd.presentation.ui.theme.*
 import ApunteIA.FrontEnd.presentation.viewmodel.ManageSubjectsViewModel
 
@@ -29,7 +28,7 @@ import ApunteIA.FrontEnd.presentation.viewmodel.ManageSubjectsViewModel
 fun ManageSubjectsScreen(
     onBack: () -> Unit,
     onJoinCourse: () -> Unit = {},
-    viewModel: ManageSubjectsViewModel = viewModel(factory = ManageSubjectsViewModelFactory())
+    viewModel: ManageSubjectsViewModel = hiltViewModel()
 ) {
     val courses by viewModel.courses.collectAsState()
 

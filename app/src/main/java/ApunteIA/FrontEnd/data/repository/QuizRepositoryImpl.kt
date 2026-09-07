@@ -3,8 +3,9 @@ package ApunteIA.FrontEnd.data.repository
 import ApunteIA.FrontEnd.data.datasource.QuizDataSource
 import ApunteIA.FrontEnd.domain.model.Question
 import ApunteIA.FrontEnd.domain.repository.QuizRepository
+import javax.inject.Inject
 
-class QuizRepositoryImpl(
+class QuizRepositoryImpl @Inject constructor(
     private val dataSource: QuizDataSource
 ) : QuizRepository {
     override suspend fun getQuestions(): Result<List<Question>> {

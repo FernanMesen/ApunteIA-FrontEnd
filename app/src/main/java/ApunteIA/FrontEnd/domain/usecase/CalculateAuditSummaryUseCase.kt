@@ -3,8 +3,9 @@ package ApunteIA.FrontEnd.domain.usecase
 import ApunteIA.FrontEnd.domain.model.AuditSummary
 import ApunteIA.FrontEnd.domain.model.Topic
 import ApunteIA.FrontEnd.domain.model.TopicStatus
+import javax.inject.Inject
 
-class CalculateAuditSummaryUseCase {
+class CalculateAuditSummaryUseCase @Inject constructor() {
 
     operator fun invoke(topics: List<Topic>): AuditSummary {
         if (topics.isEmpty()) {

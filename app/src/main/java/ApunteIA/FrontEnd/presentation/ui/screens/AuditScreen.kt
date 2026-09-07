@@ -12,8 +12,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.lifecycle.viewmodel.compose.viewModel
-import ApunteIA.FrontEnd.presentation.factory.AuditViewModelFactory
+import androidx.hilt.navigation.compose.hiltViewModel
 import ApunteIA.FrontEnd.presentation.ui.components.AuditSummaryCard
 import ApunteIA.FrontEnd.presentation.ui.components.FilterChip
 import ApunteIA.FrontEnd.presentation.ui.components.TopicCard
@@ -32,7 +31,7 @@ fun AuditScreen(
     onCameraClick: () -> Unit = {},
     onPracticeClick: (String) -> Unit = {},
     onProfileClick: () -> Unit = {},
-    viewModel: AuditViewModel = viewModel(factory = AuditViewModelFactory())
+    viewModel: AuditViewModel = hiltViewModel()
 ) {
     val categories by viewModel.categories.collectAsState()
     val selectedCategory by viewModel.selectedCategory.collectAsState()

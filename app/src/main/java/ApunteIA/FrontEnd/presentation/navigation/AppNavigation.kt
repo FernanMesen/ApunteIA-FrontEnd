@@ -10,10 +10,7 @@ import androidx.navigation.compose.navigation
 import androidx.navigation.compose.rememberNavController
 import ApunteIA.FrontEnd.presentation.ui.screens.*
 
-import androidx.lifecycle.viewmodel.compose.viewModel
-import ApunteIA.FrontEnd.presentation.factory.QuizViewModelFactory
-import ApunteIA.FrontEnd.presentation.factory.MainViewModelFactory
-import ApunteIA.FrontEnd.presentation.factory.ScanViewModelFactory
+import androidx.hilt.navigation.compose.hiltViewModel
 import ApunteIA.FrontEnd.presentation.viewmodel.MainViewModel
 import ApunteIA.FrontEnd.presentation.viewmodel.QuizViewModel
 import ApunteIA.FrontEnd.presentation.viewmodel.ScanViewModel
@@ -21,7 +18,7 @@ import ApunteIA.FrontEnd.presentation.viewmodel.ThemeViewModel
 
 @Composable
 fun AppNavigation(
-    themeViewModel: ThemeViewModel = viewModel()
+    themeViewModel: ThemeViewModel = hiltViewModel()
 ) {
 
     val isDarkMode by themeViewModel.isDarkMode.collectAsState(false)
@@ -179,7 +176,7 @@ fun AppNavigation(
         // =========================
 
         composable(Routes.MAIN) {
-            val mainViewModel: MainViewModel = viewModel(factory = MainViewModelFactory())
+            val mainViewModel: MainViewModel = hiltViewModel()
             MainScreen(
                 viewModel = mainViewModel,
                 onInicio = {
@@ -393,7 +390,7 @@ fun AppNavigation(
         // =========================
 
         composable(Routes.QUIZ) {
-            val quizViewModel: QuizViewModel = viewModel(factory = QuizViewModelFactory())
+            val quizViewModel: QuizViewModel = hiltViewModel()
             QuizScreen(
                 viewModel = quizViewModel,
                 onClose = { navController.popBackStack() },
@@ -422,7 +419,7 @@ fun AppNavigation(
                 val parentEntry = remember(backStackEntry) {
                     navController.getBackStackEntry(Routes.SCAN_GRAPH)
                 }
-                val scanViewModel: ScanViewModel = viewModel(parentEntry, factory = ScanViewModelFactory())
+                val scanViewModel: ScanViewModel = hiltViewModel(parentEntry)
 
                 ScanNewScreen(
                     viewModel = scanViewModel,
@@ -439,7 +436,7 @@ fun AppNavigation(
                 val parentEntry = remember(backStackEntry) {
                     navController.getBackStackEntry(Routes.SCAN_GRAPH)
                 }
-                val scanViewModel: ScanViewModel = viewModel(parentEntry, factory = ScanViewModelFactory())
+                val scanViewModel: ScanViewModel = hiltViewModel(parentEntry)
 
                 ScanCameraScreen(
                     viewModel = scanViewModel,
@@ -456,7 +453,7 @@ fun AppNavigation(
                 val parentEntry = remember(backStackEntry) {
                     navController.getBackStackEntry(Routes.SCAN_GRAPH)
                 }
-                val scanViewModel: ScanViewModel = viewModel(parentEntry, factory = ScanViewModelFactory())
+                val scanViewModel: ScanViewModel = hiltViewModel(parentEntry)
 
                 ScanPagesScreen(
                     viewModel = scanViewModel,
@@ -476,7 +473,7 @@ fun AppNavigation(
                 val parentEntry = remember(backStackEntry) {
                     navController.getBackStackEntry(Routes.SCAN_GRAPH)
                 }
-                val scanViewModel: ScanViewModel = viewModel(parentEntry, factory = ScanViewModelFactory())
+                val scanViewModel: ScanViewModel = hiltViewModel(parentEntry)
 
                 ScanProcessingScreen(
                     viewModel = scanViewModel,
@@ -495,7 +492,7 @@ fun AppNavigation(
                 val parentEntry = remember(backStackEntry) {
                     navController.getBackStackEntry(Routes.SCAN_GRAPH)
                 }
-                val scanViewModel: ScanViewModel = viewModel(parentEntry, factory = ScanViewModelFactory())
+                val scanViewModel: ScanViewModel = hiltViewModel(parentEntry)
 
                 ScanReviewScreen(
                     viewModel = scanViewModel,

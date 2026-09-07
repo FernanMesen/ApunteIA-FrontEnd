@@ -7,7 +7,7 @@ package ApunteIA.FrontEnd.data.datasource.model
  * tiene un motivo real para existir, igual que pasaría con un JSON real.
  */
 data class NoteDto(
-    val id: Int,
+    val id: String? = null,
     val title: String,
     val className: String,
     val classNumber: Int,

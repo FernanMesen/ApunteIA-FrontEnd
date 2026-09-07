@@ -6,12 +6,15 @@ import androidx.lifecycle.viewModelScope
 import ApunteIA.FrontEnd.domain.model.Question
 import ApunteIA.FrontEnd.domain.model.UserAnswer
 import ApunteIA.FrontEnd.domain.usecase.GetQuizUseCase
+import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
+import javax.inject.Inject
 
-class QuizViewModel(
+@HiltViewModel
+class QuizViewModel @Inject constructor(
     private val getQuizUseCase: GetQuizUseCase
 ) : ViewModel() {
 

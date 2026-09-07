@@ -4,12 +4,15 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import ApunteIA.FrontEnd.domain.model.Course
 import ApunteIA.FrontEnd.domain.usecase.GetTopicsUseCase
+import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
+import javax.inject.Inject
 
-class ManageSubjectsViewModel(
+@HiltViewModel
+class ManageSubjectsViewModel @Inject constructor(
     private val getTopicsUseCase: GetTopicsUseCase
 ) : ViewModel() {
 

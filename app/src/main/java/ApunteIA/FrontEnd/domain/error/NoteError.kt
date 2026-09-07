@@ -6,9 +6,9 @@ package ApunteIA.FrontEnd.domain.error
  * de excepciones concretas de Android/Kotlin: solo de este contrato.
  */
 sealed class NoteError : Exception() {
-    /** La fuente de datos (local o remota) no pudo entregar las notas. */
-    data object DataUnavailable : NoteError()
-
-    /** Cualquier otro error no anticipado. */
+    data object NoConnection : NoteError()
+    data class ClientError(val code: Int) : NoteError()
+    data class ServerError(val code: Int) : NoteError()
+    data object InvalidData : NoteError()
     data object Unknown : NoteError()
 }

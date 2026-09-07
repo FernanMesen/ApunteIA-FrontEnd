@@ -2,9 +2,11 @@ package ApunteIA.FrontEnd.presentation.viewmodel
 
 import androidx.lifecycle.ViewModel
 import ApunteIA.FrontEnd.domain.model.RecentActivity
+import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import javax.inject.Inject
 
 data class StudyStats(
     val precision: Int,
@@ -15,7 +17,8 @@ data class StudyStats(
     val weakAreas: Int
 )
 
-class StudyHistoryViewModel : ViewModel() {
+@HiltViewModel
+class StudyHistoryViewModel @Inject constructor() : ViewModel() {
     private val _isWeekly = MutableStateFlow(true)
     val isWeekly: StateFlow<Boolean> = _isWeekly.asStateFlow()
 

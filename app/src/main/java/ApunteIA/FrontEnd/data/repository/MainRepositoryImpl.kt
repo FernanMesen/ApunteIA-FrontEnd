@@ -4,10 +4,11 @@ import ApunteIA.FrontEnd.data.datasource.MainDataSource
 import ApunteIA.FrontEnd.domain.model.RecentActivity
 import ApunteIA.FrontEnd.domain.model.UserStats
 import ApunteIA.FrontEnd.domain.repository.MainRepository
+import javax.inject.Inject
 
 // esta clase Delegan al datasource y aplican los mappers.
 
-class MainRepositoryImpl(
+class MainRepositoryImpl @Inject constructor(
     private val dataSource: MainDataSource
 ) : MainRepository {
     override suspend fun getUserStats(): Result<UserStats> = try {

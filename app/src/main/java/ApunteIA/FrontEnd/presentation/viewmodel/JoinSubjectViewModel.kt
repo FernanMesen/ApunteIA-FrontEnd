@@ -3,11 +3,14 @@ package ApunteIA.FrontEnd.presentation.viewmodel
 import androidx.lifecycle.ViewModel
 import ApunteIA.FrontEnd.data.datasource.TopicProvider
 import ApunteIA.FrontEnd.presentation.ui.screens.AvailableCourse
+import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import javax.inject.Inject
 
-class JoinSubjectViewModel : ViewModel() {
+@HiltViewModel
+class JoinSubjectViewModel @Inject constructor() : ViewModel() {
     
     private val allCourses = listOf(
         AvailableCourse("Álgebra Lineal", "Dr. Nora Belén", "Fall 2026", "LIN-1180", "#2E3B3B"),

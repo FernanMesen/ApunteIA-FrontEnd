@@ -19,7 +19,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.lifecycle.viewmodel.compose.viewModel
+import androidx.hilt.navigation.compose.hiltViewModel
 import ApunteIA.FrontEnd.domain.model.RecentActivity
 import ApunteIA.FrontEnd.presentation.ui.theme.*
 import ApunteIA.FrontEnd.presentation.viewmodel.StudyHistoryViewModel
@@ -28,7 +28,7 @@ import ApunteIA.FrontEnd.presentation.viewmodel.StudyStats
 @Composable
 fun StudyHistoryScreen(
     onBack: () -> Unit,
-    viewModel: StudyHistoryViewModel = viewModel()
+    viewModel: StudyHistoryViewModel = hiltViewModel()
 ) {
     val isWeekly by viewModel.isWeekly.collectAsState()
     val stats by viewModel.stats.collectAsState()

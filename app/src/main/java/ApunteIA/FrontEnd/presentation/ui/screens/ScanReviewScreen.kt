@@ -219,6 +219,15 @@ fun ScanReviewScreen(
             }
         }
 
+        if (state.saveError != null) {
+            Text(
+                text = state.saveError!!,
+                color = StatusRed,
+                fontSize = 12.sp,
+                modifier = Modifier.padding(bottom = 8.dp)
+            )
+        }
+
         Row(
             modifier = Modifier
                 .fillMaxWidth()
@@ -227,6 +236,7 @@ fun ScanReviewScreen(
         ) {
             OutlinedButton(
                 onClick = onProcessAgain,
+                enabled = !state.isSaving,
                 modifier = Modifier.weight(1f).height(54.dp),
                 shape = RoundedCornerShape(27.dp),
                 border = BorderStroke(1.dp, Color(0xFFE0E0E0)),
@@ -236,12 +246,16 @@ fun ScanReviewScreen(
             }
             Button(
                 onClick = { viewModel.saveNote() },
-                enabled = !state.isProcessing,
+                enabled = !state.isProcessing && !state.isSaving,
                 modifier = Modifier.weight(1f).height(54.dp),
                 shape = RoundedCornerShape(27.dp),
                 colors = ButtonDefaults.buttonColors(containerColor = DarkGreen)
             ) {
-                Text("Guardar nota", color = Color.White, fontWeight = FontWeight.Bold, fontSize = 14.sp)
+                if (state.isSaving) {
+                    CircularProgressIndicator(modifier = Modifier.size(24.dp), color = Color.White, strokeWidth = 2.dp)
+                } else {
+                    Text("Guardar nota", color = Color.White, fontWeight = FontWeight.Bold, fontSize = 14.sp)
+                }
             }
         }
     }
