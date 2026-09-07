@@ -1,6 +1,7 @@
 package ApunteIA.FrontEnd.data.repository
 
 import ApunteIA.FrontEnd.data.datasource.MainDataSource
+import ApunteIA.FrontEnd.data.util.safeApiCall
 import ApunteIA.FrontEnd.domain.model.RecentActivity
 import ApunteIA.FrontEnd.domain.model.UserStats
 import ApunteIA.FrontEnd.domain.repository.MainRepository
@@ -12,15 +13,11 @@ import javax.inject.Inject
 class MainRepositoryImpl @Inject constructor(
     private val dataSource: MainDataSource
 ) : MainRepository {
-    override suspend fun getUserStats(): Resource<UserStats> = try {
-        Resource.Success(dataSource.getUserStats())
-    } catch (e: Exception) {
-        Resource.Error(e.message ?: "Error desconocido", e)
+    override suspend fun getUserStats(): Resource<UserStats> = safeApiCall {
+        dataSource.getUserStats()
     }
 
-    override suspend fun getRecentActivity(): Resource<List<RecentActivity>> = try {
-        Resource.Success(dataSource.getRecentActivity())
-    } catch (e: Exception) {
-        Resource.Error(e.message ?: "Error desconocido", e)
+    override suspend fun getRecentActivity(): Resource<List<RecentActivity>> = safeApiCall {
+        dataSource.getRecentActivity()
     }
 }
