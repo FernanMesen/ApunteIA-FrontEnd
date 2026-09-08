@@ -2,6 +2,7 @@ package ApunteIA.FrontEnd.data.di
 
 import ApunteIA.FrontEnd.BuildConfig
 import ApunteIA.FrontEnd.data.remote.ApiService
+import ApunteIA.FrontEnd.data.remote.mock.MockApiInterceptor
 import com.google.gson.Gson
 import com.google.gson.GsonBuilder
 import dagger.Module
@@ -12,6 +13,7 @@ import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
+import java.util.concurrent.TimeUnit
 import javax.inject.Singleton
 
 @Module
@@ -24,11 +26,21 @@ object NetworkModule {
 
     @Provides
     @Singleton
-    fun provideOkHttpClient(): OkHttpClient {
+    fun provideOkHttpClient(mockApiInterceptor: MockApiInterceptor): OkHttpClient {
         val logging = HttpLoggingInterceptor().apply {
             level = HttpLoggingInterceptor.Level.BODY
         }
-        return OkHttpClient.Builder()
+
+        val builder = OkHttpClient.Builder()
+            .connectTimeout(15, TimeUnit.SECONDS)
+            .readTimeout(15, TimeUnit.SECONDS)
+            .writeTimeout(15, TimeUnit.SECONDS)
+
+        if (BuildConfig.USE_MOCK_API) {
+            builder.addInterceptor(mockApiInterceptor)
+        }
+
+        return builder
             .addInterceptor(logging)
             .build()
     }

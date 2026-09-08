@@ -9,7 +9,7 @@ android {
     namespace = "ApunteIA.FrontEnd"
     compileSdk = 34
 
-    defaultConfig {
+    defaultConfig {                                          // 👈 AQUÍ, reemplaza este bloque completo
         applicationId = "ApunteIA.FrontEnd"
         minSdk = 24
         targetSdk = 34
@@ -21,6 +21,7 @@ android {
             useSupportLibrary = true
         }
         buildConfigField("String", "MOCK_API_BASE_URL", "\"https://6a9e55922f89be7fb70ddea9.mockapi.io/\"")
+        buildConfigField("boolean", "USE_MOCK_API", "true")   // 👈 esta es la línea nueva
     }
 
     buildTypes {
