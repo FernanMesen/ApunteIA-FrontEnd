@@ -39,3 +39,4 @@ class MainRepositoryImplTest {
         assertTrue(result.exceptionOrNull() is MainError.NoConnection)
     }
 }
+//
