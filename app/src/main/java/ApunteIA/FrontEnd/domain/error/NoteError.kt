@@ -11,4 +11,12 @@ sealed class NoteError : Exception() {
     data class ServerError(val code: Int) : NoteError()
     data object InvalidData : NoteError()
     data object Unknown : NoteError()
+
+    fun toUserMessage(): String = when (this) {
+        is NoConnection -> "No hay conexión a internet. Por favor, verifica tu red."
+        is ClientError -> "Hubo un problema con la solicitud (Error $code)."
+        is ServerError -> "El servidor de notas está teniendo problemas (Error $code)."
+        is InvalidData -> "Los datos recibidos no son válidos."
+        is Unknown -> "Ocurrió un error inesperado al gestionar tus notas."
+    }
 }

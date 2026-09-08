@@ -1,6 +1,7 @@
 package ApunteIA.FrontEnd.data.repository
 
 import ApunteIA.FrontEnd.data.datasource.QuizDataSource
+import ApunteIA.FrontEnd.data.mapper.toQuizError
 import ApunteIA.FrontEnd.data.util.safeApiCall
 import ApunteIA.FrontEnd.domain.model.Question
 import ApunteIA.FrontEnd.domain.repository.QuizRepository
@@ -11,7 +12,9 @@ class QuizRepositoryImpl @Inject constructor(
     private val dataSource: QuizDataSource
 ) : QuizRepository {
 
-    override suspend fun getQuestions(): Resource<List<Question>> = safeApiCall {
+    override suspend fun getQuestions(): Resource<List<Question>> = safeApiCall(
+        errorMapper = { it.toQuizError().toUserMessage() }
+    ) {
         dataSource.getQuestions()
     }
 }
