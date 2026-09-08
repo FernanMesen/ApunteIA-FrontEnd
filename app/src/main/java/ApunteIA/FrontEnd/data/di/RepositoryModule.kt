@@ -15,49 +15,41 @@ abstract class RepositoryModule {
 
     @Binds
     @Singleton
-    abstract fun bindMainRepository(
-        mainRepositoryImpl: MainRepositoryImpl
-    ): MainRepository
+    abstract fun bindMainRepository(mainRepositoryImpl: MainRepositoryImpl): MainRepository
 
     @Binds
     @Singleton
-    abstract fun bindNoteRepository(
-        noteRepositoryImpl: NoteRepositoryImpl
-    ): NoteRepository
+    abstract fun bindNoteRepository(noteRepositoryImpl: NoteRepositoryImpl): NoteRepository
 
     @Binds
     @Singleton
-    abstract fun bindQuizRepository(
-        quizRepositoryImpl: QuizRepositoryImpl
-    ): QuizRepository
+    abstract fun bindQuizRepository(quizRepositoryImpl: QuizRepositoryImpl): QuizRepository
 
     @Binds
     @Singleton
-    abstract fun bindTopicRepository(
-        topicRepositoryImpl: TopicRepositoryImpl
-    ): TopicRepository
+    abstract fun bindTopicRepository(topicRepositoryImpl: TopicRepositoryImpl): TopicRepository
 
     @Binds
     @Singleton
-    abstract fun bindMainDataSource(
-        mainDataSourceImpl: MainDataSourceImpl
-    ): MainDataSource
+    abstract fun bindMainDataSource(mainDataSourceImpl: MainDataSourceImpl): MainDataSource
 
     @Binds
     @Singleton
-    abstract fun bindNoteDataSource(
-        noteDataSourceImpl: NoteDataSourceImpl
-    ): NoteDataSource
+    abstract fun bindNoteDataSource(noteDataSourceImpl: NoteDataSourceImpl): NoteDataSource
 
     @Binds
     @Singleton
-    abstract fun bindQuizDataSource(
-        quizDataSourceImpl: QuizDataSourceImpl
-    ): QuizDataSource
+    abstract fun bindQuizDataSource(quizDataSourceImpl: QuizDataSourceImpl): QuizDataSource
 
     @Binds
     @Singleton
-    abstract fun bindTopicDataSource(
-        topicDataSourceImpl: TopicDataSourceImpl
-    ): TopicDataSource
+    abstract fun bindTopicDataSource(topicDataSourceImpl: TopicDataSourceImpl): TopicDataSource
+
+    @Binds
+    @Singleton
+    abstract fun bindAuthRepository(authRepositoryImpl: AuthRepositoryImpl): AuthRepository
+
+    @Binds
+    @Singleton
+    abstract fun bindAuthDataSource(authDataSourceImpl: AuthDataSourceImpl): AuthDataSource
 }
