@@ -8,4 +8,5 @@ class TopicDataSourceImpl @Inject constructor(
     private val apiService: ApiService
 ) : TopicDataSource {
     override suspend fun getTopics(): List<TopicDto> = apiService.getTopics()
+    override suspend fun addTopic(topic: TopicDto): TopicDto = apiService.createTopic(topic)
 }

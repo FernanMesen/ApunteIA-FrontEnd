@@ -1,17 +1,23 @@
 package ApunteIA.FrontEnd.presentation.viewmodel
 
 import androidx.lifecycle.ViewModel
-import ApunteIA.FrontEnd.data.datasource.TopicProvider
+import androidx.lifecycle.viewModelScope
+import ApunteIA.FrontEnd.domain.usecase.AddTopicUseCase
+import ApunteIA.FrontEnd.domain.usecase.GetTopicsUseCase
 import ApunteIA.FrontEnd.presentation.ui.screens.AvailableCourse
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
-class JoinSubjectViewModel @Inject constructor() : ViewModel() {
-    
+class JoinSubjectViewModel @Inject constructor(
+    private val getTopicsUseCase: GetTopicsUseCase,
+    private val addTopicUseCase: AddTopicUseCase
+) : ViewModel() {
+
     private val allCourses = listOf(
         AvailableCourse("Álgebra Lineal", "Dr. Nora Belén", "Fall 2026", "LIN-1180", "#2E3B3B"),
         AvailableCourse("Introducción a la Psicología", "Prof. Iván Duarte", "Fall 2026", "PSY-1010", "#8FB2C9"),
@@ -28,21 +34,32 @@ class JoinSubjectViewModel @Inject constructor() : ViewModel() {
     }
 
     private fun refreshAvailableCourses() {
-        val existingCourseNames = TopicProvider.topics.map { it.className }.distinct()
-        _availableCourses.value = allCourses.filter { it.name !in existingCourseNames }
+        viewModelScope.launch {
+            getTopicsUseCase()
+                .onSuccess { topics ->
+                    val existingCourseNames = topics.map { it.className }.distinct()
+                    _availableCourses.value = allCourses.filter { it.name !in existingCourseNames }
+                }
+                .onFailure {
+                    _availableCourses.value = allCourses
+                }
+        }
     }
 
     fun joinCourse(course: AvailableCourse) {
-        TopicProvider.addCourse(course.name)
-        refreshAvailableCourses()
+        viewModelScope.launch {
+            addTopicUseCase(course.name)
+            refreshAvailableCourses()
+        }
     }
 
     fun joinByCode(code: String) {
-        // En un caso real buscaríamos el curso por código
         if (code.isNotBlank()) {
             val name = "Curso Nuevo ($code)"
-            TopicProvider.addCourse(name)
-            refreshAvailableCourses()
+            viewModelScope.launch {
+                addTopicUseCase(name)
+                refreshAvailableCourses()
+            }
         }
     }
 }

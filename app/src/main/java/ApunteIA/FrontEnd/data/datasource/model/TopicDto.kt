@@ -1,10 +1,16 @@
 package ApunteIA.FrontEnd.data.datasource.model
 
-//representan la forma "cruda" del dato tal como llegaría de una fuente externa
+import com.google.gson.annotations.SerializedName
+
 data class TopicDto(
+    @SerializedName("id")
     val id: Int,
+    @SerializedName("title")
     val title: String,
+    @SerializedName("className")
     val className: String,
+    @SerializedName("status")
     val status: String,
+    @SerializedName("progress")
     val progress: Int
 )

@@ -1,17 +1,20 @@
 package ApunteIA.FrontEnd.data.datasource.model
 
-/**
- * Representación "cruda" de una nota tal como llegaría de una fuente de
- * datos (API, base de datos local, etc.). A propósito usa `status` como
- * `String` en vez del enum de dominio: así el [ApunteIA.FrontEnd.data.mapper.NoteMapper]
- * tiene un motivo real para existir, igual que pasaría con un JSON real.
- */
+import com.google.gson.annotations.SerializedName
+
 data class NoteDto(
+    @SerializedName("id")
     val id: String? = null,
+    @SerializedName("title")
     val title: String,
+    @SerializedName("className")
     val className: String,
+    @SerializedName("classNumber")
     val classNumber: Int,
+    @SerializedName("date")
     val date: String,
+    @SerializedName("preview")
     val preview: String,
+    @SerializedName("status")
     val status: String
 )
