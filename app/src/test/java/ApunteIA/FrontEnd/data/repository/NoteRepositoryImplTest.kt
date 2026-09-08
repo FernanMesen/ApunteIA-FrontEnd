@@ -1,10 +1,10 @@
 package ApunteIA.FrontEnd.data.repository
 
 import ApunteIA.FrontEnd.data.datasource.NoteDataSource
-import ApunteIA.FrontEnd.domain.error.NoteError
+import ApunteIA.FrontEnd.domain.util.Resource
 import kotlinx.coroutines.runBlocking
 import okhttp3.ResponseBody.Companion.toResponseBody
-import org.junit.Assert.assertThrows
+import org.junit.Assert.assertTrue
 import org.junit.Before
 import org.junit.Test
 import org.mockito.kotlin.mock
@@ -25,23 +25,21 @@ class NoteRepositoryImplTest {
     }
 
     @Test
-    fun `getNotes throws NoConnection on IOException`() = runBlocking {
+    fun `getNotes returns Resource Error on IOException`() = runBlocking {
         whenever(dataSource.getNotes()).thenAnswer { throw IOException() }
 
-        assertThrows(NoteError.NoConnection::class.java) {
-            runBlocking { repository.getNotes() }
-        }
-        Unit
+        val result = repository.getNotes()
+
+        assertTrue(result is Resource.Error)
     }
 
     @Test
-    fun `getNotes throws ServerError on 500 HttpException`() = runBlocking {
+    fun `getNotes returns Resource Error on 500 HttpException`() = runBlocking {
         val errorResponse = Response.error<Any>(500, "".toResponseBody(null))
         whenever(dataSource.getNotes()).thenAnswer { throw HttpException(errorResponse) }
 
-        assertThrows(NoteError.ServerError::class.java) {
-            runBlocking { repository.getNotes() }
-        }
-        Unit
+        val result = repository.getNotes()
+
+        assertTrue(result is Resource.Error)
     }
 }

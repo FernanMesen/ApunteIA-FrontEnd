@@ -4,6 +4,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import ApunteIA.FrontEnd.domain.usecase.AddTopicUseCase
 import ApunteIA.FrontEnd.domain.usecase.GetTopicsUseCase
+import ApunteIA.FrontEnd.domain.util.Resource
 import ApunteIA.FrontEnd.presentation.ui.screens.AvailableCourse
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -35,14 +36,18 @@ class JoinSubjectViewModel @Inject constructor(
 
     private fun refreshAvailableCourses() {
         viewModelScope.launch {
-            getTopicsUseCase()
-                .onSuccess { topics ->
-                    val existingCourseNames = topics.map { it.className }.distinct()
-                    _availableCourses.value = allCourses.filter { it.name !in existingCourseNames }
+            when (val resource = getTopicsUseCase()) {
+                is Resource.Success -> {
+                    val existingCourseNames = resource.data.map { topic -> topic.className }.distinct()
+                    _availableCourses.value = allCourses.filter { course -> course.name !in existingCourseNames }
                 }
-                .onFailure {
+                is Resource.Error -> {
                     _availableCourses.value = allCourses
                 }
+                is Resource.Loading -> {
+                    // No-op: esta pantalla no muestra un estado de carga separado.
+                }
+            }
         }
     }
 
