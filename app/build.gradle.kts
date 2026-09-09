@@ -20,8 +20,8 @@ android {
         vectorDrawables {
             useSupportLibrary = true
         }
-        buildConfigField("String", "MOCK_API_BASE_URL", "\"https://6a9e55922f89be7fb70ddea9.mockapi.io/\"")
-        buildConfigField("boolean", "USE_MOCK_API", "true")
+        buildConfigField("String", "MOCK_API_BASE_URL", "\"http://10.0.2.2:3001/\"")
+        buildConfigField("boolean", "USE_MOCK_API", "false")
     }
 
     buildTypes {

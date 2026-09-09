@@ -17,18 +17,33 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
+import androidx.hilt.navigation.compose.hiltViewModel
 import ApunteIA.FrontEnd.presentation.ui.theme.SpaceCadet
+import ApunteIA.FrontEnd.presentation.viewmodel.LoginViewModel
 
 @Composable
 fun LoginScreen(
     onLogin: () -> Unit,
-    onRegister: () -> Unit
+    onRegister: () -> Unit,
+    viewModel: LoginViewModel = hiltViewModel()
 ) {
     val isDark = MaterialTheme.colorScheme.primary == SpaceCadet
     val primaryColor = MaterialTheme.colorScheme.primary
-    
+
+    val uiState by viewModel.uiState.collectAsState()
+
     var email by remember { mutableStateOf("") }
     var password by remember { mutableStateOf("") }
+
+    LaunchedEffect(uiState.loginSuccess) {
+        if (uiState.loginSuccess) {
+            onLogin()
+            viewModel.onLoginHandled()
+        }
+    }
 
     var selectedRole by remember {
         mutableStateOf("Estudiante")
@@ -50,7 +65,7 @@ fun LoginScreen(
 
         Spacer(modifier = Modifier.height(28.dp))
 
-      // Seleccionar idioma
+        // Seleccionar idioma
 
         Row(
             modifier = Modifier
@@ -219,12 +234,24 @@ fun LoginScreen(
             )
         )
 
+        if (uiState.errorMessage != null) {
+            Spacer(modifier = Modifier.height(12.dp))
+
+            Text(
+                text = uiState.errorMessage.orEmpty(),
+                color = MaterialTheme.colorScheme.error,
+                fontSize = 14.sp,
+                modifier = Modifier.fillMaxWidth()
+            )
+        }
+
         Spacer(modifier = Modifier.height(26.dp))
 
         // Botón de login
 
         Button(
-            onClick = onLogin,
+            onClick = { viewModel.login(email, password) },
+            enabled = !uiState.isLoading,
             modifier = Modifier
                 .fillMaxWidth()
                 .height(62.dp),
@@ -233,12 +260,20 @@ fun LoginScreen(
                 containerColor = primaryColor
             )
         ) {
-            Text(
-                text = "Iniciar sesión",
-                color = MaterialTheme.colorScheme.onPrimary,
-                fontWeight = FontWeight.Bold,
-                fontSize = 17.sp
-            )
+            if (uiState.isLoading) {
+                CircularProgressIndicator(
+                    modifier = Modifier.size(22.dp),
+                    color = MaterialTheme.colorScheme.onPrimary,
+                    strokeWidth = 2.dp
+                )
+            } else {
+                Text(
+                    text = "Iniciar sesión",
+                    color = MaterialTheme.colorScheme.onPrimary,
+                    fontWeight = FontWeight.Bold,
+                    fontSize = 17.sp
+                )
+            }
         }
 
         Spacer(modifier = Modifier.height(24.dp))
