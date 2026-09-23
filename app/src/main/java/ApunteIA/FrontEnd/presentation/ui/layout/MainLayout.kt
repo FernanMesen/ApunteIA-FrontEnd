@@ -30,12 +30,14 @@ fun MainLayout(
     onCameraClick: () -> Unit = {},
     showFab: Boolean = true,
     topBar: @Composable () -> Unit = {},
+    snackbarHost: @Composable () -> Unit = {},
     content: @Composable (PaddingValues) -> Unit
 ) {
     val isDark = MaterialTheme.colorScheme.primary == SpaceCadet
 
     Scaffold(
         topBar = topBar,
+        snackbarHost = snackbarHost,
         bottomBar = {
             CustomBottomNavigation(
                 currentRoute = currentRoute,

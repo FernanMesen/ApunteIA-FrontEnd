@@ -33,9 +33,24 @@ fun ManageSubjectsScreen(
     viewModel: ManageSubjectsViewModel = hiltViewModel()
 ) {
     val uiState by viewModel.uiState.collectAsState()
+    val snackbarHostState = remember { SnackbarHostState() }
+
+    LaunchedEffect(uiState.error) {
+        uiState.error?.let { errorMessage ->
+            val result = snackbarHostState.showSnackbar(
+                message = errorMessage,
+                actionLabel = "Reintentar",
+                duration = SnackbarDuration.Indefinite
+            )
+            if (result == SnackbarResult.ActionPerformed) {
+                viewModel.refresh()
+            }
+        }
+    }
 
     Scaffold(
         containerColor = MaterialTheme.colorScheme.background,
+        snackbarHost = { SnackbarHost(snackbarHostState) },
         topBar = {
             ManageSubjectsTopBar(onBack = onBack, onJoinCourse = onJoinCourse)
         }
@@ -205,7 +220,6 @@ fun CourseCard(course: Course) {
                 .fillMaxWidth(),
             verticalAlignment = Alignment.CenterVertically
         ) {
-            // Icono con la inicial
             Box(
                 modifier = Modifier
                     .size(56.dp)

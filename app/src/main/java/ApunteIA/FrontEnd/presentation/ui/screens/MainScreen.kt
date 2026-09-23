@@ -12,8 +12,10 @@ import androidx.compose.material.icons.filled.*
 import androidx.compose.material3.*
 import androidx.compose.material3.pulltorefresh.PullToRefreshBox
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -41,6 +43,20 @@ fun MainScreen(
     onProfileClick: () -> Unit = {}
 ) {
     val uiState by viewModel.uiState.collectAsState()
+    val snackbarHostState = remember { SnackbarHostState() }
+
+    LaunchedEffect(uiState.error) {
+        uiState.error?.let { errorMessage ->
+            val result = snackbarHostState.showSnackbar(
+                message = errorMessage,
+                actionLabel = "Reintentar",
+                duration = SnackbarDuration.Indefinite
+            )
+            if (result == SnackbarResult.ActionPerformed) {
+                viewModel.refresh()
+            }
+        }
+    }
 
     MainLayout(
         currentRoute = "Inicio",
@@ -49,6 +65,7 @@ fun MainScreen(
         onAuditoria = onAuditoria,
         onReforzar = onReforzar,
         onCameraClick = onCameraClick,
+        snackbarHost = { SnackbarHost(snackbarHostState) },
         topBar = { 
             TopHeader(
                 onProfileClick = onProfileClick
@@ -104,7 +121,7 @@ fun MainScreen(
                                 horizontalAlignment = Alignment.CenterHorizontally
                             ) {
                                 Text(
-                                    text = "Error al cargar datos: ${uiState.error}",
+                                    text = "Error de red: ${uiState.error}",
                                     color = MaterialTheme.colorScheme.onErrorContainer,
                                     fontSize = 14.sp
                                 )

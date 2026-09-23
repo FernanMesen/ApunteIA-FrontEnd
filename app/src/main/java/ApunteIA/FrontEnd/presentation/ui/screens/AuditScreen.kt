@@ -39,11 +39,26 @@ fun AuditScreen(
     val selectedCategory by viewModel.selectedCategory.collectAsState()
     val summary by viewModel.summary.collectAsState()
     val filteredTopics by viewModel.filteredTopics.collectAsState()
+    val snackbarHostState = remember { SnackbarHostState() }
+
+    LaunchedEffect(uiState.error) {
+        uiState.error?.let { errorMessage ->
+            val result = snackbarHostState.showSnackbar(
+                message = errorMessage,
+                actionLabel = "Reintentar",
+                duration = SnackbarDuration.Indefinite
+            )
+            if (result == SnackbarResult.ActionPerformed) {
+                viewModel.refresh()
+            }
+        }
+    }
 
     MainLayout(
         currentRoute = "Auditoría",
         onInicio = onInicio, onNotas = onNotas, onAuditoria = onAuditoria, onReforzar = onReforzar,
         onCameraClick = onCameraClick,
+        snackbarHost = { SnackbarHost(snackbarHostState) },
         topBar = { 
             TopHeader(
                 onProfileClick = onProfileClick

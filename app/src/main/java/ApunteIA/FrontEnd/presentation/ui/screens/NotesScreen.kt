@@ -41,6 +41,20 @@ fun NotesScreen(
     val selectedCategory by viewModel.selectedCategory.collectAsState()
     val searchQuery by viewModel.searchQuery.collectAsState()
     val filteredNotes by viewModel.filteredNotes.collectAsState()
+    val snackbarHostState = remember { SnackbarHostState() }
+
+    LaunchedEffect(uiState.error) {
+        uiState.error?.let { errorMessage ->
+            val result = snackbarHostState.showSnackbar(
+                message = errorMessage,
+                actionLabel = "Reintentar",
+                duration = SnackbarDuration.Indefinite
+            )
+            if (result == SnackbarResult.ActionPerformed) {
+                viewModel.refresh()
+            }
+        }
+    }
 
     MainLayout(
         currentRoute = "Notas",
@@ -49,6 +63,7 @@ fun NotesScreen(
         onAuditoria = onAuditoria,
         onReforzar = onReforzar,
         onCameraClick = onCameraClick,
+        snackbarHost = { SnackbarHost(snackbarHostState) },
         topBar = { 
             TopHeader(
                 onProfileClick = onProfileClick
