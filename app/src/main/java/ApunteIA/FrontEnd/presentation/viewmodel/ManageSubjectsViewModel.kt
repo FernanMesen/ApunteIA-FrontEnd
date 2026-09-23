@@ -32,25 +32,19 @@ class ManageSubjectsViewModel @Inject constructor(
 
     fun loadCourses() {
         viewModelScope.launch {
-
             _uiState.value = _uiState.value.copy(
                 isLoading = true,
                 error = null
             )
 
             when (val resource = getTopicsUseCase()) {
-
                 is Resource.Success -> {
-
                     val grouped = resource.data.groupBy { it.className }
 
                     val courseList = grouped.map { (className, classTopics) ->
-
-                        val avgProgress =
-                            classTopics
-                                .map { it.progress }
-                                .average()
-                                .toInt()
+                        val avgProgress = if (classTopics.isNotEmpty()) {
+                            classTopics.map { it.progress }.average().toInt()
+                        } else 0
 
                         val professor = when (className) {
                             "Química Orgánica" -> "Dr. Alan Reyes"
@@ -85,7 +79,6 @@ class ManageSubjectsViewModel @Inject constructor(
                 }
 
                 is Resource.Error -> {
-
                     _uiState.value = _uiState.value.copy(
                         isLoading = false,
                         error = resource.message
@@ -93,12 +86,15 @@ class ManageSubjectsViewModel @Inject constructor(
                 }
 
                 is Resource.Loading -> {
-
                     _uiState.value = _uiState.value.copy(
                         isLoading = true
                     )
                 }
             }
         }
+    }
+
+    fun refresh() {
+        loadCourses()
     }
 }

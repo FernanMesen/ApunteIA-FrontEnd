@@ -14,10 +14,18 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
+data class QuizUiState(
+    val isLoading: Boolean = false,
+    val error: String? = null
+)
+
 @HiltViewModel
 class QuizViewModel @Inject constructor(
     private val getQuizUseCase: GetQuizUseCase
 ) : ViewModel() {
+
+    private val _uiState = MutableStateFlow(QuizUiState())
+    val uiState: StateFlow<QuizUiState> = _uiState.asStateFlow()
 
     private val _questions = MutableStateFlow<List<Question>>(emptyList())
     val questions: StateFlow<List<Question>> = _questions.asStateFlow()
@@ -41,25 +49,34 @@ class QuizViewModel @Inject constructor(
         loadQuestions()
     }
 
-    private fun loadQuestions() {
+    fun loadQuestions() {
         viewModelScope.launch {
+            _uiState.value = _uiState.value.copy(isLoading = true, error = null)
             when (val result = getQuizUseCase()) {
                 is Resource.Success -> {
                     val questionsList = result.data
                     _questions.value = questionsList
                     _userAnswers.clear()
                     repeat(questionsList.size) { _userAnswers.add(null) }
+                    _uiState.value = QuizUiState(isLoading = false, error = null)
                 }
                 is Resource.Error -> {
                     _questions.value = emptyList()
+                    _uiState.value = QuizUiState(isLoading = false, error = result.message)
                 }
-                is Resource.Loading -> { }
+                is Resource.Loading -> {
+                    _uiState.value = _uiState.value.copy(isLoading = true)
+                }
             }
         }
     }
 
+    fun refresh() {
+        loadQuestions()
+    }
+
     fun onOptionSelected(index: Int) {
-        if (!_isAnswered.value) {
+        if (!_isAnswered.value && _questions.value.isNotEmpty()) {
             val currentQuestion = _questions.value[_currentQuestionIndex.value]
             _selectedOptionIndex.value = index
             _isAnswered.value = true

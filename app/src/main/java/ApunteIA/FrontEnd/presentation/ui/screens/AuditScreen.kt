@@ -4,8 +4,9 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
-import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Text
+import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material3.*
+import androidx.compose.material3.pulltorefresh.PullToRefreshBox
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -20,8 +21,8 @@ import ApunteIA.FrontEnd.presentation.ui.components.TopHeader
 import ApunteIA.FrontEnd.presentation.ui.layout.MainLayout
 import ApunteIA.FrontEnd.presentation.ui.theme.TextGray
 import ApunteIA.FrontEnd.presentation.viewmodel.AuditViewModel
-import ApunteIA.FrontEnd.presentation.viewmodel.NotificationViewModel
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun AuditScreen(
     onInicio: () -> Unit = {},
@@ -33,6 +34,7 @@ fun AuditScreen(
     onProfileClick: () -> Unit = {},
     viewModel: AuditViewModel = hiltViewModel()
 ) {
+    val uiState by viewModel.uiState.collectAsState()
     val categories by viewModel.categories.collectAsState()
     val selectedCategory by viewModel.selectedCategory.collectAsState()
     val summary by viewModel.summary.collectAsState()
@@ -48,40 +50,98 @@ fun AuditScreen(
             ) 
         }
     ) { paddingValues ->
-        LazyColumn(
-            modifier = Modifier.fillMaxSize().padding(paddingValues).padding(horizontal = 20.dp),
-            verticalArrangement = Arrangement.spacedBy(16.dp)
+        PullToRefreshBox(
+            isRefreshing = uiState.isLoading,
+            onRefresh = { viewModel.refresh() },
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(paddingValues)
         ) {
-            item {
-                Spacer(modifier = Modifier.height(24.dp))
-                Text(text = "Auditoría", fontSize = 32.sp, fontWeight = FontWeight.Bold, color = MaterialTheme.colorScheme.onBackground)
-                Text(text = "Comparado con el programa de tu curso", fontSize = 14.sp, color = TextGray)
-            }
-            item {
-                LazyRow(horizontalArrangement = Arrangement.spacedBy(8.dp), modifier = Modifier.fillMaxWidth()) {
-                    items(categories) { category ->
-                        FilterChip(
-                            text = category,
-                            isSelected = selectedCategory == category,
-                            onClick = { viewModel.onCategorySelected(category) }
-                        )
-                    }
-                }
-            }
-            item { AuditSummaryCard(summary = summary) }
-
-            if (filteredTopics.isEmpty()) {
+            LazyColumn(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .padding(horizontal = 20.dp),
+                verticalArrangement = Arrangement.spacedBy(16.dp)
+            ) {
                 item {
-                    Box(modifier = Modifier.fillMaxWidth().padding(top = 40.dp), contentAlignment = Alignment.Center) {
-                        Text("No hay temas para esta categoría", color = TextGray)
+                    Spacer(modifier = Modifier.height(24.dp))
+                    Text(text = "Auditoría", fontSize = 32.sp, fontWeight = FontWeight.Bold, color = MaterialTheme.colorScheme.onBackground)
+                    Text(text = "Comparado con el programa de tu curso", fontSize = 14.sp, color = TextGray)
+                }
+
+                if (uiState.isLoading && uiState.topics.isEmpty()) {
+                    item {
+                        Box(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .padding(top = 40.dp),
+                            contentAlignment = Alignment.Center
+                        ) {
+                            CircularProgressIndicator()
+                        }
                     }
                 }
-            } else {
-                items(filteredTopics) { topic ->
-                    TopicCard(topic = topic, onPracticeClick = { onPracticeClick(topic.title) })
+
+                if (uiState.error != null) {
+                    item {
+                        Card(
+                            modifier = Modifier.fillMaxWidth(),
+                            colors = CardDefaults.cardColors(
+                                containerColor = MaterialTheme.colorScheme.errorContainer
+                            ),
+                            shape = RoundedCornerShape(16.dp)
+                        ) {
+                            Column(
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .padding(16.dp),
+                                horizontalAlignment = Alignment.CenterHorizontally
+                            ) {
+                                Text(
+                                    text = "Error al cargar auditoría: ${uiState.error}",
+                                    color = MaterialTheme.colorScheme.onErrorContainer,
+                                    fontSize = 14.sp
+                                )
+                                Spacer(modifier = Modifier.height(8.dp))
+                                Button(
+                                    onClick = { viewModel.loadTopics() },
+                                    colors = ButtonDefaults.buttonColors(
+                                        containerColor = MaterialTheme.colorScheme.error
+                                    )
+                                ) {
+                                    Text("Reintentar")
+                                }
+                            }
+                        }
+                    }
                 }
+
+                item {
+                    LazyRow(horizontalArrangement = Arrangement.spacedBy(8.dp), modifier = Modifier.fillMaxWidth()) {
+                        items(categories) { category ->
+                            FilterChip(
+                                text = category,
+                                isSelected = selectedCategory == category,
+                                onClick = { viewModel.onCategorySelected(category) }
+                            )
+                        }
+                    }
+                }
+                item { AuditSummaryCard(summary = summary) }
+
+                if (!uiState.isLoading && filteredTopics.isEmpty() && uiState.error == null) {
+                    item {
+                        Box(modifier = Modifier.fillMaxWidth().padding(top = 40.dp), contentAlignment = Alignment.Center) {
+                            Text("No hay temas para esta categoría", color = TextGray)
+                        }
+                    }
+                } else {
+                    items(filteredTopics) { topic ->
+                        TopicCard(topic = topic, onPracticeClick = { onPracticeClick(topic.title) })
+                    }
+                }
+                item { Spacer(modifier = Modifier.height(80.dp)) }
             }
-            item { Spacer(modifier = Modifier.height(80.dp)) }
         }
     }
 }

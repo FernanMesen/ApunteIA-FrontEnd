@@ -10,6 +10,7 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.KeyboardArrowLeft
 import androidx.compose.material3.*
+import androidx.compose.material3.pulltorefresh.PullToRefreshBox
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -23,6 +24,7 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import ApunteIA.FrontEnd.presentation.ui.theme.SpaceCadet
 import ApunteIA.FrontEnd.presentation.viewmodel.JoinSubjectViewModel
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun JoinSubjectScreen(
     onBack: () -> Unit,
@@ -30,7 +32,7 @@ fun JoinSubjectScreen(
     viewModel: JoinSubjectViewModel = hiltViewModel()
 ) {
     var courseCode by remember { mutableStateOf("") }
-    val availableCourses by viewModel.availableCourses.collectAsState()
+    val uiState by viewModel.uiState.collectAsState()
     val isDark = MaterialTheme.colorScheme.primary == SpaceCadet
 
     Scaffold(
@@ -39,56 +41,126 @@ fun JoinSubjectScreen(
             JoinSubjectTopBar(onBack = onBack)
         }
     ) { paddingValues ->
-        LazyColumn(
+        PullToRefreshBox(
+            isRefreshing = uiState.isLoading,
+            onRefresh = { viewModel.refreshAvailableCourses() },
             modifier = Modifier
                 .fillMaxSize()
                 .padding(paddingValues)
-                .padding(horizontal = 24.dp),
-            verticalArrangement = Arrangement.spacedBy(24.dp)
         ) {
-            item {
-                CodeJoinCard(
-                    value = courseCode,
-                    onValueChange = { courseCode = it },
-                    onJoin = {
-                        viewModel.joinByCode(courseCode)
-                        onJoinSuccess()
+            LazyColumn(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .padding(horizontal = 24.dp),
+                verticalArrangement = Arrangement.spacedBy(24.dp)
+            ) {
+                item {
+                    CodeJoinCard(
+                        value = courseCode,
+                        onValueChange = { courseCode = it },
+                        isJoining = uiState.isJoining,
+                        onJoin = {
+                            viewModel.joinByCode(courseCode, onJoinSuccess)
+                        }
+                    )
+                }
+
+                if (uiState.error != null) {
+                    item {
+                        Card(
+                            modifier = Modifier.fillMaxWidth(),
+                            colors = CardDefaults.cardColors(
+                                containerColor = MaterialTheme.colorScheme.errorContainer
+                            ),
+                            shape = RoundedCornerShape(16.dp)
+                        ) {
+                            Column(
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .padding(16.dp),
+                                horizontalAlignment = Alignment.CenterHorizontally
+                            ) {
+                                Text(
+                                    text = uiState.error.orEmpty(),
+                                    color = MaterialTheme.colorScheme.onErrorContainer,
+                                    fontSize = 14.sp
+                                )
+                                Spacer(modifier = Modifier.height(8.dp))
+                                Button(
+                                    onClick = { viewModel.refreshAvailableCourses() },
+                                    colors = ButtonDefaults.buttonColors(
+                                        containerColor = MaterialTheme.colorScheme.error
+                                    )
+                                ) {
+                                    Text("Reintentar")
+                                }
+                            }
+                        }
                     }
-                )
-            }
+                }
 
-            item {
-                Text(
-                    text = "CURSOS DISPONIBLES",
-                    fontSize = 13.sp,
-                    fontWeight = FontWeight.Bold,
-                    color = MaterialTheme.colorScheme.onSurfaceVariant,
-                    modifier = Modifier.padding(start = 4.dp)
-                )
-            }
+                item {
+                    Text(
+                        text = "CURSOS DISPONIBLES",
+                        fontSize = 13.sp,
+                        fontWeight = FontWeight.Bold,
+                        color = MaterialTheme.colorScheme.onSurfaceVariant,
+                        modifier = Modifier.padding(start = 4.dp)
+                    )
+                }
 
-            items(availableCourses) { course ->
-                AvailableCourseCard(
-                    course = course, 
-                    onJoin = {
-                        viewModel.joinCourse(course)
-                        onJoinSuccess()
+                if (uiState.isLoading && uiState.availableCourses.isEmpty()) {
+                    item {
+                        Box(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .padding(vertical = 32.dp),
+                            contentAlignment = Alignment.Center
+                        ) {
+                            CircularProgressIndicator()
+                        }
                     }
-                )
-            }
+                } else if (uiState.availableCourses.isEmpty()) {
+                    item {
+                        Box(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .padding(vertical = 32.dp),
+                            contentAlignment = Alignment.Center
+                        ) {
+                            Text(
+                                "Ya estás inscrito en todos los cursos disponibles.",
+                                fontSize = 14.sp,
+                                color = MaterialTheme.colorScheme.onSurfaceVariant,
+                                textAlign = TextAlign.Center
+                            )
+                        }
+                    }
+                } else {
+                    items(uiState.availableCourses) { course ->
+                        AvailableCourseCard(
+                            course = course, 
+                            isJoining = uiState.isJoining,
+                            onJoin = {
+                                viewModel.joinCourse(course, onJoinSuccess)
+                            }
+                        )
+                    }
+                }
 
-            item {
-                Text(
-                    text = "Los cursos los crea tu administrador. Únete a uno para empezar a estudiar.",
-                    fontSize = 13.sp,
-                    color = MaterialTheme.colorScheme.onSurfaceVariant,
-                    textAlign = TextAlign.Center,
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(horizontal = 20.dp, vertical = 8.dp),
-                    lineHeight = 18.sp
-                )
-                Spacer(modifier = Modifier.height(32.dp))
+                item {
+                    Text(
+                        text = "Los cursos los crea tu administrador. Únete a uno para empezar a estudiar.",
+                        fontSize = 13.sp,
+                        color = MaterialTheme.colorScheme.onSurfaceVariant,
+                        textAlign = TextAlign.Center,
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(horizontal = 20.dp, vertical = 8.dp),
+                        lineHeight = 18.sp
+                    )
+                    Spacer(modifier = Modifier.height(32.dp))
+                }
             }
         }
     }
@@ -138,7 +210,12 @@ fun JoinSubjectTopBar(onBack: () -> Unit) {
 }
 
 @Composable
-fun CodeJoinCard(value: String, onValueChange: (String) -> Unit, onJoin: () -> Unit) {
+fun CodeJoinCard(
+    value: String, 
+    onValueChange: (String) -> Unit, 
+    isJoining: Boolean = false,
+    onJoin: () -> Unit
+) {
     val isDark = MaterialTheme.colorScheme.primary == SpaceCadet
     
     Card(
@@ -176,20 +253,33 @@ fun CodeJoinCard(value: String, onValueChange: (String) -> Unit, onJoin: () -> U
             
             Button(
                 onClick = onJoin,
+                enabled = !isJoining && value.isNotBlank(),
                 modifier = Modifier.height(52.dp),
                 shape = RoundedCornerShape(12.dp),
                 colors = ButtonDefaults.buttonColors(
                     containerColor = if (isDark) Color(0xFF5D7B92) else MaterialTheme.colorScheme.primary
                 )
             ) {
-                Text("Unirse", fontWeight = FontWeight.Bold)
+                if (isJoining) {
+                    CircularProgressIndicator(
+                        modifier = Modifier.size(18.dp),
+                        color = Color.White,
+                        strokeWidth = 2.dp
+                    )
+                } else {
+                    Text("Unirse", fontWeight = FontWeight.Bold)
+                }
             }
         }
     }
 }
 
 @Composable
-fun AvailableCourseCard(course: AvailableCourse, onJoin: () -> Unit) {
+fun AvailableCourseCard(
+    course: AvailableCourse, 
+    isJoining: Boolean = false,
+    onJoin: () -> Unit
+) {
     val isDark = MaterialTheme.colorScheme.primary == SpaceCadet
     
     Card(
@@ -211,7 +301,7 @@ fun AvailableCourseCard(course: AvailableCourse, onJoin: () -> Unit) {
                     contentAlignment = Alignment.Center
                 ) {
                     Text(
-                        text = course.name.first().toString(),
+                        text = course.name.firstOrNull()?.toString() ?: "?",
                         color = Color.White,
                         fontSize = 20.sp,
                         fontWeight = FontWeight.Bold
@@ -246,6 +336,7 @@ fun AvailableCourseCard(course: AvailableCourse, onJoin: () -> Unit) {
             
             Button(
                 onClick = onJoin,
+                enabled = !isJoining,
                 modifier = Modifier
                     .fillMaxWidth()
                     .height(48.dp),
@@ -255,7 +346,15 @@ fun AvailableCourseCard(course: AvailableCourse, onJoin: () -> Unit) {
                     contentColor = Color.White
                 )
             ) {
-                Text("Unirme al curso", fontWeight = FontWeight.Bold)
+                if (isJoining) {
+                    CircularProgressIndicator(
+                        modifier = Modifier.size(18.dp),
+                        color = Color.White,
+                        strokeWidth = 2.dp
+                    )
+                } else {
+                    Text("Unirme al curso", fontWeight = FontWeight.Bold)
+                }
             }
         }
     }

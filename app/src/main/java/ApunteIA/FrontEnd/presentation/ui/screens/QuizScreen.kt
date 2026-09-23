@@ -31,6 +31,7 @@ fun QuizScreen(
     onNavigateToMain: () -> Unit,
     onScanMore: () -> Unit
 ) {
+    val uiState by viewModel.uiState.collectAsState()
     val questions by viewModel.questions.collectAsState()
     val currentQuestionIndex by viewModel.currentQuestionIndex.collectAsState()
     val selectedOptionIndex by viewModel.selectedOptionIndex.collectAsState()
@@ -38,10 +39,68 @@ fun QuizScreen(
     val showResults by viewModel.showResults.collectAsState()
     val userAnswers = viewModel.userAnswers
     
-    // Detectamos modo oscuro de forma más robusta
     val isDark = MaterialTheme.colorScheme.background != BackgroundBeige
 
-    if (showResults) {
+    if (uiState.isLoading) {
+        Box(
+            modifier = Modifier
+                .fillMaxSize()
+                .background(MaterialTheme.colorScheme.background),
+            contentAlignment = Alignment.Center
+        ) {
+            Column(horizontalAlignment = Alignment.CenterHorizontally) {
+                CircularProgressIndicator()
+                Spacer(modifier = Modifier.height(16.dp))
+                Text(
+                    "Generando cuestionario con IA...",
+                    color = MaterialTheme.colorScheme.onSurfaceVariant
+                )
+            }
+        }
+    } else if (uiState.error != null) {
+        Box(
+            modifier = Modifier
+                .fillMaxSize()
+                .background(MaterialTheme.colorScheme.background)
+                .padding(24.dp),
+            contentAlignment = Alignment.Center
+        ) {
+            Card(
+                modifier = Modifier.fillMaxWidth(),
+                colors = CardDefaults.cardColors(
+                    containerColor = MaterialTheme.colorScheme.errorContainer
+                ),
+                shape = RoundedCornerShape(16.dp)
+            ) {
+                Column(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(20.dp),
+                    horizontalAlignment = Alignment.CenterHorizontally
+                ) {
+                    Text(
+                        text = "Error al cargar el cuestionario: ${uiState.error}",
+                        color = MaterialTheme.colorScheme.onErrorContainer,
+                        fontSize = 15.sp
+                    )
+                    Spacer(modifier = Modifier.height(16.dp))
+                    Row(horizontalArrangement = Arrangement.spacedBy(12.dp)) {
+                        OutlinedButton(onClick = onClose) {
+                            Text("Cerrar")
+                        }
+                        Button(
+                            onClick = { viewModel.refresh() },
+                            colors = ButtonDefaults.buttonColors(
+                                containerColor = MaterialTheme.colorScheme.error
+                            )
+                        ) {
+                            Text("Reintentar")
+                        }
+                    }
+                }
+            }
+        }
+    } else if (showResults) {
         ResultsScreen(
             questions = questions,
             userAnswers = userAnswers.filterNotNull(),
@@ -181,7 +240,7 @@ fun ResultsScreen(
 ) {
     val correctCount = userAnswers.count { it.isCorrect }
     val incorrectCount = questions.size - correctCount
-    val score = (correctCount.toFloat() / questions.size * 100).toInt()
+    val score = if (questions.isNotEmpty()) (correctCount.toFloat() / questions.size * 100).toInt() else 0
 
     Scaffold(
         containerColor = MaterialTheme.colorScheme.background,

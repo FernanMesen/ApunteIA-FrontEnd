@@ -91,6 +91,10 @@ class NotesViewModel @Inject constructor(
         }
     }
 
+    fun refresh() {
+        loadNotes()
+    }
+
     fun onSearchQueryChange(query: String) {
         _searchQuery.value = query
     }

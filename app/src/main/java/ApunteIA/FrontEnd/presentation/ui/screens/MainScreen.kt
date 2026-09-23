@@ -10,6 +10,7 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.*
 import androidx.compose.material3.*
+import androidx.compose.material3.pulltorefresh.PullToRefreshBox
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
@@ -27,7 +28,6 @@ import ApunteIA.FrontEnd.presentation.ui.theme.*
 import ApunteIA.FrontEnd.presentation.ui.layout.MainLayout
 import ApunteIA.FrontEnd.presentation.ui.components.TopHeader
 import ApunteIA.FrontEnd.presentation.viewmodel.MainViewModel
-import ApunteIA.FrontEnd.presentation.viewmodel.NotificationViewModel
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -40,8 +40,7 @@ fun MainScreen(
     onCameraClick: () -> Unit = {},
     onProfileClick: () -> Unit = {}
 ) {
-    val userStats by viewModel.userStats.collectAsState()
-    val recentActivity by viewModel.recentActivity.collectAsState()
+    val uiState by viewModel.uiState.collectAsState()
 
     MainLayout(
         currentRoute = "Inicio",
@@ -56,44 +55,98 @@ fun MainScreen(
             ) 
         }
     ) { paddingValues ->
-        LazyColumn(
+        PullToRefreshBox(
+            isRefreshing = uiState.isLoading,
+            onRefresh = { viewModel.refresh() },
             modifier = Modifier
                 .fillMaxSize()
                 .padding(paddingValues)
-                .padding(horizontal = 20.dp),
-            verticalArrangement = Arrangement.spacedBy(20.dp)
         ) {
-            item {
-                Spacer(modifier = Modifier.height(8.dp))
-                userStats?.let { 
-                    GreetingSection(it.userName, it.streakDays)
+            LazyColumn(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .padding(horizontal = 20.dp),
+                verticalArrangement = Arrangement.spacedBy(20.dp)
+            ) {
+                item {
+                    Spacer(modifier = Modifier.height(8.dp))
+                    uiState.userStats?.let { 
+                        GreetingSection(it.userName, it.streakDays)
+                    }
                 }
-            }
-            
-            item {
-                userStats?.let { stats ->
-                    StatsCard(
-                        progress = stats.progressPercent,
-                        notesCount = stats.notesCount,
-                        pendingTopics = stats.pendingTopicsCount,
-                        quizzesDone = stats.quizzesDoneCount
+
+                if (uiState.isLoading && uiState.userStats == null) {
+                    item {
+                        Box(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .padding(vertical = 40.dp),
+                            contentAlignment = Alignment.Center
+                        ) {
+                            CircularProgressIndicator()
+                        }
+                    }
+                }
+
+                if (uiState.error != null) {
+                    item {
+                        Card(
+                            modifier = Modifier.fillMaxWidth(),
+                            colors = CardDefaults.cardColors(
+                                containerColor = MaterialTheme.colorScheme.errorContainer
+                            ),
+                            shape = RoundedCornerShape(16.dp)
+                        ) {
+                            Column(
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .padding(16.dp),
+                                horizontalAlignment = Alignment.CenterHorizontally
+                            ) {
+                                Text(
+                                    text = "Error al cargar datos: ${uiState.error}",
+                                    color = MaterialTheme.colorScheme.onErrorContainer,
+                                    fontSize = 14.sp
+                                )
+                                Spacer(modifier = Modifier.height(8.dp))
+                                Button(
+                                    onClick = { viewModel.refresh() },
+                                    colors = ButtonDefaults.buttonColors(
+                                        containerColor = MaterialTheme.colorScheme.error
+                                    )
+                                ) {
+                                    Text("Reintentar")
+                                }
+                            }
+                        }
+                    }
+                }
+
+                item {
+                    uiState.userStats?.let { stats ->
+                        StatsCard(
+                            progress = stats.progressPercent,
+                            notesCount = stats.notesCount,
+                            pendingTopics = stats.pendingTopicsCount,
+                            quizzesDone = stats.quizzesDoneCount
+                        )
+                    }
+                }
+
+                item {
+                    CycleSection(
+                        onOrganizarClick = onNotas,
+                        onReforzarClick = onReforzar
                     )
                 }
-            }
-            
-            item {
-                CycleSection(
-                    onOrganizarClick = onNotas,
-                    onReforzarClick = onReforzar
-                )
-            }
-            
-            item {
-                RecentActivitySection(recentActivity)
-            }
-            
-            item {
-                Spacer(modifier = Modifier.height(80.dp)) // Extra space for FAB/Nav
+
+                item {
+                    RecentActivitySection(uiState.recentActivity)
+                }
+
+                item {
+                    Spacer(modifier = Modifier.height(80.dp))
+                }
             }
         }
     }

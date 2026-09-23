@@ -13,32 +13,69 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
+data class MainUiState(
+    val isLoading: Boolean = false,
+    val userStats: UserStats? = null,
+    val recentActivity: List<RecentActivity> = emptyList(),
+    val error: String? = null
+)
+
 @HiltViewModel
 class MainViewModel @Inject constructor(
     private val getMainDashboardUseCase: GetMainDashboardUseCase
 ) : ViewModel() {
 
-    private val _userStats = MutableStateFlow<UserStats?>(null)
-    val userStats: StateFlow<UserStats?> = _userStats.asStateFlow()
+    private val _uiState = MutableStateFlow(MainUiState())
+    val uiState: StateFlow<MainUiState> = _uiState.asStateFlow()
 
-    private val _recentActivity = MutableStateFlow<List<RecentActivity>>(emptyList())
-    val recentActivity: StateFlow<List<RecentActivity>> = _recentActivity.asStateFlow()
+    // Backwards compatibility for callers observing individual flows
+    val userStats: StateFlow<UserStats?> get() = MutableStateFlow(_uiState.value.userStats).asStateFlow()
+    val recentActivity: StateFlow<List<RecentActivity>> get() = MutableStateFlow(_uiState.value.recentActivity).asStateFlow()
 
     init {
         loadDashboard()
     }
 
-    private fun loadDashboard() {
+    fun loadDashboard() {
         viewModelScope.launch {
-            val statsResult = getMainDashboardUseCase.getUserStats()
-            if (statsResult is Resource.Success) {
-                _userStats.value = statsResult.data
-            }
+            _uiState.value = _uiState.value.copy(isLoading = true, error = null)
             
-            val activityResult = getMainDashboardUseCase.getRecentActivity()
-            if (activityResult is Resource.Success) {
-                _recentActivity.value = activityResult.data
+            var stats: UserStats? = _uiState.value.userStats
+            var activity: List<RecentActivity> = _uiState.value.recentActivity
+            var errorMessage: String? = null
+
+            when (val statsResult = getMainDashboardUseCase.getUserStats()) {
+                is Resource.Success -> {
+                    stats = statsResult.data
+                }
+                is Resource.Error -> {
+                    errorMessage = statsResult.message
+                }
+                is Resource.Loading -> { }
             }
+
+            when (val activityResult = getMainDashboardUseCase.getRecentActivity()) {
+                is Resource.Success -> {
+                    activity = activityResult.data
+                }
+                is Resource.Error -> {
+                    if (errorMessage == null) {
+                        errorMessage = activityResult.message
+                    }
+                }
+                is Resource.Loading -> { }
+            }
+
+            _uiState.value = MainUiState(
+                isLoading = false,
+                userStats = stats,
+                recentActivity = activity,
+                error = errorMessage
+            )
         }
+    }
+
+    fun refresh() {
+        loadDashboard()
     }
 }

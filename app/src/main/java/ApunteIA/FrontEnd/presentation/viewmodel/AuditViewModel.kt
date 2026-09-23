@@ -19,6 +19,12 @@ import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
+data class AuditUiState(
+    val isLoading: Boolean = false,
+    val topics: List<Topic> = emptyList(),
+    val error: String? = null
+)
+
 @HiltViewModel
 class AuditViewModel @Inject constructor(
     private val getTopicsUseCase: GetTopicsUseCase,
@@ -26,41 +32,58 @@ class AuditViewModel @Inject constructor(
     private val calculateAuditSummaryUseCase: CalculateAuditSummaryUseCase
 ) : ViewModel() {
 
-    private val _topics = MutableStateFlow<List<Topic>>(emptyList())
-    val topics: StateFlow<List<Topic>> = _topics.asStateFlow()
+    private val _uiState = MutableStateFlow(AuditUiState())
+    val uiState: StateFlow<AuditUiState> = _uiState.asStateFlow()
 
     private val _selectedCategory = MutableStateFlow(FilterTopicsUseCase.CATEGORY_ALL)
     val selectedCategory: StateFlow<String> = _selectedCategory.asStateFlow()
 
-    val categories: StateFlow<List<String>> = _topics
-        .map { topics -> listOf(FilterTopicsUseCase.CATEGORY_ALL) + topics.map { it.className }.distinct() }
+    val categories: StateFlow<List<String>> = _uiState
+        .map { state -> listOf(FilterTopicsUseCase.CATEGORY_ALL) + state.topics.map { it.className }.distinct() }
         .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5_000), listOf(FilterTopicsUseCase.CATEGORY_ALL))
 
-    val summary: StateFlow<AuditSummary> = _topics
-        .map { calculateAuditSummaryUseCase(it) }
+    val summary: StateFlow<AuditSummary> = _uiState
+        .map { calculateAuditSummaryUseCase(it.topics) }
         .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5_000), AuditSummary(0, 0, 0, 0))
 
     val filteredTopics: StateFlow<List<Topic>> = combine(
-        _topics,
+        _uiState,
         _selectedCategory
-    ) { topics, category ->
-        filterTopicsUseCase(topics, category)
+    ) { state, category ->
+        filterTopicsUseCase(state.topics, category)
     }.stateIn(viewModelScope, SharingStarted.WhileSubscribed(5_000), emptyList())
+
+    // Backwards compatibility for callers observing topic flow
+    val topics: StateFlow<List<Topic>> get() = MutableStateFlow(_uiState.value.topics).asStateFlow()
 
     init { loadTopics() }
 
-    private fun loadTopics() {
+    fun loadTopics() {
         viewModelScope.launch {
+            _uiState.value = _uiState.value.copy(isLoading = true, error = null)
             when (val result = getTopicsUseCase()) {
                 is Resource.Success -> {
-                    _topics.value = result.data
+                    _uiState.value = AuditUiState(
+                        isLoading = false,
+                        topics = result.data,
+                        error = null
+                    )
                 }
                 is Resource.Error -> {
-                    _topics.value = emptyList()
+                    _uiState.value = _uiState.value.copy(
+                        isLoading = false,
+                        error = result.message
+                    )
                 }
-                is Resource.Loading -> { }
+                is Resource.Loading -> {
+                    _uiState.value = _uiState.value.copy(isLoading = true)
+                }
             }
         }
+    }
+
+    fun refresh() {
+        loadTopics()
     }
 
     fun onCategorySelected(category: String) {

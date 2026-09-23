@@ -11,6 +11,7 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Close
 import androidx.compose.material.icons.filled.KeyboardArrowLeft
 import androidx.compose.material3.*
+import androidx.compose.material3.pulltorefresh.PullToRefreshBox
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -24,12 +25,13 @@ import ApunteIA.FrontEnd.domain.model.Notification
 import ApunteIA.FrontEnd.presentation.ui.theme.*
 import ApunteIA.FrontEnd.presentation.viewmodel.NotificationViewModel
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun NotificationsScreen(
     onBack: () -> Unit,
     viewModel: NotificationViewModel = hiltViewModel()
 ) {
-    val notifications by viewModel.notifications.collectAsState()
+    val uiState by viewModel.uiState.collectAsState()
 
     Scaffold(
         containerColor = MaterialTheme.colorScheme.background,
@@ -40,23 +42,93 @@ fun NotificationsScreen(
             )
         }
     ) { paddingValues ->
-        LazyColumn(
+        PullToRefreshBox(
+            isRefreshing = uiState.isLoading,
+            onRefresh = { viewModel.refresh() },
             modifier = Modifier
                 .fillMaxSize()
                 .padding(paddingValues)
-                .padding(horizontal = 24.dp),
-            verticalArrangement = Arrangement.spacedBy(16.dp)
         ) {
-            item { Spacer(modifier = Modifier.height(8.dp)) }
+            LazyColumn(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .padding(horizontal = 24.dp),
+                verticalArrangement = Arrangement.spacedBy(16.dp)
+            ) {
+                item { Spacer(modifier = Modifier.height(8.dp)) }
 
-            items(notifications) { notification ->
-                NotificationItem(
-                    notification = notification,
-                    onDelete = { viewModel.deleteNotification(notification.id) }
-                )
+                if (uiState.isLoading && uiState.notifications.isEmpty()) {
+                    item {
+                        Box(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .padding(top = 40.dp),
+                            contentAlignment = Alignment.Center
+                        ) {
+                            CircularProgressIndicator()
+                        }
+                    }
+                }
+
+                if (uiState.error != null) {
+                    item {
+                        Card(
+                            modifier = Modifier.fillMaxWidth(),
+                            colors = CardDefaults.cardColors(
+                                containerColor = MaterialTheme.colorScheme.errorContainer
+                            ),
+                            shape = RoundedCornerShape(16.dp)
+                        ) {
+                            Column(
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .padding(16.dp),
+                                horizontalAlignment = Alignment.CenterHorizontally
+                            ) {
+                                Text(
+                                    text = "Error al cargar notificaciones: ${uiState.error}",
+                                    color = MaterialTheme.colorScheme.onErrorContainer,
+                                    fontSize = 14.sp
+                                )
+                                Spacer(modifier = Modifier.height(8.dp))
+                                Button(
+                                    onClick = { viewModel.loadNotifications() },
+                                    colors = ButtonDefaults.buttonColors(
+                                        containerColor = MaterialTheme.colorScheme.error
+                                    )
+                                ) {
+                                    Text("Reintentar")
+                                }
+                            }
+                        }
+                    }
+                }
+
+                if (!uiState.isLoading && uiState.notifications.isEmpty() && uiState.error == null) {
+                    item {
+                        Box(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .padding(top = 40.dp),
+                            contentAlignment = Alignment.Center
+                        ) {
+                            Text(
+                                "No tienes notificaciones pendientes",
+                                color = MaterialTheme.colorScheme.onSurfaceVariant
+                            )
+                        }
+                    }
+                } else {
+                    items(uiState.notifications) { notification ->
+                        NotificationItem(
+                            notification = notification,
+                            onDelete = { viewModel.deleteNotification(notification.id) }
+                        )
+                    }
+                }
+
+                item { Spacer(modifier = Modifier.height(24.dp)) }
             }
-
-            item { Spacer(modifier = Modifier.height(24.dp)) }
         }
     }
 }

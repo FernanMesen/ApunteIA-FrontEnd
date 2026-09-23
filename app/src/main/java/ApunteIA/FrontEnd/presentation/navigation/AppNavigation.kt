@@ -4,16 +4,21 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
+import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.navigation
 import androidx.navigation.compose.rememberNavController
 import ApunteIA.FrontEnd.presentation.ui.screens.*
-
-import androidx.hilt.navigation.compose.hiltViewModel
+import ApunteIA.FrontEnd.presentation.viewmodel.AuditViewModel
+import ApunteIA.FrontEnd.presentation.viewmodel.JoinSubjectViewModel
+import ApunteIA.FrontEnd.presentation.viewmodel.LoginViewModel
 import ApunteIA.FrontEnd.presentation.viewmodel.MainViewModel
+import ApunteIA.FrontEnd.presentation.viewmodel.ManageSubjectsViewModel
+import ApunteIA.FrontEnd.presentation.viewmodel.NotesViewModel
 import ApunteIA.FrontEnd.presentation.viewmodel.QuizViewModel
 import ApunteIA.FrontEnd.presentation.viewmodel.ScanViewModel
+import ApunteIA.FrontEnd.presentation.viewmodel.StudyHistoryViewModel
 import ApunteIA.FrontEnd.presentation.viewmodel.ThemeViewModel
 
 @Composable
@@ -34,22 +39,17 @@ fun AppNavigation(
         // =========================
 
         composable(Routes.LOGIN) {
-
+            val loginViewModel: LoginViewModel = hiltViewModel()
             LoginScreen(
+                viewModel = loginViewModel,
                 onLogin = {
-
-                    // Usuario que YA tiene cuenta
                     navController.navigate(Routes.MAIN) {
-
                         popUpTo(Routes.LOGIN) {
                             inclusive = true
                         }
                     }
                 },
-
                 onRegister = {
-
-                    // Usuario nuevo
                     navController.navigate(Routes.REGISTER)
                 }
             )
@@ -61,15 +61,10 @@ fun AppNavigation(
         // =========================
 
         composable(Routes.REGISTER) {
-
             RegisterScreen(
                 onRegister = {
-
-                    // Después de crear la cuenta
-                    // empieza la configuración inicial
                     navController.navigate(Routes.PROFILE_SETUP)
                 },
-
                 onBackToLogin = {
                     navController.popBackStack()
                 }
@@ -82,7 +77,6 @@ fun AppNavigation(
         // =========================
 
         composable(Routes.PROFILE_SETUP) {
-
             ProfileSetupScreen(
                 onNext = {
                     navController.navigate(Routes.SUBJECTS)
@@ -96,12 +90,10 @@ fun AppNavigation(
         // =========================
 
         composable(Routes.SUBJECTS) {
-
             SubjectsScreen(
                 onBack = {
                     navController.popBackStack()
                 },
-
                 onNext = {
                     navController.navigate(Routes.STUDY_GOAL)
                 }
@@ -114,12 +106,10 @@ fun AppNavigation(
         // =========================
 
         composable(Routes.STUDY_GOAL) {
-
             StudyGoalScreen(
                 onBack = {
                     navController.popBackStack()
                 },
-
                 onNext = {
                     navController.navigate(Routes.LANGUAGE)
                 }
@@ -132,12 +122,10 @@ fun AppNavigation(
         // =========================
 
         composable(Routes.LANGUAGE) {
-
             LanguageScreen(
                 onBack = {
                     navController.popBackStack()
                 },
-
                 onNext = {
                     navController.navigate(Routes.PERMISSIONS)
                 }
@@ -150,18 +138,12 @@ fun AppNavigation(
         // =========================
 
         composable(Routes.PERMISSIONS) {
-
             PermissionsScreen(
                 onBack = {
                     navController.popBackStack()
                 },
-
                 onFinish = {
-
-                    // Termina onboarding
-                    // y entra a la aplicación
                     navController.navigate(Routes.MAIN) {
-
                         popUpTo(Routes.LOGIN) {
                             inclusive = true
                         }
@@ -179,9 +161,7 @@ fun AppNavigation(
             val mainViewModel: MainViewModel = hiltViewModel()
             MainScreen(
                 viewModel = mainViewModel,
-                onInicio = {
-
-                },
+                onInicio = { },
                 onNotas = {
                     navController.navigate(Routes.NOTES)
                 },
@@ -244,7 +224,9 @@ fun AppNavigation(
         // =========================
 
         composable(Routes.MANAGE_SUBJECTS) {
+            val manageSubjectsViewModel: ManageSubjectsViewModel = hiltViewModel()
             ManageSubjectsScreen(
+                viewModel = manageSubjectsViewModel,
                 onBack = {
                     navController.popBackStack()
                 },
@@ -255,7 +237,9 @@ fun AppNavigation(
         }
 
         composable(Routes.JOIN_SUBJECT) {
+            val joinSubjectViewModel: JoinSubjectViewModel = hiltViewModel()
             JoinSubjectScreen(
+                viewModel = joinSubjectViewModel,
                 onBack = {
                     navController.popBackStack()
                 },
@@ -266,7 +250,9 @@ fun AppNavigation(
         }
 
         composable(Routes.STUDY_HISTORY) {
+            val studyHistoryViewModel: StudyHistoryViewModel = hiltViewModel()
             StudyHistoryScreen(
+                viewModel = studyHistoryViewModel,
                 onBack = {
                     navController.popBackStack()
                 }
@@ -311,7 +297,9 @@ fun AppNavigation(
         // =========================
 
         composable(Routes.NOTES) {
+            val notesViewModel: NotesViewModel = hiltViewModel()
             NotesScreen(
+                viewModel = notesViewModel,
                 onInicio = {
                     navController.navigate(Routes.MAIN) {
                         popUpTo(Routes.LOGIN) { inclusive = true }
@@ -353,7 +341,9 @@ fun AppNavigation(
         // =========================
 
         composable(Routes.AUDITORIA) {
+            val auditViewModel: AuditViewModel = hiltViewModel()
             AuditScreen(
+                viewModel = auditViewModel,
                 onInicio = {
                     navController.navigate(Routes.MAIN) {
                         popUpTo(Routes.LOGIN) { inclusive = true }
@@ -410,9 +400,6 @@ fun AppNavigation(
         // =========================
         // ESCANEO (Nuevo escaneo -> Cámara -> Páginas -> Revisar nota)
         // =========================
-        // Las 4 pantallas comparten una misma instancia de ScanViewModel
-        // "escopada" a este grafo anidado, para no perder el estado del
-        // formulario/fotos al navegar entre pasos.
         navigation(startDestination = Routes.SCAN_NEW, route = Routes.SCAN_GRAPH) {
 
             composable(Routes.SCAN_NEW) { backStackEntry ->

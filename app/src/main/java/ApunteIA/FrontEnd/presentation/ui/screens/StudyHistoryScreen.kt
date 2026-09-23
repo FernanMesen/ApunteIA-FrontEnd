@@ -4,12 +4,12 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.KeyboardArrowLeft
 import androidx.compose.material3.*
+import androidx.compose.material3.pulltorefresh.PullToRefreshBox
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -25,14 +25,13 @@ import ApunteIA.FrontEnd.presentation.ui.theme.*
 import ApunteIA.FrontEnd.presentation.viewmodel.StudyHistoryViewModel
 import ApunteIA.FrontEnd.presentation.viewmodel.StudyStats
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun StudyHistoryScreen(
     onBack: () -> Unit,
     viewModel: StudyHistoryViewModel = hiltViewModel()
 ) {
-    val isWeekly by viewModel.isWeekly.collectAsState()
-    val stats by viewModel.stats.collectAsState()
-    val recentActivity by viewModel.recentActivity.collectAsState()
+    val uiState by viewModel.uiState.collectAsState()
 
     Scaffold(
         containerColor = MaterialTheme.colorScheme.background,
@@ -40,39 +39,83 @@ fun StudyHistoryScreen(
             StudyHistoryTopBar(onBack = onBack)
         }
     ) { paddingValues ->
-        LazyColumn(
+        PullToRefreshBox(
+            isRefreshing = uiState.isLoading,
+            onRefresh = { viewModel.refresh() },
             modifier = Modifier
                 .fillMaxSize()
                 .padding(paddingValues)
-                .padding(horizontal = 24.dp),
-            verticalArrangement = Arrangement.spacedBy(24.dp)
         ) {
-            item {
-                PeriodSelector(isWeekly = isWeekly, onPeriodSelected = { viewModel.setPeriod(it) })
-            }
+            LazyColumn(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .padding(horizontal = 24.dp),
+                verticalArrangement = Arrangement.spacedBy(24.dp)
+            ) {
+                item {
+                    PeriodSelector(
+                        isWeekly = uiState.isWeekly, 
+                        onPeriodSelected = { viewModel.setPeriod(it) }
+                    )
+                }
 
-            item {
-                StatsOverviewRow(stats = stats)
-            }
+                if (uiState.error != null) {
+                    item {
+                        Card(
+                            modifier = Modifier.fillMaxWidth(),
+                            colors = CardDefaults.cardColors(
+                                containerColor = MaterialTheme.colorScheme.errorContainer
+                            ),
+                            shape = RoundedCornerShape(16.dp)
+                        ) {
+                            Column(
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .padding(16.dp),
+                                horizontalAlignment = Alignment.CenterHorizontally
+                            ) {
+                                Text(
+                                    text = "Error al cargar historial: ${uiState.error}",
+                                    color = MaterialTheme.colorScheme.onErrorContainer,
+                                    fontSize = 14.sp
+                                )
+                                Spacer(modifier = Modifier.height(8.dp))
+                                Button(
+                                    onClick = { viewModel.loadHistory() },
+                                    colors = ButtonDefaults.buttonColors(
+                                        containerColor = MaterialTheme.colorScheme.error
+                                    )
+                                ) {
+                                    Text("Reintentar")
+                                }
+                            }
+                        }
+                    }
+                }
 
-            item {
-                WeeklyChartCard(progress = stats.weeklyProgress)
-            }
+                item {
+                    StatsOverviewRow(stats = uiState.stats)
+                }
 
-            item {
-                SubjectProgressSection()
-            }
+                item {
+                    WeeklyChartCard(progress = uiState.stats.weeklyProgress)
+                }
 
-            item {
-                SummaryCards(stats = stats)
-            }
+                item {
+                    SubjectProgressSection()
+                }
 
-            item {
-                RecentActivityHistory(activities = recentActivity)
-            }
-            
-            item {
-                Spacer(modifier = Modifier.height(32.dp))
+                item {
+                    SummaryCards(stats = uiState.stats)
+                }
+
+                item {
+                    RecentActivityHistory(activities = uiState.recentActivity)
+                }
+                
+                item {
+                    Spacer(modifier = Modifier.height(32.dp))
+                }
             }
         }
     }

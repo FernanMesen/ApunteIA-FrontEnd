@@ -11,6 +11,7 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.KeyboardArrowLeft
 import androidx.compose.material3.*
+import androidx.compose.material3.pulltorefresh.PullToRefreshBox
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -24,17 +25,14 @@ import ApunteIA.FrontEnd.domain.model.Course
 import ApunteIA.FrontEnd.presentation.ui.theme.*
 import ApunteIA.FrontEnd.presentation.viewmodel.ManageSubjectsViewModel
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun ManageSubjectsScreen(
     onBack: () -> Unit,
     onJoinCourse: () -> Unit = {},
     viewModel: ManageSubjectsViewModel = hiltViewModel()
 ) {
-    val courses by viewModel.courses.collectAsState()
-
-    LaunchedEffect(Unit) {
-        viewModel.loadCourses()
-    }
+    val uiState by viewModel.uiState.collectAsState()
 
     Scaffold(
         containerColor = MaterialTheme.colorScheme.background,
@@ -42,20 +40,90 @@ fun ManageSubjectsScreen(
             ManageSubjectsTopBar(onBack = onBack, onJoinCourse = onJoinCourse)
         }
     ) { paddingValues ->
-        LazyColumn(
+        PullToRefreshBox(
+            isRefreshing = uiState.isLoading,
+            onRefresh = { viewModel.refresh() },
             modifier = Modifier
                 .fillMaxSize()
                 .padding(paddingValues)
-                .padding(horizontal = 24.dp),
-            verticalArrangement = Arrangement.spacedBy(16.dp)
         ) {
-            item { Spacer(modifier = Modifier.height(8.dp)) }
-            
-            items(courses) { course ->
-                CourseCard(course)
+            LazyColumn(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .padding(horizontal = 24.dp),
+                verticalArrangement = Arrangement.spacedBy(16.dp)
+            ) {
+                item { Spacer(modifier = Modifier.height(8.dp)) }
+
+                if (uiState.isLoading && uiState.courses.isEmpty()) {
+                    item {
+                        Box(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .padding(top = 40.dp),
+                            contentAlignment = Alignment.Center
+                        ) {
+                            CircularProgressIndicator()
+                        }
+                    }
+                }
+
+                if (uiState.error != null) {
+                    item {
+                        Card(
+                            modifier = Modifier.fillMaxWidth(),
+                            colors = CardDefaults.cardColors(
+                                containerColor = MaterialTheme.colorScheme.errorContainer
+                            ),
+                            shape = RoundedCornerShape(16.dp)
+                        ) {
+                            Column(
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .padding(16.dp),
+                                horizontalAlignment = Alignment.CenterHorizontally
+                            ) {
+                                Text(
+                                    text = "Error al cargar materias: ${uiState.error}",
+                                    color = MaterialTheme.colorScheme.onErrorContainer,
+                                    fontSize = 14.sp
+                                )
+                                Spacer(modifier = Modifier.height(8.dp))
+                                Button(
+                                    onClick = { viewModel.loadCourses() },
+                                    colors = ButtonDefaults.buttonColors(
+                                        containerColor = MaterialTheme.colorScheme.error
+                                    )
+                                ) {
+                                    Text("Reintentar")
+                                }
+                            }
+                        }
+                    }
+                }
+
+                if (!uiState.isLoading && uiState.courses.isEmpty() && uiState.error == null) {
+                    item {
+                        Box(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .padding(top = 40.dp),
+                            contentAlignment = Alignment.Center
+                        ) {
+                            Text(
+                                "No tienes materias registradas",
+                                color = MaterialTheme.colorScheme.onSurfaceVariant
+                            )
+                        }
+                    }
+                } else {
+                    items(uiState.courses) { course ->
+                        CourseCard(course)
+                    }
+                }
+                
+                item { Spacer(modifier = Modifier.height(24.dp)) }
             }
-            
-            item { Spacer(modifier = Modifier.height(24.dp)) }
         }
     }
 }
@@ -146,7 +214,7 @@ fun CourseCard(course: Course) {
                 contentAlignment = Alignment.Center
             ) {
                 Text(
-                    text = course.name.first().toString(),
+                    text = course.name.firstOrNull()?.toString() ?: "?",
                     color = Color.White,
                     fontSize = 24.sp,
                     fontWeight = FontWeight.Bold

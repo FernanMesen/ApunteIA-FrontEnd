@@ -13,6 +13,13 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
+data class JoinSubjectUiState(
+    val isLoading: Boolean = false,
+    val availableCourses: List<AvailableCourse> = emptyList(),
+    val isJoining: Boolean = false,
+    val error: String? = null
+)
+
 @HiltViewModel
 class JoinSubjectViewModel @Inject constructor(
     private val getTopicsUseCase: GetTopicsUseCase,
@@ -27,43 +34,86 @@ class JoinSubjectViewModel @Inject constructor(
         AvailableCourse("Cálculo II", "Prof. Sam Kessler", "Fall 2026", "CAL-4040", "#C07B7B")
     )
 
-    private val _availableCourses = MutableStateFlow<List<AvailableCourse>>(emptyList())
-    val availableCourses: StateFlow<List<AvailableCourse>> = _availableCourses.asStateFlow()
+    private val _uiState = MutableStateFlow(JoinSubjectUiState())
+    val uiState: StateFlow<JoinSubjectUiState> = _uiState.asStateFlow()
+
+    // Backwards compatibility for callers observing availableCourses flow directly
+    val availableCourses: StateFlow<List<AvailableCourse>> get() = MutableStateFlow(_uiState.value.availableCourses).asStateFlow()
 
     init {
         refreshAvailableCourses()
     }
 
-    private fun refreshAvailableCourses() {
+    fun refreshAvailableCourses() {
         viewModelScope.launch {
+            _uiState.value = _uiState.value.copy(isLoading = true, error = null)
             when (val resource = getTopicsUseCase()) {
                 is Resource.Success -> {
                     val existingCourseNames = resource.data.map { topic -> topic.className }.distinct()
-                    _availableCourses.value = allCourses.filter { course -> course.name !in existingCourseNames }
+                    val filtered = allCourses.filter { course -> course.name !in existingCourseNames }
+                    _uiState.value = _uiState.value.copy(
+                        isLoading = false,
+                        availableCourses = filtered,
+                        error = null
+                    )
                 }
                 is Resource.Error -> {
-                    _availableCourses.value = allCourses
+                    _uiState.value = _uiState.value.copy(
+                        isLoading = false,
+                        availableCourses = allCourses,
+                        error = resource.message
+                    )
                 }
                 is Resource.Loading -> {
-                    // No-op: esta pantalla no muestra un estado de carga separado.
+                    _uiState.value = _uiState.value.copy(isLoading = true)
                 }
             }
         }
     }
 
-    fun joinCourse(course: AvailableCourse) {
+    fun refresh() {
+        refreshAvailableCourses()
+    }
+
+    fun joinCourse(course: AvailableCourse, onDone: () -> Unit = {}) {
         viewModelScope.launch {
-            addTopicUseCase(course.name)
-            refreshAvailableCourses()
+            _uiState.value = _uiState.value.copy(isJoining = true, error = null)
+            when (val result = addTopicUseCase(course.name)) {
+                is Resource.Success -> {
+                    _uiState.value = _uiState.value.copy(isJoining = false)
+                    refreshAvailableCourses()
+                    onDone()
+                }
+                is Resource.Error -> {
+                    _uiState.value = _uiState.value.copy(
+                        isJoining = false,
+                        error = result.message ?: "Error al unirse al curso"
+                    )
+                }
+                is Resource.Loading -> { }
+            }
         }
     }
 
-    fun joinByCode(code: String) {
+    fun joinByCode(code: String, onDone: () -> Unit = {}) {
         if (code.isNotBlank()) {
             val name = "Curso Nuevo ($code)"
             viewModelScope.launch {
-                addTopicUseCase(name)
-                refreshAvailableCourses()
+                _uiState.value = _uiState.value.copy(isJoining = true, error = null)
+                when (val result = addTopicUseCase(name)) {
+                    is Resource.Success -> {
+                        _uiState.value = _uiState.value.copy(isJoining = false)
+                        refreshAvailableCourses()
+                        onDone()
+                    }
+                    is Resource.Error -> {
+                        _uiState.value = _uiState.value.copy(
+                            isJoining = false,
+                            error = result.message ?: "Error al unirse con el código"
+                        )
+                    }
+                    is Resource.Loading -> { }
+                }
             }
         }
     }
