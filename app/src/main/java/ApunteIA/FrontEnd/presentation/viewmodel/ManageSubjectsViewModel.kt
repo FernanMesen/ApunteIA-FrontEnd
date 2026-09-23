@@ -12,13 +12,19 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
+data class CoursesUiState(
+    val isLoading: Boolean = false,
+    val courses: List<Course> = emptyList(),
+    val error: String? = null
+)
+
 @HiltViewModel
 class ManageSubjectsViewModel @Inject constructor(
     private val getTopicsUseCase: GetTopicsUseCase
 ) : ViewModel() {
 
-    private val _courses = MutableStateFlow<List<Course>>(emptyList())
-    val courses: StateFlow<List<Course>> = _courses.asStateFlow()
+    private val _uiState = MutableStateFlow(CoursesUiState())
+    val uiState: StateFlow<CoursesUiState> = _uiState.asStateFlow()
 
     init {
         loadCourses()
@@ -26,13 +32,26 @@ class ManageSubjectsViewModel @Inject constructor(
 
     fun loadCourses() {
         viewModelScope.launch {
-            when (val resource = getTopicsUseCase()) {
-                is Resource.Success -> {
-                    val grouped = resource.data.groupBy { it.className }
-                    val courseList = grouped.map { (className, classTopics) ->
-                        val avgProgress = classTopics.map { it.progress }.average().toInt()
 
-                        // Mapeo de datos extras (Profesor, Color, etc.) basado en el nombre de la clase
+            _uiState.value = _uiState.value.copy(
+                isLoading = true,
+                error = null
+            )
+
+            when (val resource = getTopicsUseCase()) {
+
+                is Resource.Success -> {
+
+                    val grouped = resource.data.groupBy { it.className }
+
+                    val courseList = grouped.map { (className, classTopics) ->
+
+                        val avgProgress =
+                            classTopics
+                                .map { it.progress }
+                                .average()
+                                .toInt()
+
                         val professor = when (className) {
                             "Química Orgánica" -> "Dr. Alan Reyes"
                             "Biología Celular" -> "Dr. Elena Vidal"
@@ -41,6 +60,7 @@ class ManageSubjectsViewModel @Inject constructor(
                         }
 
                         val term = "Fall 2026"
+
                         val colorHex = when (className) {
                             "Química Orgánica" -> "#0A3326"
                             "Biología Celular" -> "#006064"
@@ -48,15 +68,35 @@ class ManageSubjectsViewModel @Inject constructor(
                             else -> "#757575"
                         }
 
-                        Course(className, professor, term, avgProgress, colorHex)
+                        Course(
+                            name = className,
+                            professor = professor,
+                            term = term,
+                            progress = avgProgress,
+                            colorHex = colorHex
+                        )
                     }
-                    _courses.value = courseList
+
+                    _uiState.value = CoursesUiState(
+                        isLoading = false,
+                        courses = courseList,
+                        error = null
+                    )
                 }
+
                 is Resource.Error -> {
-                    _courses.value = emptyList()
+
+                    _uiState.value = _uiState.value.copy(
+                        isLoading = false,
+                        error = resource.message
+                    )
                 }
+
                 is Resource.Loading -> {
-                    // No-op: esta pantalla no muestra un estado de carga separado.
+
+                    _uiState.value = _uiState.value.copy(
+                        isLoading = true
+                    )
                 }
             }
         }
