@@ -3,19 +3,42 @@ package ApunteIA.FrontEnd.data.repository
 import ApunteIA.FrontEnd.data.datasource.AuthDataSource
 import ApunteIA.FrontEnd.data.mapper.toAuthError
 import ApunteIA.FrontEnd.data.mapper.toDomain
+import ApunteIA.FrontEnd.data.session.SessionStore
 import ApunteIA.FrontEnd.data.util.safeApiCall
 import ApunteIA.FrontEnd.domain.model.AuthSession
 import ApunteIA.FrontEnd.domain.repository.AuthRepository
 import ApunteIA.FrontEnd.domain.util.Resource
+import kotlinx.coroutines.flow.Flow
 import javax.inject.Inject
 
 class AuthRepositoryImpl @Inject constructor(
-    private val dataSource: AuthDataSource
+    private val dataSource: AuthDataSource,
+    private val sessionManager: SessionStore
 ) : AuthRepository {
 
     override suspend fun login(email: String, password: String): Resource<AuthSession> = safeApiCall(
         errorMapper = { it.toAuthError().toUserMessage() }
     ) {
-        dataSource.login(email, password).toDomain()
+        val session = dataSource.login(email.trim(), password).toDomain()
+        sessionManager.save(session)
+        session
+    }
+
+    override suspend fun register(fullName: String, email: String, password: String): Resource<AuthSession> =
+        safeApiCall(errorMapper = { it.toAuthError().toUserMessage() }) {
+            dataSource.register(fullName, email, password)
+            val session = dataSource.login(email, password).toDomain()
+            sessionManager.save(session)
+            session
+        }
+
+    override fun currentSession(): AuthSession? = sessionManager.currentSession()
+
+    override fun logout() = sessionManager.clear()
+
+    override val sessionExpired: Flow<Unit> get() = sessionManager.sessionExpired
+
+    override suspend fun warmUp() {
+        runCatching { dataSource.ping() }
     }
 }

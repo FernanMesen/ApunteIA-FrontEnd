@@ -18,3 +18,12 @@ captures/
 # OS generated files
 .DS_Store
 Thumbs.db
+
+# Firma de release (nunca subir a GitHub)
+keystore.properties
+*.jks
+*.keystore
+
+# APKs generados
+*.apk
+*.aab

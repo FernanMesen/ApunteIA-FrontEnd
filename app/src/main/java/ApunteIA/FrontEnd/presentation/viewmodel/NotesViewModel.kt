@@ -103,6 +103,5 @@ class NotesViewModel @Inject constructor(
         _selectedCategory.value = category
     }
 
-    fun noteByTitle(title: String): Note? =
-        _uiState.value.notes.firstOrNull { it.title == title }
+
 }

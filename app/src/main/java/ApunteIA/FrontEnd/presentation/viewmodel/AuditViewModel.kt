@@ -56,7 +56,6 @@ class AuditViewModel @Inject constructor(
     // Backwards compatibility for callers observing topic flow
     val topics: StateFlow<List<Topic>> get() = MutableStateFlow(_uiState.value.topics).asStateFlow()
 
-    init { loadTopics() }
 
     fun loadTopics() {
         viewModelScope.launch {

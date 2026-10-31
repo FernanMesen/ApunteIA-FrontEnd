@@ -7,9 +7,11 @@ object Routes {
     const val COURSES = "courses"
     const val NOTES = "notes"
     const val NOTE_DETAIL = "note_detail"
+    const val NOTE_DETAIL_PATTERN = "note_detail/{noteId}"
     const val AUDITORIA = "auditoria"
     const val REFORZAR = "reforzar"
     const val QUIZ = "quiz"
+    const val QUIZ_PATTERN = "quiz/{assessmentId}"
     const val PROFILE = "profile"
     const val MANAGE_SUBJECTS = "manage_subjects"
     const val STUDY_HISTORY = "study_history"
@@ -34,4 +36,7 @@ object Routes {
     const val SCAN_PAGES = "scan_pages"
     const val SCAN_PROCESSING = "scan_processing"
     const val SCAN_REVIEW = "scan_review"
+
+    fun noteDetail(noteId: Long) = "$NOTE_DETAIL/$noteId"
+    fun quiz(assessmentId: Long) = "$QUIZ/$assessmentId"
 }

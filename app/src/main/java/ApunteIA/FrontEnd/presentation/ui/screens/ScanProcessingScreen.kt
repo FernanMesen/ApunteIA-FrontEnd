@@ -41,9 +41,9 @@ fun ScanProcessingScreen(
 ) {
     val state by viewModel.uiState.collectAsState()
 
-    // Arranca el análisis apenas se entra a esta pantalla.
+    // Arranca el análisis apenas se entra a esta pantalla (no se repite al rotar).
     LaunchedEffect(Unit) {
-        viewModel.confirmAndProcess()
+        viewModel.startProcessingIfNeeded()
     }
 
     LaunchedEffect(state.processingDone) {
@@ -67,20 +67,14 @@ fun ScanProcessingScreen(
                     onCancel = onClose
                 )
             } else {
-                ProcessingChecklist(
-                    completedSteps = state.completedSteps,
-                    onSimulateError = { viewModel.simulateError(it) }
-                )
+                ProcessingChecklist(completedSteps = state.completedSteps)
             }
         }
     }
 }
 
 @Composable
-private fun ProcessingChecklist(
-    completedSteps: Int,
-    onSimulateError: (ProcessingError) -> Unit
-) {
+private fun ProcessingChecklist(completedSteps: Int) {
     Column(horizontalAlignment = Alignment.CenterHorizontally) {
         CircularProgressIndicator(color = DarkGreen, strokeWidth = 3.dp, modifier = Modifier.size(56.dp))
 
@@ -97,12 +91,12 @@ private fun ProcessingChecklist(
 
         Spacer(modifier = Modifier.height(48.dp))
 
-        Row(horizontalArrangement = Arrangement.spacedBy(24.dp)) {
-            SimulateLink("Simular: sin conexión") { onSimulateError(ProcessingError.NO_CONNECTION) }
-            SimulateLink("Simular: foto borrosa") { onSimulateError(ProcessingError.BLURRY_PHOTO) }
-        }
-        Spacer(modifier = Modifier.height(8.dp))
-        SimulateLink("Simular: archivo inválido") { onSimulateError(ProcessingError.INVALID_FILE) }
+        Text(
+            text = "La IA puede tardar hasta un minuto si el servidor estaba dormido.",
+            color = TextGray,
+            fontSize = 12.sp,
+            textAlign = TextAlign.Center
+        )
     }
 }
 
@@ -134,16 +128,6 @@ private fun StepRow(label: String, done: Boolean) {
             fontWeight = if (done) FontWeight.Medium else FontWeight.Normal
         )
     }
-}
-
-@Composable
-private fun SimulateLink(text: String, onClick: () -> Unit) {
-    Text(
-        text = text,
-        color = TextGray,
-        fontSize = 12.sp,
-        modifier = Modifier.clickable { onClick() }
-    )
 }
 
 @Composable

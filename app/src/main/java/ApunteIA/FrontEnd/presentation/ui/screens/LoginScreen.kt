@@ -21,6 +21,10 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.hilt.navigation.compose.hiltViewModel
+import android.widget.Toast
+import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.text.input.KeyboardType
+import androidx.compose.foundation.text.KeyboardOptions
 import ApunteIA.FrontEnd.presentation.ui.theme.SpaceCadet
 import ApunteIA.FrontEnd.presentation.viewmodel.LoginViewModel
 
@@ -34,6 +38,10 @@ fun LoginScreen(
     val primaryColor = MaterialTheme.colorScheme.primary
 
     val uiState by viewModel.uiState.collectAsState()
+    val context = LocalContext.current
+    val comingSoon = {
+        Toast.makeText(context, "Disponible próximamente", Toast.LENGTH_SHORT).show()
+    }
 
     var email by remember { mutableStateOf("") }
     var password by remember { mutableStateOf("") }
@@ -180,6 +188,7 @@ fun LoginScreen(
             onValueChange = {
                 email = it
             },
+            keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Email),
             placeholder = {
                 Text(
                     text = "Correo electrónico",
@@ -276,6 +285,16 @@ fun LoginScreen(
             }
         }
 
+        if (uiState.isLoading) {
+            Spacer(modifier = Modifier.height(10.dp))
+            Text(
+                text = "Conectando con el servidor… la primera vez puede tardar hasta 1 minuto.",
+                color = MaterialTheme.colorScheme.onSurfaceVariant,
+                fontSize = 12.sp,
+                modifier = Modifier.fillMaxWidth()
+            )
+        }
+
         Spacer(modifier = Modifier.height(24.dp))
 
         // Olvidó contraseña
@@ -285,9 +304,7 @@ fun LoginScreen(
             color = primaryColor,
             fontSize = 14.sp,
             textDecoration = TextDecoration.Underline,
-            modifier = Modifier.clickable {
-                // Se implementará después
-            }
+            modifier = Modifier.clickable { comingSoon() }
         )
 
         Spacer(modifier = Modifier.height(26.dp))
@@ -321,9 +338,7 @@ fun LoginScreen(
         // Botón Google
 
         OutlinedButton(
-            onClick = {
-                // Google login se implementará después
-            },
+            onClick = { comingSoon() },
             modifier = Modifier
                 .fillMaxWidth()
                 .height(60.dp),

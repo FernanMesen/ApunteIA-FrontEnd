@@ -38,10 +38,10 @@ fun QuizScreen(
     val isAnswered by viewModel.isAnswered.collectAsState()
     val showResults by viewModel.showResults.collectAsState()
     val userAnswers = viewModel.userAnswers
-    
+
     val isDark = MaterialTheme.colorScheme.background != BackgroundBeige
 
-    if (uiState.isLoading) {
+    if (uiState.isLoading || uiState.isSubmitting) {
         Box(
             modifier = Modifier
                 .fillMaxSize()
@@ -52,7 +52,7 @@ fun QuizScreen(
                 CircularProgressIndicator()
                 Spacer(modifier = Modifier.height(16.dp))
                 Text(
-                    "Generando cuestionario con IA...",
+                    if (uiState.isSubmitting) "Calificando tus respuestas..." else "Preparando el cuestionario...",
                     color = MaterialTheme.colorScheme.onSurfaceVariant
                 )
             }
@@ -79,7 +79,7 @@ fun QuizScreen(
                     horizontalAlignment = Alignment.CenterHorizontally
                 ) {
                     Text(
-                        text = "Error al cargar el cuestionario: ${uiState.error}",
+                        text = "No se pudo completar el cuestionario: ${uiState.error}",
                         color = MaterialTheme.colorScheme.onErrorContainer,
                         fontSize = 15.sp
                     )
@@ -107,10 +107,14 @@ fun QuizScreen(
             isDarkMode = isDark,
             onNavigateToMain = onNavigateToMain,
             onScanMore = onScanMore,
-            onRepeatIncorrects = { viewModel.repeatIncorrects() }
+            onRepeatIncorrects = if (uiState.canRepeat) ({ viewModel.repeatIncorrects() }) else null
         )
     } else if (questions.isNotEmpty()) {
-        val currentQuestion = questions[currentQuestionIndex]
+        val currentQuestion = questions[currentQuestionIndex.coerceIn(0, questions.lastIndex)]
+        // Durante la evaluación real el backend no revela la respuesta correcta (-1):
+        // se elige una opción y se califica al entregar.
+        val revealsAnswer = currentQuestion.correctAnswerIndex >= 0
+        val isLastQuestion = currentQuestionIndex >= questions.lastIndex
 
         Scaffold(
             containerColor = MaterialTheme.colorScheme.background,
@@ -131,8 +135,12 @@ fun QuizScreen(
                             contentPadding = PaddingValues(horizontal = 32.dp, vertical = 12.dp)
                         ) {
                             Text(
-                                "Siguiente", 
-                                color = MaterialTheme.colorScheme.onPrimary, 
+                                when {
+                                    isLastQuestion && !revealsAnswer -> "Entregar"
+                                    isLastQuestion -> "Ver resultados"
+                                    else -> "Siguiente"
+                                },
+                                color = MaterialTheme.colorScheme.onPrimary,
                                 fontWeight = FontWeight.Bold
                             )
                         }
@@ -159,8 +167,8 @@ fun QuizScreen(
                             .background(MaterialTheme.colorScheme.surfaceVariant)
                     ) {
                         Icon(
-                            Icons.Default.Close, 
-                            contentDescription = "Cerrar", 
+                            Icons.Default.Close,
+                            contentDescription = "Cerrar",
                             tint = MaterialTheme.colorScheme.primary
                         )
                     }
@@ -186,7 +194,16 @@ fun QuizScreen(
                     )
                 }
 
-                Spacer(modifier = Modifier.height(32.dp))
+                if (uiState.title.isNotBlank()) {
+                    Spacer(modifier = Modifier.height(16.dp))
+                    Text(
+                        text = uiState.title,
+                        fontSize = 13.sp,
+                        color = MaterialTheme.colorScheme.onSurfaceVariant
+                    )
+                }
+
+                Spacer(modifier = Modifier.height(24.dp))
 
                 // Question
                 Text(
@@ -203,19 +220,19 @@ fun QuizScreen(
                 currentQuestion.options.forEachIndexed { index, option ->
                     val isCorrect = index == currentQuestion.correctAnswerIndex
                     val isSelected = selectedOptionIndex == index
-                    
+
                     QuizOptionCard(
                         text = option,
                         isSelected = isSelected,
                         isCorrect = isCorrect,
-                        isAnswered = isAnswered,
+                        isAnswered = isAnswered && revealsAnswer,
                         isDark = isDark,
                         onClick = { viewModel.onOptionSelected(index) }
                     )
                     Spacer(modifier = Modifier.height(12.dp))
                 }
 
-                if (isAnswered) {
+                if (isAnswered && revealsAnswer && currentQuestion.explanation.isNotBlank()) {
                     Spacer(modifier = Modifier.height(16.dp))
                     Text(
                         text = currentQuestion.explanation,
@@ -236,7 +253,7 @@ fun ResultsScreen(
     isDarkMode: Boolean,
     onNavigateToMain: () -> Unit,
     onScanMore: () -> Unit,
-    onRepeatIncorrects: () -> Unit
+    onRepeatIncorrects: (() -> Unit)?
 ) {
     val correctCount = userAnswers.count { it.isCorrect }
     val incorrectCount = questions.size - correctCount
@@ -256,7 +273,7 @@ fun ResultsScreen(
                     horizontalArrangement = Arrangement.spacedBy(12.dp)
                 ) {
                     // Repeat Incorrects Button
-                    if (incorrectCount > 0) {
+                    if (incorrectCount > 0 && onRepeatIncorrects != null) {
                         Button(
                             onClick = onRepeatIncorrects,
                             modifier = Modifier.weight(1f),
@@ -274,7 +291,7 @@ fun ResultsScreen(
                             )
                         }
                     }
-                    
+
                     // Scan More Notes Button
                     Button(
                         onClick = onScanMore,
@@ -284,7 +301,7 @@ fun ResultsScreen(
                         ),
                         shape = RoundedCornerShape(24.dp),
                         border = androidx.compose.foundation.BorderStroke(
-                            1.dp, 
+                            1.dp,
                             MaterialTheme.colorScheme.onSurface.copy(alpha = 0.1f)
                         ),
                         contentPadding = PaddingValues(vertical = 12.dp)
@@ -297,9 +314,9 @@ fun ResultsScreen(
                         )
                     }
                 }
-                
+
                 Spacer(modifier = Modifier.height(16.dp))
-                
+
                 // Back to Start Button
                 Button(
                     onClick = onNavigateToMain,
@@ -316,7 +333,7 @@ fun ResultsScreen(
                         fontWeight = FontWeight.Bold
                     )
                 }
-                
+
                 Spacer(modifier = Modifier.height(8.dp))
             }
         }
@@ -338,7 +355,7 @@ fun ResultsScreen(
                     textAlign = androidx.compose.ui.text.style.TextAlign.Center
                 )
                 Spacer(modifier = Modifier.height(16.dp))
-                
+
                 // Score card
                 Surface(
                     modifier = Modifier.fillMaxWidth(),
@@ -368,7 +385,7 @@ fun ResultsScreen(
                         )
                     }
                 }
-                
+
                 Spacer(modifier = Modifier.height(32.dp))
                 Text(
                     text = "Revisión",
@@ -389,7 +406,7 @@ fun ResultsScreen(
                 )
                 Spacer(modifier = Modifier.height(16.dp))
             }
-            
+
             item {
                 Spacer(modifier = Modifier.height(20.dp))
             }
@@ -409,7 +426,7 @@ fun ReviewItem(
         shape = RoundedCornerShape(12.dp),
         color = MaterialTheme.colorScheme.surfaceVariant,
         border = androidx.compose.foundation.BorderStroke(
-            1.dp, 
+            1.dp,
             MaterialTheme.colorScheme.onSurface.copy(alpha = 0.1f)
         )
     ) {
@@ -428,11 +445,16 @@ fun ReviewItem(
                 )
             }
             Spacer(modifier = Modifier.height(12.dp))
-            
+
             question.options.forEachIndexed { optIndex, option ->
-                val isCorrect = optIndex == question.correctAnswerIndex
                 val isSelected = userAnswer?.selectedOptionIndex == optIndex
-                
+                // Si el backend no envió la opción correcta, solo se sabe si la elegida acertó.
+                val isCorrect = if (question.correctAnswerIndex >= 0) {
+                    optIndex == question.correctAnswerIndex
+                } else {
+                    isSelected && userAnswer?.isCorrect == true
+                }
+
                 Row(
                     modifier = Modifier
                         .fillMaxWidth()

@@ -24,6 +24,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import ApunteIA.FrontEnd.presentation.ui.theme.*
+import ApunteIA.FrontEnd.presentation.ui.components.LocalCurrentUser
 
 @Composable
 fun ProfileScreen(
@@ -36,7 +37,9 @@ fun ProfileScreen(
     onCameraAccess: () -> Unit = {},
     onPrivacy: () -> Unit = {},
     onExportData: () -> Unit = {},
-    onChangePassword: () -> Unit = {}
+    onChangePassword: () -> Unit = {},
+    notesCount: Int? = null,
+    quizzesCount: Int? = null
 ) {
     var showDeleteDialog by remember { mutableStateOf(false) }
     val isThemeDark = MaterialTheme.colorScheme.primary == SpaceCadet
@@ -82,7 +85,7 @@ fun ProfileScreen(
                     shape = RoundedCornerShape(12.dp)
                 ) {
                     Text(
-                        "Cancelar", 
+                        "Cancelar",
                         color = MaterialTheme.colorScheme.onSurface,
                         fontWeight = FontWeight.Bold
                     )
@@ -111,7 +114,7 @@ fun ProfileScreen(
             }
 
             item {
-                StatsSection()
+                StatsSection(notesCount = notesCount, quizzesCount = quizzesCount)
             }
 
             item {
@@ -170,7 +173,7 @@ fun ProfileTopBar(onBack: () -> Unit) {
                 tint = MaterialTheme.colorScheme.onBackground
             )
         }
-        
+
         Text(
             text = "Perfil",
             modifier = Modifier.weight(1f).padding(end = 40.dp),
@@ -184,6 +187,7 @@ fun ProfileTopBar(onBack: () -> Unit) {
 
 @Composable
 fun ProfileHeader() {
+    val user = LocalCurrentUser.current
     Column(
         horizontalAlignment = Alignment.CenterHorizontally,
         modifier = Modifier.fillMaxWidth()
@@ -196,24 +200,24 @@ fun ProfileHeader() {
             contentAlignment = Alignment.Center
         ) {
             Text(
-                text = "M",
+                text = user?.initial ?: "?",
                 color = MaterialTheme.colorScheme.onPrimary,
                 fontSize = 40.sp,
                 fontWeight = FontWeight.Bold
             )
         }
-        
+
         Spacer(modifier = Modifier.height(16.dp))
-        
+
         Text(
-            text = "Maya Torres",
+            text = user?.name ?: "Usuario",
             fontSize = 22.sp,
             fontWeight = FontWeight.Bold,
             color = MaterialTheme.colorScheme.onBackground
         )
-        
+
         Text(
-            text = "maya.torres@email.com",
+            text = user?.email.orEmpty(),
             fontSize = 14.sp,
             color = MaterialTheme.colorScheme.onSurfaceVariant
         )
@@ -221,7 +225,7 @@ fun ProfileHeader() {
 }
 
 @Composable
-fun StatsSection() {
+fun StatsSection(notesCount: Int?, quizzesCount: Int?) {
     Card(
         modifier = Modifier.fillMaxWidth(),
         shape = RoundedCornerShape(20.dp),
@@ -229,9 +233,9 @@ fun StatsSection() {
         elevation = CardDefaults.cardElevation(defaultElevation = 0.dp)
     ) {
         Column {
-            StatItem("Notas capturadas", "6")
+            StatItem("Notas capturadas", notesCount?.toString() ?: "—")
             HorizontalDivider(color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.05f), modifier = Modifier.padding(horizontal = 16.dp))
-            StatItem("Cuestionarios hechos", "9")
+            StatItem("Cuestionarios hechos", quizzesCount?.toString() ?: "—")
         }
     }
 }
@@ -262,7 +266,7 @@ fun ConfigSection(
     onChangePassword: () -> Unit
 ) {
     val isThemeDark = MaterialTheme.colorScheme.primary == SpaceCadet
-    
+
     Column {
         Text(
             text = "CONFIGURACIÓN",
@@ -271,7 +275,7 @@ fun ConfigSection(
             color = if (isThemeDark) Color(0xFF9BA4B5) else TextGray,
             modifier = Modifier.padding(start = 4.dp, bottom = 12.dp)
         )
-        
+
         Surface(
             modifier = Modifier.fillMaxWidth(),
             shape = RoundedCornerShape(20.dp),
@@ -335,8 +339,8 @@ fun ConfigItem(label: String, onClick: () -> Unit = {}, trailing: @Composable ()
         verticalAlignment = Alignment.CenterVertically
     ) {
         Text(
-            text = label, 
-            fontSize = 15.sp, 
+            text = label,
+            fontSize = 15.sp,
             fontWeight = FontWeight.Medium,
             color = MaterialTheme.colorScheme.onSurface
         )
@@ -347,7 +351,7 @@ fun ConfigItem(label: String, onClick: () -> Unit = {}, trailing: @Composable ()
 @Composable
 fun AppearanceToggle(isDarkMode: Boolean, onThemeToggle: (Boolean) -> Unit) {
     val isThemeDark = MaterialTheme.colorScheme.primary == SpaceCadet
-    
+
     Row(
         modifier = Modifier
             .background(if (isThemeDark) Color(0xFF1E2532) else Color(0xFFF5F5F5), RoundedCornerShape(20.dp))
@@ -370,7 +374,7 @@ fun AppearanceToggle(isDarkMode: Boolean, onThemeToggle: (Boolean) -> Unit) {
                 fontWeight = FontWeight.Bold
             )
         }
-        
+
         Box(
             modifier = Modifier
                 .clip(RoundedCornerShape(16.dp))
@@ -392,7 +396,7 @@ fun AppearanceToggle(isDarkMode: Boolean, onThemeToggle: (Boolean) -> Unit) {
 @Composable
 fun LogoutButton(onClick: () -> Unit) {
     val isDark = MaterialTheme.colorScheme.primary == SpaceCadet
-    
+
     Button(
         onClick = onClick,
         modifier = Modifier

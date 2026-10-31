@@ -32,7 +32,7 @@ fun NotesScreen(
     onAuditoria: () -> Unit = {},
     onReforzar: () -> Unit = {},
     onCameraClick: () -> Unit = {},
-    onNoteClick: (String) -> Unit = {},
+    onNoteClick: (Int) -> Unit = {},
     onProfileClick: () -> Unit = {},
     viewModel: NotesViewModel = hiltViewModel()
 ) {
@@ -64,10 +64,10 @@ fun NotesScreen(
         onReforzar = onReforzar,
         onCameraClick = onCameraClick,
         snackbarHost = { SnackbarHost(snackbarHostState) },
-        topBar = { 
+        topBar = {
             TopHeader(
                 onProfileClick = onProfileClick
-            ) 
+            )
         }
     ) { paddingValues ->
         PullToRefreshBox(
@@ -147,15 +147,15 @@ fun NotesScreen(
 
                 item {
                     val isDark = MaterialTheme.colorScheme.primary == SpaceCadet
-                    
+
                     OutlinedTextField(
                         value = searchQuery,
                         onValueChange = { viewModel.onSearchQueryChange(it) },
-                        placeholder = { 
+                        placeholder = {
                             Text(
-                                "Buscar notas", 
+                                "Buscar notas",
                                 color = MaterialTheme.colorScheme.onSurfaceVariant
-                            ) 
+                            )
                         },
                         modifier = Modifier
                             .fillMaxWidth()
@@ -168,12 +168,12 @@ fun NotesScreen(
                             unfocusedBorderColor = if (isDark) MaterialTheme.colorScheme.outline else Color.Transparent,
                             cursorColor = MaterialTheme.colorScheme.primary
                         ),
-                        leadingIcon = { 
+                        leadingIcon = {
                             Icon(
-                                Icons.Default.Search, 
-                                contentDescription = null, 
+                                Icons.Default.Search,
+                                contentDescription = null,
                                 tint = MaterialTheme.colorScheme.onSurfaceVariant
-                            ) 
+                            )
                         },
                         singleLine = true
                     )
@@ -199,18 +199,23 @@ fun NotesScreen(
                         Box(
                             modifier = Modifier
                                 .fillMaxWidth()
-                                .padding(top = 40.dp), 
+                                .padding(top = 40.dp),
                             contentAlignment = Alignment.Center
                         ) {
                             Text(
-                                "No se encontraron notas", 
-                                color = MaterialTheme.colorScheme.onSurfaceVariant
+                                if (uiState.notes.isEmpty()) {
+                                    "Aún no tienes notas. Toca la cámara para escanear tu primer apunte."
+                                } else {
+                                    "No se encontraron notas"
+                                },
+                                color = MaterialTheme.colorScheme.onSurfaceVariant,
+                                textAlign = androidx.compose.ui.text.style.TextAlign.Center
                             )
                         }
                     }
                 } else {
                     items(filteredNotes) { note ->
-                        NoteCard(note, onClick = { onNoteClick(note.title) })
+                        NoteCard(note, onClick = { onNoteClick(note.id) })
                     }
                 }
 

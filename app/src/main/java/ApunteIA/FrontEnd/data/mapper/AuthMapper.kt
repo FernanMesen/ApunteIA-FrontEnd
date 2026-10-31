@@ -5,5 +5,9 @@ import ApunteIA.FrontEnd.domain.model.AuthSession
 
 fun LoginResponseDto.toDomain(): AuthSession = AuthSession(
     token = token,
-    userName = userName
+    userName = userName,
+    userId = userId ?: 0L,
+    email = email.orEmpty(),
+    role = role.orEmpty(),
+    expiresInSeconds = expiresIn ?: 0L
 )

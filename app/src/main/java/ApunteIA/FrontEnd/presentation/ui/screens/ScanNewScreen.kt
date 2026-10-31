@@ -26,7 +26,8 @@ import ApunteIA.FrontEnd.presentation.model.MaterialType
 import ApunteIA.FrontEnd.presentation.ui.theme.BackgroundBeige
 import ApunteIA.FrontEnd.presentation.ui.theme.DarkGreen
 import ApunteIA.FrontEnd.presentation.ui.theme.TextGray
-import ApunteIA.FrontEnd.presentation.viewmodel.SCAN_SUBJECTS
+import ApunteIA.FrontEnd.presentation.ui.theme.StatusRed
+import androidx.compose.foundation.horizontalScroll
 import ApunteIA.FrontEnd.presentation.viewmodel.ScanViewModel
 import java.util.Calendar
 
@@ -54,14 +55,32 @@ fun ScanNewScreen(
         ) {
             SectionLabel("MATERIA")
             Spacer(modifier = Modifier.height(10.dp))
-            Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
-                SCAN_SUBJECTS.forEach { subject ->
+            Row(
+                horizontalArrangement = Arrangement.spacedBy(8.dp),
+                modifier = Modifier.horizontalScroll(rememberScrollState())
+            ) {
+                state.subjects.forEach { subject ->
                     SubjectChip(
                         text = subject,
                         isSelected = state.subject == subject,
                         onClick = { viewModel.selectSubject(subject) }
                     )
                 }
+            }
+            if (state.isLoadingSubjects) {
+                Spacer(modifier = Modifier.height(8.dp))
+                LinearProgressIndicator(color = DarkGreen, modifier = Modifier.fillMaxWidth())
+            }
+            state.subjectsError?.let { message ->
+                Spacer(modifier = Modifier.height(8.dp))
+                Text(text = message, color = StatusRed, fontSize = 13.sp)
+                Text(
+                    text = "Reintentar",
+                    color = DarkGreen,
+                    fontSize = 13.sp,
+                    fontWeight = FontWeight.Medium,
+                    modifier = Modifier.clickable { viewModel.loadSubjects() }.padding(top = 4.dp)
+                )
             }
 
             Spacer(modifier = Modifier.height(24.dp))

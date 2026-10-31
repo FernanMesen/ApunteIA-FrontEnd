@@ -2,7 +2,7 @@ package ApunteIA.FrontEnd.data.di
 
 import ApunteIA.FrontEnd.BuildConfig
 import ApunteIA.FrontEnd.data.remote.ApiService
-import ApunteIA.FrontEnd.data.remote.mock.MockApiInterceptor
+import ApunteIA.FrontEnd.data.remote.AuthInterceptor
 import com.google.gson.Gson
 import com.google.gson.GsonBuilder
 import dagger.Module
@@ -26,21 +26,20 @@ object NetworkModule {
 
     @Provides
     @Singleton
-    fun provideOkHttpClient(mockApiInterceptor: MockApiInterceptor): OkHttpClient {
+    fun provideOkHttpClient(authInterceptor: AuthInterceptor): OkHttpClient {
         val logging = HttpLoggingInterceptor().apply {
-            level = HttpLoggingInterceptor.Level.BODY
+            // En release no se registran cuerpos (llevan el JWT y datos del usuario).
+            level = if (BuildConfig.DEBUG) HttpLoggingInterceptor.Level.BODY else HttpLoggingInterceptor.Level.NONE
+            redactHeader("Authorization")
         }
 
-        val builder = OkHttpClient.Builder()
-            .connectTimeout(15, TimeUnit.SECONDS)
-            .readTimeout(15, TimeUnit.SECONDS)
-            .writeTimeout(15, TimeUnit.SECONDS)
-
-        if (BuildConfig.USE_MOCK_API) {
-            builder.addInterceptor(mockApiInterceptor)
-        }
-
-        return builder
+        // Render (plan gratuito) tarda ~50 s en despertar y la IA puede tardar ~30 s,
+        // por eso los tiempos de espera son más largos de lo habitual.
+        return OkHttpClient.Builder()
+            .connectTimeout(60, TimeUnit.SECONDS)
+            .readTimeout(90, TimeUnit.SECONDS)
+            .writeTimeout(60, TimeUnit.SECONDS)
+            .addInterceptor(authInterceptor)
             .addInterceptor(logging)
             .build()
     }
@@ -49,7 +48,7 @@ object NetworkModule {
     @Singleton
     fun provideRetrofit(okHttpClient: OkHttpClient, gson: Gson): Retrofit {
         return Retrofit.Builder()
-            .baseUrl(BuildConfig.MOCK_API_BASE_URL)
+            .baseUrl(BuildConfig.API_BASE_URL)
             .client(okHttpClient)
             .addConverterFactory(GsonConverterFactory.create(gson))
             .build()

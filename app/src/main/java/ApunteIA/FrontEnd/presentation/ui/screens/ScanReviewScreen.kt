@@ -25,7 +25,7 @@ import ApunteIA.FrontEnd.presentation.ui.theme.BackgroundBeige
 import ApunteIA.FrontEnd.presentation.ui.theme.DarkGreen
 import ApunteIA.FrontEnd.presentation.ui.theme.StatusRed
 import ApunteIA.FrontEnd.presentation.ui.theme.TextGray
-import ApunteIA.FrontEnd.presentation.viewmodel.SCAN_SUBJECTS
+import androidx.compose.foundation.horizontalScroll
 import ApunteIA.FrontEnd.presentation.viewmodel.ScanViewModel
 import androidx.compose.runtime.LaunchedEffect
 
@@ -153,8 +153,11 @@ fun ScanReviewScreen(
 
                 SectionLabel("MATERIA")
                 Spacer(modifier = Modifier.height(10.dp))
-                Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
-                    SCAN_SUBJECTS.forEach { subject ->
+                Row(
+                    horizontalArrangement = Arrangement.spacedBy(8.dp),
+                    modifier = Modifier.horizontalScroll(rememberScrollState())
+                ) {
+                    state.subjects.forEach { subject ->
                         SubjectChip(
                             text = subject,
                             isSelected = state.subject == subject,

@@ -23,6 +23,7 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import ApunteIA.FrontEnd.domain.model.RecentActivity
 import ApunteIA.FrontEnd.presentation.ui.theme.*
 import ApunteIA.FrontEnd.presentation.viewmodel.StudyHistoryViewModel
+import ApunteIA.FrontEnd.presentation.viewmodel.SubjectProgress
 import ApunteIA.FrontEnd.presentation.viewmodel.StudyStats
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -54,7 +55,7 @@ fun StudyHistoryScreen(
             ) {
                 item {
                     PeriodSelector(
-                        isWeekly = uiState.isWeekly, 
+                        isWeekly = uiState.isWeekly,
                         onPeriodSelected = { viewModel.setPeriod(it) }
                     )
                 }
@@ -102,7 +103,7 @@ fun StudyHistoryScreen(
                 }
 
                 item {
-                    SubjectProgressSection()
+                    SubjectProgressSection(subjects = uiState.subjects)
                 }
 
                 item {
@@ -112,7 +113,7 @@ fun StudyHistoryScreen(
                 item {
                     RecentActivityHistory(activities = uiState.recentActivity)
                 }
-                
+
                 item {
                     Spacer(modifier = Modifier.height(32.dp))
                 }
@@ -144,9 +145,9 @@ fun StudyHistoryTopBar(onBack: () -> Unit) {
                 tint = MaterialTheme.colorScheme.onBackground
             )
         }
-        
+
         Spacer(modifier = Modifier.width(16.dp))
-        
+
         Column {
             Text(
                 text = "Historial de estudio",
@@ -166,7 +167,7 @@ fun StudyHistoryTopBar(onBack: () -> Unit) {
 @Composable
 fun PeriodSelector(isWeekly: Boolean, onPeriodSelected: (Boolean) -> Unit) {
     val isDark = MaterialTheme.colorScheme.primary == SpaceCadet
-    
+
     Row(
         modifier = Modifier
             .background(if (isDark) Color(0xFF1E2532) else Color(0xFFF5F5F5), RoundedCornerShape(24.dp))
@@ -187,7 +188,7 @@ fun PeriodSelector(isWeekly: Boolean, onPeriodSelected: (Boolean) -> Unit) {
                 fontWeight = FontWeight.Bold
             )
         }
-        
+
         Box(
             modifier = Modifier
                 .clip(RoundedCornerShape(20.dp))
@@ -240,7 +241,7 @@ fun StatBox(value: String, label: String, modifier: Modifier = Modifier) {
 fun WeeklyChartCard(progress: List<Float>) {
     val days = listOf("L", "M", "M", "J", "V", "S", "D")
     val isDark = MaterialTheme.colorScheme.primary == SpaceCadet
-    
+
     Card(
         modifier = Modifier.fillMaxWidth(),
         shape = RoundedCornerShape(24.dp),
@@ -278,7 +279,7 @@ fun WeeklyChartCard(progress: List<Float>) {
 }
 
 @Composable
-fun SubjectProgressSection() {
+fun SubjectProgressSection(subjects: List<SubjectProgress>) {
     Column(verticalArrangement = Arrangement.spacedBy(16.dp)) {
         Text(
             text = "PROGRESO POR MATERIA",
@@ -286,17 +287,28 @@ fun SubjectProgressSection() {
             fontWeight = FontWeight.Bold,
             color = MaterialTheme.colorScheme.onSurfaceVariant
         )
-        
-        SubjectProgressItem("Química Orgánica", 54, Color(0xFF1B6E63))
-        SubjectProgressItem("Biología Celular", 67, Color(0xFF006064))
-        SubjectProgressItem("Cálculo II", 15, Color(0xFFB33A3A))
+
+        if (subjects.isEmpty()) {
+            Text(
+                text = "Aún no estás inscrito en ninguna materia.",
+                fontSize = 14.sp,
+                color = MaterialTheme.colorScheme.onSurfaceVariant
+            )
+        }
+        subjects.forEach { subject ->
+            SubjectProgressItem(
+                subject.name,
+                subject.progress,
+                Color(android.graphics.Color.parseColor(subject.colorHex))
+            )
+        }
     }
 }
 
 @Composable
 fun SubjectProgressItem(name: String, progress: Int, color: Color) {
     val isDark = MaterialTheme.colorScheme.primary == SpaceCadet
-    
+
     Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
         Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween) {
             Text(text = name, fontSize = 15.sp, color = MaterialTheme.colorScheme.onSurface)
@@ -345,7 +357,7 @@ fun SummaryCards(stats: StudyStats) {
 @Composable
 fun SummaryCard(label: String, value: String, color: Color, textColor: Color, modifier: Modifier = Modifier) {
     val isDark = MaterialTheme.colorScheme.primary == SpaceCadet
-    
+
     Card(
         modifier = modifier,
         shape = RoundedCornerShape(20.dp),
@@ -395,7 +407,7 @@ fun RecentActivityHistory(activities: List<RecentActivity>) {
 @Composable
 fun ActivityHistoryItem(title: String, time: String) {
     val isDark = MaterialTheme.colorScheme.primary == SpaceCadet
-    
+
     Row(
         modifier = Modifier.fillMaxWidth(),
         horizontalArrangement = Arrangement.SpaceBetween,

@@ -139,7 +139,7 @@ fun JoinSubjectScreen(
                 } else {
                     items(uiState.availableCourses) { course ->
                         AvailableCourseCard(
-                            course = course, 
+                            course = course,
                             isJoining = uiState.isJoining,
                             onJoin = {
                                 viewModel.joinCourse(course, onJoinSuccess)
@@ -190,9 +190,9 @@ fun JoinSubjectTopBar(onBack: () -> Unit) {
                 modifier = Modifier.size(20.dp)
             )
         }
-        
+
         Spacer(modifier = Modifier.width(16.dp))
-        
+
         Column {
             Text(
                 text = "Unirse a un curso",
@@ -211,13 +211,13 @@ fun JoinSubjectTopBar(onBack: () -> Unit) {
 
 @Composable
 fun CodeJoinCard(
-    value: String, 
-    onValueChange: (String) -> Unit, 
+    value: String,
+    onValueChange: (String) -> Unit,
     isJoining: Boolean = false,
     onJoin: () -> Unit
 ) {
     val isDark = MaterialTheme.colorScheme.primary == SpaceCadet
-    
+
     Card(
         modifier = Modifier.fillMaxWidth(),
         shape = RoundedCornerShape(20.dp),
@@ -248,9 +248,9 @@ fun CodeJoinCard(
                 ),
                 singleLine = true
             )
-            
+
             Spacer(modifier = Modifier.width(12.dp))
-            
+
             Button(
                 onClick = onJoin,
                 enabled = !isJoining && value.isNotBlank(),
@@ -276,12 +276,12 @@ fun CodeJoinCard(
 
 @Composable
 fun AvailableCourseCard(
-    course: AvailableCourse, 
+    course: AvailableCourse,
     isJoining: Boolean = false,
     onJoin: () -> Unit
 ) {
     val isDark = MaterialTheme.colorScheme.primary == SpaceCadet
-    
+
     Card(
         modifier = Modifier.fillMaxWidth(),
         shape = RoundedCornerShape(24.dp),
@@ -307,9 +307,9 @@ fun AvailableCourseCard(
                         fontWeight = FontWeight.Bold
                     )
                 }
-                
+
                 Spacer(modifier = Modifier.width(16.dp))
-                
+
                 Column(modifier = Modifier.weight(1f)) {
                     Text(
                         text = course.name,
@@ -318,12 +318,12 @@ fun AvailableCourseCard(
                         color = MaterialTheme.colorScheme.onSurface
                     )
                     Text(
-                        text = "${course.professor} · ${course.term}",
+                        text = listOf(course.professor, course.term).filter { it.isNotBlank() }.joinToString(" · "),
                         fontSize = 13.sp,
                         color = MaterialTheme.colorScheme.onSurfaceVariant
                     )
                 }
-                
+
                 Text(
                     text = course.id,
                     fontSize = 12.sp,
@@ -331,9 +331,9 @@ fun AvailableCourseCard(
                     color = MaterialTheme.colorScheme.onSurfaceVariant
                 )
             }
-            
+
             Spacer(modifier = Modifier.height(16.dp))
-            
+
             Button(
                 onClick = onJoin,
                 enabled = !isJoining,
@@ -362,8 +362,12 @@ fun AvailableCourseCard(
 
 data class AvailableCourse(
     val name: String,
+    /** Descripción del curso. */
     val professor: String,
     val term: String,
+    /** Código del curso (p. ej. "EIF411"). */
     val id: String,
-    val colorHex: String
+    val colorHex: String,
+    /** Id del curso en el backend. */
+    val courseId: Long = 0L
 )

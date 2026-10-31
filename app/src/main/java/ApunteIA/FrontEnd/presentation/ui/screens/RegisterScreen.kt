@@ -17,15 +17,29 @@ import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import ApunteIA.FrontEnd.presentation.ui.theme.SpaceCadet
+import ApunteIA.FrontEnd.presentation.viewmodel.RegisterViewModel
+import androidx.compose.foundation.text.KeyboardOptions
+import androidx.compose.ui.text.input.KeyboardType
+import androidx.hilt.navigation.compose.hiltViewModel
 
 @Composable
 fun RegisterScreen(
     onRegister: () -> Unit,
-    onBackToLogin: () -> Unit
+    onBackToLogin: () -> Unit,
+    viewModel: RegisterViewModel = hiltViewModel()
 ) {
+    val uiState by viewModel.uiState.collectAsState()
+
+    LaunchedEffect(uiState.registered) {
+        if (uiState.registered) {
+            onRegister()
+            viewModel.onRegisterHandled()
+        }
+    }
+
     val primaryColor = MaterialTheme.colorScheme.primary
     val isDark = primaryColor == SpaceCadet
-    
+
     var fullName by remember {
         mutableStateOf("")
     }
@@ -123,6 +137,7 @@ fun RegisterScreen(
             onValueChange = {
                 email = it
             },
+            keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Email),
             placeholder = {
                 Text(
                     text = "Correo electrónico",
@@ -178,11 +193,22 @@ fun RegisterScreen(
 
         Spacer(modifier = Modifier.height(26.dp))
 
+        if (uiState.errorMessage != null) {
+            Spacer(modifier = Modifier.height(12.dp))
+            Text(
+                text = uiState.errorMessage.orEmpty(),
+                color = MaterialTheme.colorScheme.error,
+                fontSize = 14.sp,
+                modifier = Modifier.fillMaxWidth()
+            )
+        }
+
         // Crear cuenta
         Button(
             onClick = {
-                onRegister()
+                viewModel.register(fullName, email, password)
             },
+            enabled = !uiState.isLoading,
             modifier = Modifier
                 .fillMaxWidth()
                 .height(62.dp),
@@ -191,12 +217,20 @@ fun RegisterScreen(
                 containerColor = primaryColor
             )
         ) {
-            Text(
-                text = "Crear cuenta",
-                color = MaterialTheme.colorScheme.onPrimary,
-                fontSize = 16.sp,
-                fontWeight = FontWeight.Bold
-            )
+            if (uiState.isLoading) {
+                CircularProgressIndicator(
+                    modifier = Modifier.size(22.dp),
+                    color = MaterialTheme.colorScheme.onPrimary,
+                    strokeWidth = 2.dp
+                )
+            } else {
+                Text(
+                    text = "Crear cuenta",
+                    color = MaterialTheme.colorScheme.onPrimary,
+                    fontSize = 16.sp,
+                    fontWeight = FontWeight.Bold
+                )
+            }
         }
 
         Spacer(modifier = Modifier.height(24.dp))

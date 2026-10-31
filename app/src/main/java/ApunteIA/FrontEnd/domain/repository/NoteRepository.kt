@@ -1,21 +1,35 @@
 package ApunteIA.FrontEnd.domain.repository
 
 import ApunteIA.FrontEnd.domain.model.Note
+import ApunteIA.FrontEnd.domain.model.QuizDifficulty
 import ApunteIA.FrontEnd.domain.util.Resource
 
 /**
- * Contrato que expone el dominio para obtener notas, sin importar si detrás
- * hay datos locales de ejemplo, una base de datos o una API remota.
- *
- * La capa `data` (ApunteIA.FrontEnd.data.repository.NoteRepositoryImpl) es la
- * encargada de implementar este contrato; `domain` y `presentation` solo
- * conocen esta interfaz.
+ * Contrato que expone el dominio para las notas del usuario actual. La capa `data`
+ * lo implementa contra el backend (NoteRepositoryImpl); `domain` y `presentation`
+ * solo conocen esta interfaz.
  */
 interface NoteRepository {
+    /** Notas del usuario con sesión iniciada. */
     suspend fun getNotes(): Resource<List<Note>>
 
-    /**
-     * Guarda una nota nueva (p.ej. la generada por IA al final de un escaneo).
-     */
-    suspend fun addNote(note: Note): Resource<Unit>
+    suspend fun getNote(id: Long): Resource<Note>
+
+    suspend fun createNote(title: String, content: String, courseId: Long): Resource<Note>
+
+    suspend fun updateNote(
+        id: Long,
+        title: String,
+        content: String,
+        courseId: Long,
+        summary: String?
+    ): Resource<Note>
+
+    suspend fun deleteNote(id: Long): Resource<Unit>
+
+    /** IA: genera el resumen de la nota. */
+    suspend fun processWithAi(id: Long): Resource<Note>
+
+    /** IA: genera un quiz a partir de la nota. Devuelve el id de la evaluación creada. */
+    suspend fun generateQuiz(noteId: Long, questionCount: Int, difficulty: QuizDifficulty): Resource<Long>
 }

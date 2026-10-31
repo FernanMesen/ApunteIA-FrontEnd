@@ -30,6 +30,7 @@ fun CoursesScreen(
     viewModel: ManageSubjectsViewModel = hiltViewModel()
 ) {
     val uiState by viewModel.uiState.collectAsState()
+    ApunteIA.FrontEnd.presentation.ui.components.RefreshOnResume { viewModel.refresh() }
 
     PullToRefreshBox(
         isRefreshing = uiState.isLoading,

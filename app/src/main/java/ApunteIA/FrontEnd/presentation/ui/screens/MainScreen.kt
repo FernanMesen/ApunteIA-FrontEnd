@@ -66,10 +66,10 @@ fun MainScreen(
         onReforzar = onReforzar,
         onCameraClick = onCameraClick,
         snackbarHost = { SnackbarHost(snackbarHostState) },
-        topBar = { 
+        topBar = {
             TopHeader(
                 onProfileClick = onProfileClick
-            ) 
+            )
         }
     ) { paddingValues ->
         PullToRefreshBox(
@@ -87,7 +87,7 @@ fun MainScreen(
             ) {
                 item {
                     Spacer(modifier = Modifier.height(8.dp))
-                    uiState.userStats?.let { 
+                    uiState.userStats?.let {
                         GreetingSection(it.userName, it.streakDays)
                     }
                 }
@@ -172,10 +172,10 @@ fun MainScreen(
 @Composable
 fun GreetingSection(userName: String, streakDays: Int) {
     val isDark = MaterialTheme.colorScheme.primary == SpaceCadet
-    
+
     Column(modifier = Modifier.fillMaxWidth()) {
         Text(
-            text = "Buenas tardes",
+            text = greetingForNow(),
             fontSize = 16.sp,
             color = MaterialTheme.colorScheme.onSurfaceVariant
         )
@@ -185,7 +185,7 @@ fun GreetingSection(userName: String, streakDays: Int) {
             verticalAlignment = Alignment.CenterVertically
         ) {
             Text(
-                text = userName,
+                text = userName.trim().substringBefore(' ').ifBlank { userName },
                 fontSize = 32.sp,
                 fontWeight = FontWeight.Bold,
                 color = MaterialTheme.colorScheme.onSurface
@@ -222,7 +222,7 @@ fun GreetingSection(userName: String, streakDays: Int) {
 @Composable
 fun StatsCard(progress: Int, notesCount: Int, pendingTopics: Int, quizzesDone: Int) {
     val isDark = MaterialTheme.colorScheme.primary == SpaceCadet
-    
+
     Card(
         modifier = Modifier.fillMaxWidth(),
         shape = RoundedCornerShape(24.dp),
@@ -252,14 +252,14 @@ fun StatsCard(progress: Int, notesCount: Int, pendingTopics: Int, quizzesDone: I
                 }
                 Column(horizontalAlignment = Alignment.CenterHorizontally) {
                     Text(
-                        text = "$progress%", 
-                        fontWeight = FontWeight.Bold, 
-                        fontSize = 18.sp, 
+                        text = "$progress%",
+                        fontWeight = FontWeight.Bold,
+                        fontSize = 18.sp,
                         color = if (isDark) Color.White else DarkGreen
                     )
                     Text(
-                        text = "cubierto", 
-                        fontSize = 10.sp, 
+                        text = "cubierto",
+                        fontSize = 10.sp,
                         color = MaterialTheme.colorScheme.onSurfaceVariant
                     )
                 }
@@ -286,9 +286,9 @@ fun StatLine(label: String, value: String, valueColor: Color) {
 fun CycleSection(onOrganizarClick: () -> Unit, onReforzarClick: () -> Unit) {
     Column {
         Text(
-            text = "TU CICLO", 
-            style = MaterialTheme.typography.titleSmall, 
-            color = MaterialTheme.colorScheme.onSurfaceVariant, 
+            text = "TU CICLO",
+            style = MaterialTheme.typography.titleSmall,
+            color = MaterialTheme.colorScheme.onSurfaceVariant,
             fontWeight = FontWeight.Bold
         )
         Spacer(modifier = Modifier.height(16.dp))
@@ -310,7 +310,7 @@ fun CycleSection(onOrganizarClick: () -> Unit, onReforzarClick: () -> Unit) {
 @Composable
 fun CycleItem(number: String, label: String, isHighlighted: Boolean, onClick: () -> Unit = {}) {
     val isDark = MaterialTheme.colorScheme.primary == SpaceCadet
-    
+
     Column(
         horizontalAlignment = Alignment.CenterHorizontally,
         modifier = Modifier
@@ -357,9 +357,9 @@ fun CycleConnector(modifier: Modifier = Modifier) {
 fun RecentActivitySection(activities: List<RecentActivity>) {
     Column {
         Text(
-            text = "ACTIVIDAD RECIENTE", 
-            style = MaterialTheme.typography.titleSmall, 
-            color = MaterialTheme.colorScheme.onSurfaceVariant, 
+            text = "ACTIVIDAD RECIENTE",
+            style = MaterialTheme.typography.titleSmall,
+            color = MaterialTheme.colorScheme.onSurfaceVariant,
             fontWeight = FontWeight.Bold
         )
         Spacer(modifier = Modifier.height(12.dp))
@@ -374,7 +374,7 @@ fun RecentActivitySection(activities: List<RecentActivity>) {
                     ActivityItem(activity.title, activity.subtitle, activity.time)
                     if (index < activities.size - 1) {
                         HorizontalDivider(
-                            color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.05f), 
+                            color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.05f),
                             modifier = Modifier.padding(vertical = 12.dp)
                         )
                     }
@@ -387,7 +387,7 @@ fun RecentActivitySection(activities: List<RecentActivity>) {
 @Composable
 fun ActivityItem(title: String, subtitle: String, time: String) {
     val isDark = MaterialTheme.colorScheme.primary == SpaceCadet
-    
+
     Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween, verticalAlignment = Alignment.Top) {
         Column(modifier = Modifier.weight(1f)) {
             Row(verticalAlignment = Alignment.CenterVertically) {
@@ -399,23 +399,33 @@ fun ActivityItem(title: String, subtitle: String, time: String) {
                 )
                 Spacer(modifier = Modifier.width(8.dp))
                 Text(
-                    text = title, 
-                    style = MaterialTheme.typography.bodyMedium, 
-                    fontWeight = FontWeight.Bold, 
+                    text = title,
+                    style = MaterialTheme.typography.bodyMedium,
+                    fontWeight = FontWeight.Bold,
                     color = MaterialTheme.colorScheme.onSurface
                 )
             }
             Text(
-                text = subtitle, 
-                style = MaterialTheme.typography.bodySmall, 
+                text = subtitle,
+                style = MaterialTheme.typography.bodySmall,
                 color = MaterialTheme.colorScheme.onSurfaceVariant,
                 modifier = Modifier.padding(start = 16.dp)
             )
         }
         Text(
-            text = time, 
-            style = MaterialTheme.typography.bodySmall, 
+            text = time,
+            style = MaterialTheme.typography.bodySmall,
             color = MaterialTheme.colorScheme.onSurfaceVariant
         )
+    }
+}
+
+/** Saludo según la hora del teléfono. */
+private fun greetingForNow(): String {
+    val hour = java.util.Calendar.getInstance().get(java.util.Calendar.HOUR_OF_DAY)
+    return when (hour) {
+        in 5..11 -> "Buenos días"
+        in 12..18 -> "Buenas tardes"
+        else -> "Buenas noches"
     }
 }

@@ -1,44 +1,55 @@
 package ApunteIA.FrontEnd.data.repository
 
-import ApunteIA.FrontEnd.data.datasource.MainDataSource
-import ApunteIA.FrontEnd.domain.model.UserStats
+import ApunteIA.FrontEnd.domain.model.TopicStatus
 import ApunteIA.FrontEnd.domain.util.Resource
+import ApunteIA.FrontEnd.fakes.FakeNoteDataSource.Companion.note
+import ApunteIA.FrontEnd.fakes.TestBackend
+import ApunteIA.FrontEnd.fakes.attempt
 import kotlinx.coroutines.runBlocking
 import org.junit.Assert.assertEquals
-import org.junit.Assert.assertTrue
-import org.junit.Before
 import org.junit.Test
-import org.mockito.kotlin.mock
-import org.mockito.kotlin.whenever
-import java.io.IOException
 
 class MainRepositoryImplTest {
 
-    private lateinit var dataSource: MainDataSource
-    private lateinit var repository: MainRepositoryImpl
-
-    @Before
-    fun setup() {
-        dataSource = mock()
-        repository = MainRepositoryImpl(dataSource)
+    private fun backendWithData() = TestBackend().apply {
+        notes.notes += listOf(
+            note(1, title = "JPA", courseId = 1, status = "COMPLETED", summary = "- x"),
+            note(2, title = "SQL", courseId = 2, status = "PENDING")
+        )
+        quizzes.attempts += attempt(1, 50, "COMPLETED", 80.0, title = "Quiz IA - JPA")
+        quizzes.attempts += attempt(2, 51, "IN_PROGRESS", null, title = "Quiz IA - SQL")
     }
 
     @Test
-    fun `getUserStats returns Resource Success with data`() = runBlocking {
-        whenever(dataSource.getUserStats()).thenReturn(UserStats("Maya", 12, 53, 6, 6, 9))
+    fun `stats are calculated from notes, topics and completed attempts`() = runBlocking {
+        val stats = (MainRepositoryImpl(backendWithData().loader).getUserStats() as Resource.Success).data
 
-        val result = repository.getUserStats()
-
-        assertTrue(result is Resource.Success)
-        assertEquals("Maya", (result as Resource.Success).data.userName)
+        assertEquals("Maya Rodríguez", stats.userName)
+        assertEquals(2, stats.notesCount)
+        assertEquals(1, stats.quizzesDoneCount)
+        // Temas: JPA sólido (80), SQL faltante (0) → 1 pendiente, promedio 40.
+        assertEquals(1, stats.pendingTopicsCount)
+        assertEquals(40, stats.progressPercent)
     }
 
     @Test
-    fun `getUserStats returns Resource Error on IOException`() = runBlocking {
-        whenever(dataSource.getUserStats()).thenAnswer { throw IOException() }
+    fun `topics include one per note plus enrolled courses without notes`() = runBlocking {
+        val backend = backendWithData()
+        backend.notes.notes.removeAll { it.courseId == 2L }
 
-        val result = repository.getUserStats()
+        val topics = (TopicRepositoryImpl(backend.loader).getTopics() as Resource.Success).data
 
-        assertTrue(result is Resource.Error)
+        assertEquals(2, topics.size)
+        assertEquals(TopicStatus.SOLID, topics.first { it.title == "JPA" }.status)
+        val missing = topics.first { it.status == TopicStatus.MISSING }
+        assertEquals("Bases de datos", missing.className)
+    }
+
+    @Test
+    fun `recent activity mixes notes and finished quizzes, newest first`() = runBlocking {
+        val activity = (MainRepositoryImpl(backendWithData().loader).getRecentActivity() as Resource.Success).data
+
+        assertEquals("Quiz completado · Quiz IA - JPA", activity.first().title)
+        assertEquals(3, activity.size)
     }
 }

@@ -44,33 +44,39 @@ data class NoteSection(
 )
 
 /**
- * Cada paso del "análisis" que se muestra en la pantalla de procesamiento,
+ * Cada paso real del análisis que se muestra en la pantalla de procesamiento,
  * en el orden en que ocurren.
  */
 enum class ProcessingStep(val label: String) {
-    UPLOADING("Subiendo imágenes"),
-    READING("Leyendo el contenido manuscrito"),
-    ORGANIZING("Organizando la información"),
-    COMPARING("Comparando con el programa"),
+    READING("Leyendo el texto de tus páginas"),
+    UPLOADING("Guardando la nota en la nube"),
+    ORGANIZING("Resumiendo con IA"),
     GENERATING("Generando la nota estructurada")
 }
 
 /**
- * Errores simulables durante el procesamiento (botones de "Simular" en la
- * pantalla de análisis), para poder probar los estados de error del flujo
- * sin depender de un backend real.
+ * Error durante el procesamiento del escaneo, con un título y un mensaje para el usuario.
  */
-enum class ProcessingError(val title: String, val message: String) {
-    NO_CONNECTION(
-        title = "Sin conexión",
-        message = "No pudimos conectarnos para analizar tu escaneo. Revisa tu conexión a internet e intenta de nuevo."
-    ),
-    BLURRY_PHOTO(
-        title = "Foto borrosa",
-        message = "Una de las páginas está demasiado borrosa para leerla. Vuelve a escanear esa página."
-    ),
-    INVALID_FILE(
-        title = "Archivo inválido",
-        message = "Uno de los archivos capturados no se pudo procesar. Inténtalo de nuevo."
-    )
+data class ProcessingError(val title: String, val message: String) {
+    companion object {
+        val NO_COURSE = ProcessingError(
+            title = "Elige una materia",
+            message = "Selecciona la materia del apunte antes de procesarlo."
+        )
+        val NO_TEXT = ProcessingError(
+            title = "No encontramos texto",
+            message = "No se pudo leer texto en las fotos. Intenta con mejor luz, enfocando la hoja de frente y sin sombras."
+        )
+        val UNREADABLE = ProcessingError(
+            title = "Archivo inválido",
+            message = "Una de las fotos no se pudo abrir. Vuelve a tomarla e intenta de nuevo."
+        )
+
+        fun upload(message: String) = ProcessingError(title = "No se pudo guardar", message = message)
+
+        fun ai(message: String) = ProcessingError(
+            title = "La IA no respondió",
+            message = "$message Tu apunte quedó guardado: puedes reintentar el resumen ahora o más tarde desde Notas."
+        )
+    }
 }

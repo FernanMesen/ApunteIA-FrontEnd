@@ -32,9 +32,7 @@ class MainViewModel @Inject constructor(
     val userStats: StateFlow<UserStats?> get() = MutableStateFlow(_uiState.value.userStats).asStateFlow()
     val recentActivity: StateFlow<List<RecentActivity>> get() = MutableStateFlow(_uiState.value.recentActivity).asStateFlow()
 
-    init {
-        loadDashboard()
-    }
+
 
     fun loadDashboard() {
         viewModelScope.launch {

@@ -37,7 +37,7 @@ import ApunteIA.FrontEnd.presentation.ui.theme.TextGray
 @Composable
 fun FilterChip(text: String, isSelected: Boolean, onClick: () -> Unit) {
     val isDark = MaterialTheme.colorScheme.primary == SpaceCadet
-    
+
     Surface(
         modifier = Modifier.clickable { onClick() },
         shape = RoundedCornerShape(20.dp),
@@ -85,18 +85,25 @@ fun NoteCard(note: Note, onClick: () -> Unit) {
                     text = note.title,
                     fontSize = 18.sp,
                     fontWeight = FontWeight.Bold,
-                    color = MaterialTheme.colorScheme.onSurface
+                    color = MaterialTheme.colorScheme.onSurface,
+                    maxLines = 2,
+                    modifier = Modifier.weight(1f, fill = false).padding(end = 8.dp)
                 )
                 StatusTag(status = note.status)
             }
 
             Spacer(modifier = Modifier.height(4.dp))
 
-            Row {
-                Text(text = "Clase ${note.classNumber}", fontSize = 12.sp, color = MaterialTheme.colorScheme.onSurfaceVariant)
-                Text(text = "  ·  ", fontSize = 12.sp, color = MaterialTheme.colorScheme.onSurfaceVariant)
-                Text(text = "Escaneado ${note.date}", fontSize = 12.sp, color = MaterialTheme.colorScheme.onSurfaceVariant)
-            }
+            Text(
+                text = listOf(
+                    note.className,
+                    if (note.classNumber > 0) "Clase ${note.classNumber}" else "",
+                    if (note.date.isNotBlank()) "Escaneado ${note.date}" else ""
+                ).filter { it.isNotBlank() }.joinToString("  ·  "),
+                fontSize = 12.sp,
+                color = MaterialTheme.colorScheme.onSurfaceVariant,
+                maxLines = 1
+            )
 
             Spacer(modifier = Modifier.height(12.dp))
 
@@ -118,13 +125,13 @@ fun NoteCard(note: Note, onClick: () -> Unit) {
 fun StatusTag(status: NoteStatus) {
     val isDark = MaterialTheme.colorScheme.primary == SpaceCadet
     val isWeak = status == NoteStatus.WEAK
-    
+
     val backgroundColor = if (isWeak) {
         if (isDark) Color(0xFF3B2E2E) else Color(0xFFFDECEC)
     } else {
         if (isDark) Color(0xFF2E3B3B) else Color(0xFFE0F2F1)
     }
-    
+
     val textColor = if (isWeak) {
         if (isDark) Color(0xFFD08D74) else Color(0xFFE57373)
     } else {

@@ -69,7 +69,7 @@ fun TopHeader(
                 contentAlignment = Alignment.Center
             ) {
                 Text(
-                    text = "M",
+                    text = LocalCurrentUser.current?.initial ?: "?",
                     color = MaterialTheme.colorScheme.onPrimary,
                     fontWeight = FontWeight.Bold,
                     fontSize = 18.sp

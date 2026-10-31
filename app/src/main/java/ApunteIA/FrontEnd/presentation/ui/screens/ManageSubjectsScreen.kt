@@ -136,7 +136,7 @@ fun ManageSubjectsScreen(
                         CourseCard(course)
                     }
                 }
-                
+
                 item { Spacer(modifier = Modifier.height(24.dp)) }
             }
         }
@@ -146,7 +146,7 @@ fun ManageSubjectsScreen(
 @Composable
 fun ManageSubjectsTopBar(onBack: () -> Unit, onJoinCourse: () -> Unit) {
     val isDark = MaterialTheme.colorScheme.primary == SpaceCadet
-    
+
     Row(
         modifier = Modifier
             .fillMaxWidth()
@@ -171,9 +171,9 @@ fun ManageSubjectsTopBar(onBack: () -> Unit, onJoinCourse: () -> Unit) {
                     modifier = Modifier.size(20.dp)
                 )
             }
-            
+
             Spacer(modifier = Modifier.width(12.dp))
-            
+
             Column {
                 Text(
                     text = "Materias",
@@ -188,7 +188,7 @@ fun ManageSubjectsTopBar(onBack: () -> Unit, onJoinCourse: () -> Unit) {
                 )
             }
         }
-        
+
         Surface(
             modifier = Modifier.clickable { onJoinCourse() },
             color = if (isDark) Color(0xFF1E2532) else Color(0xFFE8F5E9),
@@ -234,9 +234,9 @@ fun CourseCard(course: Course) {
                     fontWeight = FontWeight.Bold
                 )
             }
-            
+
             Spacer(modifier = Modifier.width(16.dp))
-            
+
             Column(modifier = Modifier.weight(1f)) {
                 Text(
                     text = course.name,
@@ -245,12 +245,12 @@ fun CourseCard(course: Course) {
                     color = MaterialTheme.colorScheme.onSurface
                 )
                 Text(
-                    text = "${course.professor} • ${course.term}",
+                    text = listOf(course.professor, course.term).filter { it.isNotBlank() }.joinToString(" • "),
                     fontSize = 14.sp,
                     color = MaterialTheme.colorScheme.onSurfaceVariant
                 )
             }
-            
+
             Text(
                 text = "${course.progress}%",
                 fontSize = 16.sp,

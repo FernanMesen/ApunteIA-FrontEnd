@@ -1,34 +1,21 @@
 package ApunteIA.FrontEnd.data.util
 
 import ApunteIA.FrontEnd.domain.util.Resource
-import retrofit2.HttpException
-import java.io.IOException
+import kotlin.coroutines.cancellation.CancellationException
 
 /**
  * Ejecuta una llamada a la API de forma segura, capturando excepciones y permitiendo
- * mapearlas a mensajes de dominio amigables.
+ * mapearlas a mensajes de dominio amigables. La cancelación de corrutinas (p. ej. al
+ * salir de una pantalla) se vuelve a lanzar para no confundirla con un error.
  */
 suspend fun <T> safeApiCall(
-    errorMapper: (Throwable) -> String = { throwable ->
-        when (throwable) {
-            is IOException -> "No hay conexión a internet o tiempo de espera agotado"
-            is HttpException -> {
-                val code = throwable.code()
-                when (code) {
-                    401 -> "Sesión expirada o no autorizada"
-                    404 -> "Recurso no encontrado"
-                    in 400..499 -> "Error en la solicitud ($code)"
-                    in 500..599 -> "El servidor está experimentando problemas ($code)"
-                    else -> "Error inesperado del servidor ($code)"
-                }
-            }
-            else -> throwable.message ?: "Ocurrió un error inesperado"
-        }
-    },
+    errorMapper: (Throwable) -> String = { it.toFriendlyMessage() },
     apiCall: suspend () -> T
 ): Resource<T> {
     return try {
         Resource.Success(apiCall())
+    } catch (cancellation: CancellationException) {
+        throw cancellation
     } catch (throwable: Throwable) {
         Resource.Error(errorMapper(throwable), throwable)
     }
