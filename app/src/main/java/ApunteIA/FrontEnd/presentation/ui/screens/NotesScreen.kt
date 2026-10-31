@@ -13,10 +13,12 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
+import ApunteIA.FrontEnd.R
 import ApunteIA.FrontEnd.presentation.ui.theme.*
 import ApunteIA.FrontEnd.presentation.ui.components.FilterChip
 import ApunteIA.FrontEnd.presentation.ui.components.NoteCard
@@ -42,12 +44,13 @@ fun NotesScreen(
     val searchQuery by viewModel.searchQuery.collectAsState()
     val filteredNotes by viewModel.filteredNotes.collectAsState()
     val snackbarHostState = remember { SnackbarHostState() }
+    val retryText = stringResource(R.string.retry)
 
     LaunchedEffect(uiState.error) {
         uiState.error?.let { errorMessage ->
             val result = snackbarHostState.showSnackbar(
                 message = errorMessage,
-                actionLabel = "Reintentar",
+                actionLabel = retryText,
                 duration = SnackbarDuration.Indefinite
             )
             if (result == SnackbarResult.ActionPerformed) {
@@ -86,13 +89,13 @@ fun NotesScreen(
                 item {
                     Spacer(modifier = Modifier.height(24.dp))
                     Text(
-                        text = "Notas",
+                        text = stringResource(R.string.notes_title),
                         fontSize = 32.sp,
                         fontWeight = FontWeight.Bold,
                         color = MaterialTheme.colorScheme.onBackground
                     )
                     Text(
-                        text = "Estructuradas por IA a partir de tus escaneos",
+                        text = stringResource(R.string.notes_subtitle),
                         fontSize = 14.sp,
                         color = MaterialTheme.colorScheme.onSurfaceVariant
                     )
@@ -127,7 +130,7 @@ fun NotesScreen(
                                 horizontalAlignment = Alignment.CenterHorizontally
                             ) {
                                 Text(
-                                    text = "Error al cargar notas: ${uiState.error}",
+                                    text = uiState.error.orEmpty(),
                                     color = MaterialTheme.colorScheme.onErrorContainer,
                                     fontSize = 14.sp
                                 )
@@ -138,7 +141,7 @@ fun NotesScreen(
                                         containerColor = MaterialTheme.colorScheme.error
                                     )
                                 ) {
-                                    Text("Reintentar")
+                                    Text(stringResource(R.string.retry))
                                 }
                             }
                         }
@@ -153,7 +156,7 @@ fun NotesScreen(
                         onValueChange = { viewModel.onSearchQueryChange(it) },
                         placeholder = {
                             Text(
-                                "Buscar notas",
+                                stringResource(R.string.search_notes_placeholder),
                                 color = MaterialTheme.colorScheme.onSurfaceVariant
                             )
                         },
@@ -204,9 +207,9 @@ fun NotesScreen(
                         ) {
                             Text(
                                 if (uiState.notes.isEmpty()) {
-                                    "Aún no tienes notas. Toca la cámara para escanear tu primer apunte."
+                                    stringResource(R.string.no_notes_yet)
                                 } else {
-                                    "No se encontraron notas"
+                                    stringResource(R.string.no_notes_found)
                                 },
                                 color = MaterialTheme.colorScheme.onSurfaceVariant,
                                 textAlign = androidx.compose.ui.text.style.TextAlign.Center

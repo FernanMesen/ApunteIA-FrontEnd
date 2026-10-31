@@ -10,25 +10,31 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import ApunteIA.FrontEnd.R
 
 @Composable
 fun StudyGoalScreen(
     onBack: () -> Unit,
     onNext: () -> Unit
 ) {
+    val optionPassExams = stringResource(R.string.goal_pass_exams)
+    val optionImproveGrades = stringResource(R.string.goal_improve_grades)
+    val optionStayOrganized = stringResource(R.string.goal_stay_organized)
+    val optionReviewConsistently = stringResource(R.string.goal_review_consistently)
 
     var selectedGoal by remember {
-        mutableStateOf("Aprobar exámenes")
+        mutableStateOf(optionPassExams)
     }
 
     val goals = listOf(
-        "Aprobar exámenes",
-        "Mejorar calificaciones",
-        "Mantenerme organizado",
-        "Repasar constantemente"
+        optionPassExams,
+        optionImproveGrades,
+        optionStayOrganized,
+        optionReviewConsistently
     )
 
     Column(
@@ -46,7 +52,7 @@ fun StudyGoalScreen(
         Spacer(modifier = Modifier.height(32.dp))
 
         Text(
-            text = "Meta de estudio",
+            text = stringResource(R.string.study_goal_title),
             color = ApuntesGreen,
             fontSize = 22.sp,
             fontWeight = FontWeight.Bold
@@ -105,11 +111,10 @@ fun StudyGoalScreen(
         Spacer(modifier = Modifier.weight(1f))
 
         ApuntesPrimaryButton(
-            text = "Siguiente",
+            text = stringResource(R.string.next_button),
             onClick = onNext
         )
 
         Spacer(modifier = Modifier.height(26.dp))
     }
 }
-

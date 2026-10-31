@@ -4,10 +4,12 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.material3.Text
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.foundation.background
+import ApunteIA.FrontEnd.R
 
 @Composable
 fun ProfileSetupScreen(
@@ -41,7 +43,7 @@ fun ProfileSetupScreen(
         Spacer(modifier = Modifier.height(28.dp))
 
         Text(
-            text = "Configuremos tu perfil",
+            text = stringResource(R.string.setup_profile_title),
             color = ApuntesGreen,
             fontSize = 22.sp,
             fontWeight = FontWeight.Bold
@@ -50,7 +52,7 @@ fun ProfileSetupScreen(
         Spacer(modifier = Modifier.height(24.dp))
 
         Text(
-            text = "TU NOMBRE",
+            text = stringResource(R.string.your_name_header),
             color = ApuntesGreen,
             fontSize = 12.sp
         )
@@ -62,13 +64,13 @@ fun ProfileSetupScreen(
             onValueChange = {
                 name = it
             },
-            placeholder = "Nombre completo"
+            placeholder = stringResource(R.string.full_name_placeholder)
         )
 
         Spacer(modifier = Modifier.height(24.dp))
 
         Text(
-            text = "NIVEL EDUCATIVO",
+            text = stringResource(R.string.education_level_header),
             color = ApuntesGreen,
             fontSize = 12.sp
         )
@@ -80,7 +82,7 @@ fun ProfileSetupScreen(
         ) {
 
             EducationOption(
-                text = "Bachillerato",
+                text = stringResource(R.string.edu_high_school),
                 selected = educationLevel == "Bachillerato",
                 onClick = {
                     educationLevel = "Bachillerato"
@@ -88,7 +90,7 @@ fun ProfileSetupScreen(
             )
 
             EducationOption(
-                text = "Licenciatura",
+                text = stringResource(R.string.edu_bachelor),
                 selected = educationLevel == "Licenciatura",
                 onClick = {
                     educationLevel = "Licenciatura"
@@ -96,7 +98,7 @@ fun ProfileSetupScreen(
             )
 
             EducationOption(
-                text = "Posgrado",
+                text = stringResource(R.string.edu_postgraduate),
                 selected = educationLevel == "Posgrado",
                 onClick = {
                     educationLevel = "Posgrado"
@@ -107,7 +109,7 @@ fun ProfileSetupScreen(
         Spacer(modifier = Modifier.height(8.dp))
 
         EducationOption(
-            text = "Otro",
+            text = stringResource(R.string.edu_other),
             selected = educationLevel == "Otro",
             onClick = {
                 educationLevel = "Otro"
@@ -117,7 +119,7 @@ fun ProfileSetupScreen(
         Spacer(modifier = Modifier.height(25.dp))
 
         Text(
-            text = "SEMESTRE O PERÍODO",
+            text = stringResource(R.string.semester_header),
             color = ApuntesGreen,
             fontSize = 12.sp
         )
@@ -129,17 +131,16 @@ fun ProfileSetupScreen(
             onValueChange = {
                 semester = it
             },
-            placeholder = "ej. II Semestre 2026"
+            placeholder = stringResource(R.string.semester_placeholder)
         )
 
         Spacer(modifier = Modifier.weight(1f))
 
         ApuntesPrimaryButton(
-            text = "Siguiente",
+            text = stringResource(R.string.next_button),
             onClick = onNext
         )
 
         Spacer(modifier = Modifier.height(26.dp))
     }
 }
-

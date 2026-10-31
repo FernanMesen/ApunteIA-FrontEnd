@@ -1,6 +1,7 @@
 [versions]
 agp = "8.13.2"
 kotlin = "1.9.23"
+appcompat = "1.6.1"
 coreKtx = "1.12.0"
 junit = "4.13.2"
 junitVersion = "1.1.5"
@@ -20,11 +21,12 @@ okhttp = "4.12.0"
 mockwebserver = "4.12.0"
 mockito = "5.11.0"
 mockito-kotlin = "5.2.1"
-mlkitTextRecognition = "16.0.0"
+mlkitTextRecognition = "19.0.1"
 orgJson = "20231013"
 
 [libraries]
 androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "coreKtx" }
+androidx-appcompat = { group = "androidx.appcompat", name = "appcompat", version.ref = "appcompat" }
 junit = { group = "junit", name = "junit", version.ref = "junit" }
 androidx-junit = { group = "androidx.test.ext", name = "junit", version.ref = "junitVersion" }
 androidx-espresso-core = { group = "androidx.test.espresso", name = "espresso-core", version.ref = "espressoCore" }
@@ -57,7 +59,7 @@ mockwebserver = { group = "com.squareup.okhttp3", name = "mockwebserver", versio
 mockito-core = { group = "org.mockito", name = "mockito-core", version.ref = "mockito" }
 mockito-kotlin = { group = "org.mockito.kotlin", name = "mockito-kotlin", version.ref = "mockito-kotlin" }
 org-json = { group = "org.json", name = "json", version.ref = "orgJson" }
-mlkit-text-recognition = { group = "com.google.mlkit", name = "text-recognition", version.ref = "mlkitTextRecognition" }
+mlkit-text-recognition = { module = "com.google.android.gms:play-services-mlkit-text-recognition", version.ref = "mlkitTextRecognition" }
 
 [plugins]
 android-application = { id = "com.android.application", version.ref = "agp" }

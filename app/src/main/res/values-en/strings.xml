@@ -1,0 +1,264 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">ApuntesIA</string>
+
+    <!-- General / Common -->
+    <string name="ok">OK</string>
+    <string name="cancel">Cancel</string>
+    <string name="confirm">Confirm</string>
+    <string name="retry">Retry</string>
+    <string name="close">Close</string>
+    <string name="back">Back</string>
+    <string name="next">Next</string>
+    <string name="finish">Finish</string>
+    <string name="save">Save</string>
+    <string name="delete">Delete</string>
+    <string name="search">Search</string>
+    <string name="allow">Allow</string>
+    <string name="understood">Understood</string>
+    <string name="coming_soon">Coming soon</string>
+    <string name="next_button">Next</string>
+
+    <!-- Relative Time & Dates -->
+    <string name="time_just_now">Just now</string>
+    <string name="time_yesterday">Yesterday</string>
+    <string name="time_minutes_ago">%1$d min ago</string>
+    <string name="time_hours_ago">%1$d h ago</string>
+    <string name="time_days_ago">%1$d days ago</string>
+
+    <!-- Login -->
+    <string name="login_subtitle">Your AI study assistant</string>
+    <string name="role_student">Student</string>
+    <string name="role_admin">Administrator</string>
+    <string name="email_placeholder">Email address</string>
+    <string name="password_placeholder">Password</string>
+    <string name="login_button">Log in</string>
+    <string name="connecting_server_notice">Connecting to server… the first time may take up to 1 minute.</string>
+    <string name="forgot_password">Forgot your password?</string>
+    <string name="divider_or">or</string>
+    <string name="continue_with_google">Continue with Google</string>
+    <string name="no_account">Don\'t have an account? </string>
+    <string name="register_here">Sign up</string>
+
+    <!-- Language Screen -->
+    <string name="language_screen_title">Preferred language</string>
+    <string name="language_spanish">Español</string>
+    <string name="language_english">English</string>
+    <string name="language_portuguese">Português</string>
+    <string name="language_italian">Italiano</string>
+
+    <!-- Bottom Navigation -->
+    <string name="nav_home">Home</string>
+    <string name="nav_notes">Notes</string>
+    <string name="nav_audit">Audit</string>
+    <string name="nav_reinforce">Reinforce</string>
+
+    <!-- Greeting & Main Dashboard -->
+    <string name="greeting_morning">Good morning</string>
+    <string name="greeting_afternoon">Good afternoon</string>
+    <string name="greeting_night">Good evening</string>
+    <string name="streak_days">%1$d day streak</string>
+    <string name="covered_label">covered</string>
+    <string name="notes_captured_stat">Captured notes</string>
+    <string name="pending_topics_stat">Pending topics</string>
+    <string name="quizzes_done_stat">Quizzes completed</string>
+    <string name="your_cycle_header">YOUR CYCLE</string>
+    <string name="cycle_step_1">Capture</string>
+    <string name="cycle_step_2">Organize</string>
+    <string name="cycle_step_3">Audit</string>
+    <string name="cycle_step_4">Reinforce</string>
+    <string name="recent_activity_header">RECENT ACTIVITY</string>
+
+    <!-- Status Tags & Audit Summary -->
+    <string name="status_weak">Weak</string>
+    <string name="status_solid">Solid</string>
+    <string name="status_missing">Missing</string>
+    <string name="program_covered">of syllabus covered</string>
+    <string name="practice_this">Practice this →</string>
+    <string name="audit_title">Audit</string>
+    <string name="audit_subtitle">Compared with your course syllabus</string>
+    <string name="no_topics_for_category">No topics for this category</string>
+    <string name="audit_error_loading">Error loading audit: %1$s</string>
+
+    <!-- Notes & Note Detail -->
+    <string name="notes_title">Notes</string>
+    <string name="notes_subtitle">AI-structured from your scans</string>
+    <string name="search_notes_placeholder">Search notes</string>
+    <string name="class_number">Class %1$d</string>
+    <string name="scanned_date">Scanned %1$s</string>
+    <string name="no_notes_yet">You don\'t have any notes yet. Tap the camera to scan your first note.</string>
+    <string name="no_notes_found">No notes found</string>
+    <string name="note_detail_title">Note</string>
+    <string name="delete_note_title">Delete this note?</string>
+    <string name="delete_note_message">The note and its summary will be deleted. This action cannot be undone.</string>
+    <string name="ai_summary_header">AI Summary</string>
+    <string name="ai_reading_note">The AI is reading your note… it may take a few seconds.</string>
+    <string name="ai_summary_failed">The AI could not summarize this note last time. You can try again.</string>
+    <string name="ai_summary_processing">This note is being processed. Come back in a few seconds.</string>
+    <string name="ai_summary_none">This note doesn\'t have a summary yet. The AI can extract key concepts for you.</string>
+    <string name="summarize_with_ai">Summarize with AI</string>
+    <string name="original_note_header">Original note</string>
+    <string name="no_content">(no content)</string>
+    <string name="generating_questions">Generating questions…</string>
+    <string name="practice_quiz_button">Practice with an AI quiz</string>
+    <string name="quiz_description_hint">5 multiple-choice questions generated from this note.</string>
+
+    <!-- Reinforcement -->
+    <string name="reinforce_title">Reinforce with AI</string>
+    <string name="reinforce_subtitle">Choose a note and the AI builds a quiz for you</string>
+    <string name="select_note_label">Note</string>
+    <string name="only_weak_topics">Only weak topics</string>
+    <string name="no_weak_topics">You don\'t have any weak topics. Great job!</string>
+    <string name="no_notes_for_quiz">You don\'t have any notes yet. Scan one with the camera to generate a quiz.</string>
+    <string name="questions_count_label">Questions</string>
+    <string name="difficulty_label">Difficulty</string>
+    <string name="ai_creating_quiz">The AI is creating your quiz…</string>
+    <string name="generate_ai_quiz">Generate AI quiz</string>
+    <string name="subject_quizzes_header">YOUR SUBJECT QUIZZES</string>
+    <string name="questions_plural">%1$d questions</string>
+
+    <!-- Quiz Screen & Results -->
+    <string name="preparing_quiz">Preparing quiz...</string>
+    <string name="grading_answers">Grading your answers...</string>
+    <string name="quiz_error">Could not complete quiz: %1$s</string>
+    <string name="submit_quiz">Submit</string>
+    <string name="see_results">View results</string>
+    <string name="quiz_completed_title">Quiz Completed!</string>
+    <string name="your_score">Your score</string>
+    <string name="score_correct_format">%1$d of %2$d correct</string>
+    <string name="review_header">Review</string>
+    <string name="repeat_incorrects">Retry incorrect (%1$d)</string>
+    <string name="scan_more_notes">Scan more notes</string>
+    <string name="back_to_start">Back to home</string>
+
+    <!-- Register, Onboarding & Profile Setup -->
+    <string name="register_title">Sign up</string>
+    <string name="already_have_account">Already have an account? </string>
+    <string name="login_here">Log in</string>
+    <string name="full_name_placeholder">Full name</string>
+    <string name="setup_profile_title">Let\'s set up your profile</string>
+    <string name="your_name_header">YOUR NAME</string>
+    <string name="education_level_header">EDUCATION LEVEL</string>
+    <string name="semester_header">SEMESTER OR PERIOD</string>
+    <string name="edu_high_school">High School</string>
+    <string name="edu_bachelor">Bachelor\'s</string>
+    <string name="edu_postgraduate">Postgraduate</string>
+    <string name="edu_other">Other</string>
+    <string name="semester_placeholder">e.g. 2nd Semester 2026</string>
+    <string name="subjects_studied_title">Subjects you study</string>
+    <string name="subject_placeholder">Subject %1$d</string>
+    <string name="study_goal_title">Study goal</string>
+    <string name="goal_pass_exams">Pass exams</string>
+    <string name="goal_improve_grades">Improve grades</string>
+    <string name="goal_stay_organized">Stay organized</string>
+    <string name="goal_review_consistently">Review consistently</string>
+    <string name="finish_setup_title">Finish setup</string>
+    <string name="camera_permission_title">Camera access</string>
+    <string name="camera_permission_desc">Needed to scan your handwritten notes.</string>
+    <string name="photos_permission_title">Photos access</string>
+    <string name="photos_permission_desc">Import scans from existing photos.</string>
+
+    <!-- Manage Subjects & Join Subject -->
+    <string name="subjects_title">Subjects</string>
+    <string name="manage_courses_subtitle">Manage your courses</string>
+    <string name="join_course_button">Join</string>
+    <string name="error_loading_subjects">Error loading subjects: %1$s</string>
+    <string name="no_subjects_registered">You don\'t have registered subjects</string>
+    <string name="join_course_title">Join a course</string>
+    <string name="join_course_subtitle">Enter a code or choose from catalog</string>
+    <string name="course_code_placeholder">Course code</string>
+    <string name="available_courses_header">AVAILABLE COURSES</string>
+    <string name="already_enrolled_all">You are already enrolled in all available courses.</string>
+    <string name="courses_info_notice">Courses are created by your admin. Join one to start studying.</string>
+    <string name="join_course_action">Join course</string>
+
+    <!-- Study History & Profile Extensions -->
+    <string name="study_history_title">Study history</string>
+    <string name="study_history_subtitle">Your progress over time</string>
+    <string name="weekly">Weekly</string>
+    <string name="monthly">Monthly</string>
+    <string name="accuracy">Accuracy</string>
+    <string name="streak_label">Streak (days)</string>
+    <string name="study_time">Study time</string>
+    <string name="subject_progress_header">PROGRESS BY SUBJECT</string>
+    <string name="not_enrolled_any_subject">You are not enrolled in any subject yet.</string>
+    <string name="strong_areas">Strong areas</string>
+    <string name="weak_areas">Weak areas</string>
+
+    <!-- Change Password & Notifications -->
+    <string name="change_password_title">Reset your password</string>
+    <string name="change_password_email_notice">Enter your account email and we\'ll send a recovery link.</string>
+    <string name="send_link">Send link</string>
+    <string name="check_email_title">Check your email</string>
+    <string name="check_email_message">We sent a recovery link. Follow it to create a new password.</string>
+    <string name="create_new_password_title">Create a new password</string>
+    <string name="new_password_placeholder">New password</string>
+    <string name="confirm_password_placeholder">Confirm password</string>
+    <string name="update_password_button">Update password</string>
+    <string name="password_updated_title">Password updated</string>
+    <string name="password_updated_message">Your password was changed successfully.</string>
+    <string name="continue_to_start">Continue to home</string>
+    <string name="back_to_start_link">Back to home</string>
+    <string name="notifications_title">Notifications</string>
+    <string name="mark_all_read">Mark all as read</string>
+    <string name="no_pending_notifications">No pending notifications</string>
+
+    <!-- Scan Flow -->
+    <string name="new_scan_title">New scan</string>
+    <string name="subject_header">SUBJECT</string>
+    <string name="class_name_number_header">CLASS NAME OR NUMBER</string>
+    <string name="class_name_placeholder">e.g. Class 7</string>
+    <string name="date_header">DATE</string>
+    <string name="material_type_header">MATERIAL TYPE</string>
+    <string name="mat_handwritten">Handwritten notes</string>
+    <string name="mat_book_pages">Book pages</string>
+    <string name="mat_slides">Slides</string>
+    <string name="mat_whiteboard">Whiteboard</string>
+    <string name="multipage_scan_option">Multi-page scan</string>
+    <string name="continue_action">Continue</string>
+    <string name="align_notes_frame">Align your notes inside the frame</string>
+    <string name="ready_badge">Done (%1$d)</string>
+    <string name="camera_permission_needed">We need access to your camera to scan notes.</string>
+    <string name="allow_camera_access">Allow camera access</string>
+    <string name="captured_pages_title">Captured pages</string>
+    <string name="page_number_label">Page %1$d</string>
+    <string name="add_more_pages">Add more pages</string>
+    <string name="confirm_and_process">Confirm &amp; process</string>
+    <string name="ai_processing_notice">The AI may take up to a minute if the server was sleeping.</string>
+    <string name="review_note_title">Review note</string>
+    <string name="generated_tab">Generated</string>
+    <string name="original_tab">Original</string>
+    <string name="generating_your_note">Generating your note...</string>
+    <string name="note_title_header">TITLE</string>
+    <string name="note_title_placeholder">Note title</string>
+    <string name="recognized_text_header">Recognized text</string>
+    <string name="add_section_action">+ Add section</string>
+    <string name="tags_header">TAGS</string>
+    <string name="add_tag_placeholder">Add tag...</string>
+    <string name="add_button">Add</string>
+    <string name="process_again">Process again</string>
+    <string name="save_note">Save note</string>
+    <string name="add_bullet_action">+ Add bullet</string>
+    <string name="section_in_maintenance">Section in maintenance</string>
+    <string name="working_on_section">We are working on completing %1$s</string>
+
+    <!-- Profile Screen -->
+    <string name="profile_title">Profile</string>
+    <string name="profile_config_header">SETTINGS</string>
+    <string name="profile_manage_subjects">Manage subjects</string>
+    <string name="profile_study_history">Study history</string>
+    <string name="profile_appearance">Appearance</string>
+    <string name="profile_camera_access">Camera access</string>
+    <string name="profile_privacy">Privacy</string>
+    <string name="profile_export_data">Export my data</string>
+    <string name="profile_change_password">Change password</string>
+    <string name="profile_language">Language</string>
+    <string name="profile_logout">Log out</string>
+    <string name="profile_delete_account">Delete account</string>
+    <string name="profile_delete_title">Delete your account?</string>
+    <string name="profile_delete_message">All notes, subjects, and progress will be permanently deleted.</string>
+    <string name="light_theme">Light</string>
+    <string name="dark_theme">Dark</string>
+    <string name="notes_captured">Captured notes</string>
+    <string name="quizzes_done">Quizzes completed</string>
+</resources>

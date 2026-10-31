@@ -18,10 +18,12 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import ApunteIA.FrontEnd.R
 import ApunteIA.FrontEnd.presentation.model.MaterialType
 import ApunteIA.FrontEnd.presentation.ui.theme.BackgroundBeige
 import ApunteIA.FrontEnd.presentation.ui.theme.DarkGreen
@@ -46,14 +48,14 @@ fun ScanNewScreen(
             .background(BackgroundBeige)
             .padding(horizontal = 20.dp)
     ) {
-        ScanTopBar(title = "Nuevo escaneo", onClose = onClose)
+        ScanTopBar(title = stringResource(R.string.new_scan_title), onClose = onClose)
 
         Column(
             modifier = Modifier
                 .weight(1f)
                 .verticalScroll(rememberScrollState())
         ) {
-            SectionLabel("MATERIA")
+            SectionLabel(stringResource(R.string.subject_header))
             Spacer(modifier = Modifier.height(10.dp))
             Row(
                 horizontalArrangement = Arrangement.spacedBy(8.dp),
@@ -75,7 +77,7 @@ fun ScanNewScreen(
                 Spacer(modifier = Modifier.height(8.dp))
                 Text(text = message, color = StatusRed, fontSize = 13.sp)
                 Text(
-                    text = "Reintentar",
+                    text = stringResource(R.string.retry),
                     color = DarkGreen,
                     fontSize = 13.sp,
                     fontWeight = FontWeight.Medium,
@@ -85,17 +87,17 @@ fun ScanNewScreen(
 
             Spacer(modifier = Modifier.height(24.dp))
 
-            SectionLabel("NOMBRE O NÚMERO DE CLASE")
+            SectionLabel(stringResource(R.string.class_name_number_header))
             Spacer(modifier = Modifier.height(10.dp))
             ScanTextField(
                 value = state.className,
                 onValueChange = viewModel::onClassNameChange,
-                placeholder = "ej. Clase 7"
+                placeholder = stringResource(R.string.class_name_placeholder)
             )
 
             Spacer(modifier = Modifier.height(24.dp))
 
-            SectionLabel("FECHA")
+            SectionLabel(stringResource(R.string.date_header))
             Spacer(modifier = Modifier.height(10.dp))
             ScanTextField(
                 value = state.date,
@@ -123,20 +125,20 @@ fun ScanNewScreen(
 
             Spacer(modifier = Modifier.height(24.dp))
 
-            SectionLabel("TIPO DE MATERIAL")
+            SectionLabel(stringResource(R.string.material_type_header))
             Spacer(modifier = Modifier.height(10.dp))
             Row(
                 horizontalArrangement = Arrangement.spacedBy(10.dp),
                 modifier = Modifier.fillMaxWidth()
             ) {
                 MaterialTypeChip(
-                    text = MaterialType.HANDWRITTEN.label,
+                    text = stringResource(R.string.mat_handwritten),
                     isSelected = state.materialType == MaterialType.HANDWRITTEN,
                     onClick = { viewModel.selectMaterialType(MaterialType.HANDWRITTEN) },
                     modifier = Modifier.weight(1f)
                 )
                 MaterialTypeChip(
-                    text = MaterialType.BOOK_PAGES.label,
+                    text = stringResource(R.string.mat_book_pages),
                     isSelected = state.materialType == MaterialType.BOOK_PAGES,
                     onClick = { viewModel.selectMaterialType(MaterialType.BOOK_PAGES) },
                     modifier = Modifier.weight(1f)
@@ -148,13 +150,13 @@ fun ScanNewScreen(
                 modifier = Modifier.fillMaxWidth()
             ) {
                 MaterialTypeChip(
-                    text = MaterialType.SLIDES.label,
+                    text = stringResource(R.string.mat_slides),
                     isSelected = state.materialType == MaterialType.SLIDES,
                     onClick = { viewModel.selectMaterialType(MaterialType.SLIDES) },
                     modifier = Modifier.weight(1f)
                 )
                 MaterialTypeChip(
-                    text = MaterialType.WHITEBOARD.label,
+                    text = stringResource(R.string.mat_whiteboard),
                     isSelected = state.materialType == MaterialType.WHITEBOARD,
                     onClick = { viewModel.selectMaterialType(MaterialType.WHITEBOARD) },
                     modifier = Modifier.weight(1f)
@@ -172,7 +174,7 @@ fun ScanNewScreen(
                 verticalAlignment = Alignment.CenterVertically
             ) {
                 Text(
-                    text = "Escaneo de varias páginas",
+                    text = stringResource(R.string.multipage_scan_option),
                     color = DarkGreen,
                     fontSize = 15.sp,
                     fontWeight = FontWeight.Medium
@@ -203,7 +205,7 @@ fun ScanNewScreen(
                 disabledContainerColor = DarkGreen.copy(alpha = 0.4f)
             )
         ) {
-            Text("Continuar", color = Color.White, fontWeight = FontWeight.Bold, fontSize = 16.sp)
+            Text(stringResource(R.string.continue_action), color = Color.White, fontWeight = FontWeight.Bold, fontSize = 16.sp)
         }
     }
 }

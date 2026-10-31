@@ -14,12 +14,13 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import ApunteIA.FrontEnd.R
 import ApunteIA.FrontEnd.presentation.ui.theme.SpaceCadet
 
 enum class ChangePasswordStep {
@@ -122,7 +123,7 @@ fun PasswordSuccessContent(
         Spacer(modifier = Modifier.height(32.dp))
         
         Text(
-            text = "Contraseña actualizada",
+            text = stringResource(R.string.password_updated_title),
             fontSize = 24.sp,
             fontWeight = FontWeight.Bold,
             color = MaterialTheme.colorScheme.onSurface,
@@ -132,7 +133,7 @@ fun PasswordSuccessContent(
         Spacer(modifier = Modifier.height(12.dp))
         
         Text(
-            text = "Tu contraseña se cambió correctamente.",
+            text = stringResource(R.string.password_updated_message),
             fontSize = 15.sp,
             color = MaterialTheme.colorScheme.onSurfaceVariant,
             textAlign = TextAlign.Center
@@ -152,7 +153,7 @@ fun PasswordSuccessContent(
             )
         ) {
             Text(
-                text = "Continuar al inicio",
+                text = stringResource(R.string.continue_to_start),
                 fontSize = 16.sp,
                 fontWeight = FontWeight.Bold
             )
@@ -191,7 +192,7 @@ fun EmailInputContent(
         Spacer(modifier = Modifier.height(32.dp))
         
         Text(
-            text = "Restablece tu contraseña",
+            text = stringResource(R.string.change_password_title),
             fontSize = 24.sp,
             fontWeight = FontWeight.Bold,
             color = MaterialTheme.colorScheme.onSurface,
@@ -201,7 +202,7 @@ fun EmailInputContent(
         Spacer(modifier = Modifier.height(12.dp))
         
         Text(
-            text = "Ingresa el correo de tu cuenta y te enviaremos un enlace de recuperación.",
+            text = stringResource(R.string.change_password_email_notice),
             fontSize = 15.sp,
             color = MaterialTheme.colorScheme.onSurfaceVariant,
             textAlign = TextAlign.Center,
@@ -213,7 +214,7 @@ fun EmailInputContent(
         ApuntesTextField(
             value = email,
             onValueChange = onEmailChange,
-            placeholder = "Correo electrónico"
+            placeholder = stringResource(R.string.email_placeholder)
         )
         
         Spacer(modifier = Modifier.height(24.dp))
@@ -230,7 +231,7 @@ fun EmailInputContent(
             )
         ) {
             Text(
-                text = "Enviar enlace",
+                text = stringResource(R.string.send_link),
                 fontSize = 16.sp,
                 fontWeight = FontWeight.Bold
             )
@@ -239,7 +240,7 @@ fun EmailInputContent(
         Spacer(modifier = Modifier.height(32.dp))
         
         Text(
-            text = "Volver al inicio",
+            text = stringResource(R.string.back_to_start_link),
             color = MaterialTheme.colorScheme.onSurfaceVariant,
             fontSize = 14.sp,
             textDecoration = TextDecoration.Underline,
@@ -277,7 +278,7 @@ fun CheckEmailContent(
         Spacer(modifier = Modifier.height(32.dp))
         
         Text(
-            text = "Revisa tu correo",
+            text = stringResource(R.string.check_email_title),
             fontSize = 24.sp,
             fontWeight = FontWeight.Bold,
             color = MaterialTheme.colorScheme.onSurface,
@@ -287,7 +288,7 @@ fun CheckEmailContent(
         Spacer(modifier = Modifier.height(12.dp))
         
         Text(
-            text = "Enviamos un enlace de recuperación. Síguelo para crear una nueva contraseña.",
+            text = stringResource(R.string.check_email_message),
             fontSize = 15.sp,
             color = MaterialTheme.colorScheme.onSurfaceVariant,
             textAlign = TextAlign.Center,
@@ -308,7 +309,7 @@ fun CheckEmailContent(
             )
         ) {
             Text(
-                text = "Continuar al inicio",
+                text = stringResource(R.string.continue_to_start),
                 fontSize = 16.sp,
                 fontWeight = FontWeight.Bold
             )
@@ -317,7 +318,7 @@ fun CheckEmailContent(
         Spacer(modifier = Modifier.height(32.dp))
         
         Text(
-            text = "Volver al inicio",
+            text = stringResource(R.string.back_to_start_link),
             color = MaterialTheme.colorScheme.onSurfaceVariant,
             fontSize = 14.sp,
             textDecoration = TextDecoration.Underline,
@@ -341,7 +342,7 @@ fun NewPasswordContent(
         modifier = Modifier.fillMaxWidth()
     ) {
         Text(
-            text = "Crea una nueva contraseña",
+            text = stringResource(R.string.create_new_password_title),
             fontSize = 24.sp,
             fontWeight = FontWeight.Bold,
             color = MaterialTheme.colorScheme.onSurface,
@@ -353,7 +354,7 @@ fun NewPasswordContent(
         ApuntesTextField(
             value = newPassword,
             onValueChange = onNewPasswordChange,
-            placeholder = "Nueva contraseña"
+            placeholder = stringResource(R.string.new_password_placeholder)
         )
         
         Spacer(modifier = Modifier.height(16.dp))
@@ -361,7 +362,7 @@ fun NewPasswordContent(
         ApuntesTextField(
             value = confirmPassword,
             onValueChange = onConfirmPasswordChange,
-            placeholder = "Confirmar contraseña"
+            placeholder = stringResource(R.string.confirm_password_placeholder)
         )
         
         Spacer(modifier = Modifier.height(32.dp))
@@ -378,7 +379,7 @@ fun NewPasswordContent(
             )
         ) {
             Text(
-                text = "Actualizar contraseña",
+                text = stringResource(R.string.update_password_button),
                 fontSize = 16.sp,
                 fontWeight = FontWeight.Bold
             )

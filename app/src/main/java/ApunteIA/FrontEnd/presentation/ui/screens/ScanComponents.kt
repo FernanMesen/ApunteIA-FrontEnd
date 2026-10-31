@@ -3,7 +3,6 @@ package ApunteIA.FrontEnd.presentation.ui.screens
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -22,17 +21,17 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import ApunteIA.FrontEnd.R
 import ApunteIA.FrontEnd.presentation.ui.theme.DarkGreen
 import ApunteIA.FrontEnd.presentation.ui.theme.LightGreen
 import ApunteIA.FrontEnd.presentation.ui.theme.TextGray
 
 /**
- * Encabezado común de las 4 pantallas del flujo de escaneo: botón de cerrar
- * (X) a la izquierda, título opcional al centro/izquierda y un slot libre
- * a la derecha (usado por el badge de páginas capturadas).
+ * Encabezado común de las 4 pantallas del flujo de escaneo.
  */
 @Composable
 fun ScanTopBar(
@@ -52,7 +51,7 @@ fun ScanTopBar(
                 .size(36.dp)
                 .background(Color(0xFFEDEDED), CircleShape)
         ) {
-            Icon(Icons.Default.Close, contentDescription = "Cerrar", tint = DarkGreen)
+            Icon(Icons.Default.Close, contentDescription = stringResource(R.string.close), tint = DarkGreen)
         }
 
         if (title != null) {
@@ -71,7 +70,7 @@ fun ScanTopBar(
     }
 }
 
-/** Chip para elegir la materia (Química Orgánica, Biología Celular, ...). */
+/** Chip para elegir la materia. */
 @Composable
 fun SubjectChip(text: String, isSelected: Boolean, onClick: () -> Unit) {
     Surface(
@@ -90,7 +89,7 @@ fun SubjectChip(text: String, isSelected: Boolean, onClick: () -> Unit) {
     }
 }
 
-/** Chip para elegir el tipo de material (notas manuscritas, diapositivas, ...). */
+/** Chip para elegir el tipo de material. */
 @Composable
 fun MaterialTypeChip(text: String, isSelected: Boolean, onClick: () -> Unit, modifier: Modifier = Modifier) {
     Surface(

@@ -10,9 +10,11 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import ApunteIA.FrontEnd.R
 
 @Composable
 fun CustomBottomNavigation(
@@ -33,13 +35,33 @@ fun CustomBottomNavigation(
             horizontalArrangement = Arrangement.SpaceAround,
             verticalAlignment = Alignment.CenterVertically
         ) {
-            NavItem(Icons.Default.Home, "Inicio", currentRoute == "Inicio", onInicio)
-            NavItem(Icons.Default.Description, "Notas", currentRoute == "Notas", onNotas)
+            NavItem(
+                icon = Icons.Default.Home,
+                label = stringResource(R.string.nav_home),
+                isSelected = currentRoute == "Inicio",
+                onClick = onInicio
+            )
+            NavItem(
+                icon = Icons.Default.Description,
+                label = stringResource(R.string.nav_notes),
+                isSelected = currentRoute == "Notas",
+                onClick = onNotas
+            )
             
             Spacer(modifier = Modifier.width(48.dp))
             
-            NavItem(Icons.Default.Analytics, "Auditoría", currentRoute == "Auditoría", onAuditoria)
-            NavItem(Icons.Default.HistoryEdu, "Reforzar", currentRoute == "Reforzar", onReforzar)
+            NavItem(
+                icon = Icons.Default.Analytics,
+                label = stringResource(R.string.nav_audit),
+                isSelected = currentRoute == "Auditoría",
+                onClick = onAuditoria
+            )
+            NavItem(
+                icon = Icons.Default.HistoryEdu,
+                label = stringResource(R.string.nav_reinforce),
+                isSelected = currentRoute == "Reforzar",
+                onClick = onReforzar
+            )
         }
     }
 }

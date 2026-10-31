@@ -7,8 +7,6 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.*
 import androidx.compose.material3.*
 import androidx.compose.material3.pulltorefresh.PullToRefreshBox
 import androidx.compose.runtime.Composable
@@ -22,10 +20,13 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.StrokeCap
 import androidx.compose.ui.graphics.drawscope.Stroke
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import ApunteIA.FrontEnd.R
 import ApunteIA.FrontEnd.domain.model.RecentActivity
+import ApunteIA.FrontEnd.domain.util.FormatUtils
 import ApunteIA.FrontEnd.presentation.ui.theme.*
 import ApunteIA.FrontEnd.presentation.ui.layout.MainLayout
 import ApunteIA.FrontEnd.presentation.ui.components.TopHeader
@@ -44,12 +45,13 @@ fun MainScreen(
 ) {
     val uiState by viewModel.uiState.collectAsState()
     val snackbarHostState = remember { SnackbarHostState() }
+    val retryText = stringResource(R.string.retry)
 
     LaunchedEffect(uiState.error) {
         uiState.error?.let { errorMessage ->
             val result = snackbarHostState.showSnackbar(
                 message = errorMessage,
-                actionLabel = "Reintentar",
+                actionLabel = retryText,
                 duration = SnackbarDuration.Indefinite
             )
             if (result == SnackbarResult.ActionPerformed) {
@@ -121,7 +123,7 @@ fun MainScreen(
                                 horizontalAlignment = Alignment.CenterHorizontally
                             ) {
                                 Text(
-                                    text = "Error de red: ${uiState.error}",
+                                    text = uiState.error.orEmpty(),
                                     color = MaterialTheme.colorScheme.onErrorContainer,
                                     fontSize = 14.sp
                                 )
@@ -132,7 +134,7 @@ fun MainScreen(
                                         containerColor = MaterialTheme.colorScheme.error
                                     )
                                 ) {
-                                    Text("Reintentar")
+                                    Text(stringResource(R.string.retry))
                                 }
                             }
                         }
@@ -208,7 +210,7 @@ fun GreetingSection(userName: String, streakDays: Int) {
                     )
                     Spacer(modifier = Modifier.width(8.dp))
                     Text(
-                        text = "Racha de $streakDays días",
+                        text = stringResource(R.string.streak_days, streakDays),
                         fontSize = 14.sp,
                         fontWeight = FontWeight.Medium,
                         color = if (isDark) Color.White else TextGray
@@ -222,6 +224,7 @@ fun GreetingSection(userName: String, streakDays: Int) {
 @Composable
 fun StatsCard(progress: Int, notesCount: Int, pendingTopics: Int, quizzesDone: Int) {
     val isDark = MaterialTheme.colorScheme.primary == SpaceCadet
+    val formattedProgress = FormatUtils.formatNumber(progress, maxFractionDigits = 0)
 
     Card(
         modifier = Modifier.fillMaxWidth(),
@@ -252,13 +255,13 @@ fun StatsCard(progress: Int, notesCount: Int, pendingTopics: Int, quizzesDone: I
                 }
                 Column(horizontalAlignment = Alignment.CenterHorizontally) {
                     Text(
-                        text = "$progress%",
+                        text = "$formattedProgress%",
                         fontWeight = FontWeight.Bold,
                         fontSize = 18.sp,
                         color = if (isDark) Color.White else DarkGreen
                     )
                     Text(
-                        text = "cubierto",
+                        text = stringResource(R.string.covered_label),
                         fontSize = 10.sp,
                         color = MaterialTheme.colorScheme.onSurfaceVariant
                     )
@@ -266,9 +269,21 @@ fun StatsCard(progress: Int, notesCount: Int, pendingTopics: Int, quizzesDone: I
             }
             Spacer(modifier = Modifier.width(24.dp))
             Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
-                StatLine("Notas capturadas", notesCount.toString(), if (isDark) Color.White else DarkGreen)
-                StatLine("Temas pendientes", pendingTopics.toString(), StatusRed)
-                StatLine("Cuestionarios hechos", quizzesDone.toString(), if (isDark) Color.White else DarkGreen)
+                StatLine(
+                    label = stringResource(R.string.notes_captured_stat),
+                    value = FormatUtils.formatNumber(notesCount, maxFractionDigits = 0),
+                    valueColor = if (isDark) Color.White else DarkGreen
+                )
+                StatLine(
+                    label = stringResource(R.string.pending_topics_stat),
+                    value = FormatUtils.formatNumber(pendingTopics, maxFractionDigits = 0),
+                    valueColor = StatusRed
+                )
+                StatLine(
+                    label = stringResource(R.string.quizzes_done_stat),
+                    value = FormatUtils.formatNumber(quizzesDone, maxFractionDigits = 0),
+                    valueColor = if (isDark) Color.White else DarkGreen
+                )
             }
         }
     }
@@ -286,7 +301,7 @@ fun StatLine(label: String, value: String, valueColor: Color) {
 fun CycleSection(onOrganizarClick: () -> Unit, onReforzarClick: () -> Unit) {
     Column {
         Text(
-            text = "TU CICLO",
+            text = stringResource(R.string.your_cycle_header),
             style = MaterialTheme.typography.titleSmall,
             color = MaterialTheme.colorScheme.onSurfaceVariant,
             fontWeight = FontWeight.Bold
@@ -296,13 +311,13 @@ fun CycleSection(onOrganizarClick: () -> Unit, onReforzarClick: () -> Unit) {
             modifier = Modifier.fillMaxWidth(),
             verticalAlignment = Alignment.CenterVertically
         ) {
-            CycleItem("1", "Capturar", false)
+            CycleItem("1", stringResource(R.string.cycle_step_1), false)
             CycleConnector(Modifier.weight(1f))
-            CycleItem("2", "Organizar", false, onClick = onOrganizarClick)
+            CycleItem("2", stringResource(R.string.cycle_step_2), false, onClick = onOrganizarClick)
             CycleConnector(Modifier.weight(1f))
-            CycleItem("3", "Auditar", false)
+            CycleItem("3", stringResource(R.string.cycle_step_3), false)
             CycleConnector(Modifier.weight(1f))
-            CycleItem("4", "Reforzar", true, onClick = onReforzarClick)
+            CycleItem("4", stringResource(R.string.cycle_step_4), true, onClick = onReforzarClick)
         }
     }
 }
@@ -357,7 +372,7 @@ fun CycleConnector(modifier: Modifier = Modifier) {
 fun RecentActivitySection(activities: List<RecentActivity>) {
     Column {
         Text(
-            text = "ACTIVIDAD RECIENTE",
+            text = stringResource(R.string.recent_activity_header),
             style = MaterialTheme.typography.titleSmall,
             color = MaterialTheme.colorScheme.onSurfaceVariant,
             fontWeight = FontWeight.Bold
@@ -420,12 +435,12 @@ fun ActivityItem(title: String, subtitle: String, time: String) {
     }
 }
 
-/** Saludo según la hora del teléfono. */
+@Composable
 private fun greetingForNow(): String {
     val hour = java.util.Calendar.getInstance().get(java.util.Calendar.HOUR_OF_DAY)
     return when (hour) {
-        in 5..11 -> "Buenos días"
-        in 12..18 -> "Buenas tardes"
-        else -> "Buenas noches"
+        in 5..11 -> stringResource(R.string.greeting_morning)
+        in 12..18 -> stringResource(R.string.greeting_afternoon)
+        else -> stringResource(R.string.greeting_night)
     }
 }

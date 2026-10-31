@@ -6,9 +6,11 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import ApunteIA.FrontEnd.R
 
 @Composable
 fun SubjectsScreen(
@@ -43,7 +45,7 @@ fun SubjectsScreen(
         Spacer(modifier = Modifier.height(32.dp))
 
         Text(
-            text = "Materias que estudias",
+            text = stringResource(R.string.subjects_studied_title),
             color = MaterialTheme.colorScheme.primary,
             fontSize = 22.sp,
             fontWeight = FontWeight.Bold
@@ -56,7 +58,7 @@ fun SubjectsScreen(
             onValueChange = {
                 subject1 = it
             },
-            placeholder = "Materia 1"
+            placeholder = stringResource(R.string.subject_placeholder, 1)
         )
 
         Spacer(modifier = Modifier.height(12.dp))
@@ -66,7 +68,7 @@ fun SubjectsScreen(
             onValueChange = {
                 subject2 = it
             },
-            placeholder = "Materia 2"
+            placeholder = stringResource(R.string.subject_placeholder, 2)
         )
 
         Spacer(modifier = Modifier.height(12.dp))
@@ -76,17 +78,16 @@ fun SubjectsScreen(
             onValueChange = {
                 subject3 = it
             },
-            placeholder = "Materia 3"
+            placeholder = stringResource(R.string.subject_placeholder, 3)
         )
 
         Spacer(modifier = Modifier.weight(1f))
 
         ApuntesPrimaryButton(
-            text = "Siguiente",
+            text = stringResource(R.string.next_button),
             onClick = onNext
         )
 
         Spacer(modifier = Modifier.height(26.dp))
     }
 }
-

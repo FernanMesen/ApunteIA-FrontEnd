@@ -9,7 +9,6 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material.icons.filled.Check
 import androidx.compose.material.icons.filled.KeyboardArrowLeft
 import androidx.compose.material.icons.filled.KeyboardArrowRight
@@ -19,12 +18,15 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import ApunteIA.FrontEnd.R
 import ApunteIA.FrontEnd.presentation.ui.theme.*
 import ApunteIA.FrontEnd.presentation.ui.components.LocalCurrentUser
+import ApunteIA.FrontEnd.util.LanguageManager
 
 @Composable
 fun ProfileScreen(
@@ -38,6 +40,7 @@ fun ProfileScreen(
     onPrivacy: () -> Unit = {},
     onExportData: () -> Unit = {},
     onChangePassword: () -> Unit = {},
+    onLanguage: () -> Unit = {},
     notesCount: Int? = null,
     quizzesCount: Int? = null
 ) {
@@ -50,7 +53,7 @@ fun ProfileScreen(
             containerColor = if (isThemeDark) Color(0xFF252E3E) else Color.White,
             title = {
                 Text(
-                    text = "¿Eliminar tu cuenta?",
+                    text = stringResource(R.string.profile_delete_title),
                     fontSize = 20.sp,
                     fontWeight = FontWeight.Bold,
                     color = MaterialTheme.colorScheme.onSurface
@@ -58,7 +61,7 @@ fun ProfileScreen(
             },
             text = {
                 Text(
-                    text = "Todas las notas, materias y progreso se eliminarán permanentemente.",
+                    text = stringResource(R.string.profile_delete_message),
                     fontSize = 15.sp,
                     color = MaterialTheme.colorScheme.onSurfaceVariant
                 )
@@ -75,7 +78,7 @@ fun ProfileScreen(
                     ),
                     shape = RoundedCornerShape(12.dp)
                 ) {
-                    Text("Confirmar", fontWeight = FontWeight.Bold)
+                    Text(stringResource(R.string.confirm), fontWeight = FontWeight.Bold)
                 }
             },
             dismissButton = {
@@ -85,7 +88,7 @@ fun ProfileScreen(
                     shape = RoundedCornerShape(12.dp)
                 ) {
                     Text(
-                        "Cancelar",
+                        stringResource(R.string.cancel),
                         color = MaterialTheme.colorScheme.onSurface,
                         fontWeight = FontWeight.Bold
                     )
@@ -126,7 +129,8 @@ fun ProfileScreen(
                     onCameraAccess = onCameraAccess,
                     onPrivacy = onPrivacy,
                     onExportData = onExportData,
-                    onChangePassword = onChangePassword
+                    onChangePassword = onChangePassword,
+                    onLanguage = onLanguage
                 )
             }
 
@@ -137,7 +141,7 @@ fun ProfileScreen(
 
             item {
                 Text(
-                    text = "Eliminar cuenta",
+                    text = stringResource(R.string.profile_delete_account),
                     color = if (MaterialTheme.colorScheme.primary == SpaceCadet) Color(0xFFC07B7B) else MaterialTheme.colorScheme.onSurfaceVariant,
                     fontSize = 14.sp,
                     fontWeight = FontWeight.Medium,
@@ -175,7 +179,7 @@ fun ProfileTopBar(onBack: () -> Unit) {
         }
 
         Text(
-            text = "Perfil",
+            text = stringResource(R.string.profile_title),
             modifier = Modifier.weight(1f).padding(end = 40.dp),
             textAlign = TextAlign.Center,
             fontSize = 20.sp,
@@ -233,9 +237,9 @@ fun StatsSection(notesCount: Int?, quizzesCount: Int?) {
         elevation = CardDefaults.cardElevation(defaultElevation = 0.dp)
     ) {
         Column {
-            StatItem("Notas capturadas", notesCount?.toString() ?: "—")
+            StatItem(stringResource(R.string.notes_captured), notesCount?.toString() ?: "—")
             HorizontalDivider(color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.05f), modifier = Modifier.padding(horizontal = 16.dp))
-            StatItem("Cuestionarios hechos", quizzesCount?.toString() ?: "—")
+            StatItem(stringResource(R.string.quizzes_done), quizzesCount?.toString() ?: "—")
         }
     }
 }
@@ -263,13 +267,14 @@ fun ConfigSection(
     onCameraAccess: () -> Unit,
     onPrivacy: () -> Unit,
     onExportData: () -> Unit,
-    onChangePassword: () -> Unit
+    onChangePassword: () -> Unit,
+    onLanguage: () -> Unit
 ) {
     val isThemeDark = MaterialTheme.colorScheme.primary == SpaceCadet
 
     Column {
         Text(
-            text = "CONFIGURACIÓN",
+            text = stringResource(R.string.profile_config_header),
             fontSize = 13.sp,
             fontWeight = FontWeight.Bold,
             color = if (isThemeDark) Color(0xFF9BA4B5) else TextGray,
@@ -284,42 +289,59 @@ fun ConfigSection(
         ) {
             Column {
                 ConfigItem(
-                    label = "Administrar materias",
+                    label = stringResource(R.string.profile_manage_subjects),
                     onClick = onManageSubjects,
                     trailing = { Icon(Icons.Default.KeyboardArrowRight, null, tint = MaterialTheme.colorScheme.onSurfaceVariant, modifier = Modifier.size(14.dp)) }
                 )
                 HorizontalDivider(color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.08f), thickness = 0.5.dp)
                 ConfigItem(
-                    label = "Historial de estudio",
+                    label = stringResource(R.string.profile_study_history),
                     onClick = onStudyHistory,
                     trailing = { Icon(Icons.Default.KeyboardArrowRight, null, tint = MaterialTheme.colorScheme.onSurfaceVariant, modifier = Modifier.size(14.dp)) }
                 )
                 HorizontalDivider(color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.08f), thickness = 0.5.dp)
                 ConfigItem(
-                    label = "Apariencia",
+                    label = stringResource(R.string.profile_appearance),
                     trailing = { AppearanceToggle(isDarkMode, onThemeToggle) }
                 )
                 HorizontalDivider(color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.08f), thickness = 0.5.dp)
                 ConfigItem(
-                    label = "Acceso a cámara",
+                    label = stringResource(R.string.profile_language),
+                    onClick = onLanguage,
+                    trailing = {
+                        Row(verticalAlignment = Alignment.CenterVertically) {
+                            Text(
+                                text = LanguageManager.getCurrentLanguageShortCode(),
+                                fontSize = 13.sp,
+                                fontWeight = FontWeight.Bold,
+                                color = MaterialTheme.colorScheme.primary,
+                                modifier = Modifier.padding(end = 4.dp)
+                            )
+                            Icon(Icons.Default.KeyboardArrowRight, null, tint = MaterialTheme.colorScheme.onSurfaceVariant, modifier = Modifier.size(14.dp))
+                        }
+                    }
+                )
+                HorizontalDivider(color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.08f), thickness = 0.5.dp)
+                ConfigItem(
+                    label = stringResource(R.string.profile_camera_access),
                     onClick = onCameraAccess,
                     trailing = { Icon(Icons.Default.Check, null, tint = MaterialTheme.colorScheme.onSurfaceVariant, modifier = Modifier.size(16.dp)) }
                 )
                 HorizontalDivider(color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.08f), thickness = 0.5.dp)
                 ConfigItem(
-                    label = "Privacidad",
+                    label = stringResource(R.string.profile_privacy),
                     onClick = onPrivacy,
                     trailing = { Icon(Icons.Default.KeyboardArrowRight, null, tint = MaterialTheme.colorScheme.onSurfaceVariant, modifier = Modifier.size(14.dp)) }
                 )
                 HorizontalDivider(color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.08f), thickness = 0.5.dp)
                 ConfigItem(
-                    label = "Exportar mis datos",
+                    label = stringResource(R.string.profile_export_data),
                     onClick = onExportData,
                     trailing = { Icon(Icons.Default.KeyboardArrowRight, null, tint = MaterialTheme.colorScheme.onSurfaceVariant, modifier = Modifier.size(14.dp)) }
                 )
                 HorizontalDivider(color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.08f), thickness = 0.5.dp)
                 ConfigItem(
-                    label = "Cambiar contraseña",
+                    label = stringResource(R.string.profile_change_password),
                     onClick = onChangePassword,
                     trailing = { Icon(Icons.Default.KeyboardArrowRight, null, tint = MaterialTheme.colorScheme.onSurfaceVariant, modifier = Modifier.size(14.dp)) }
                 )
@@ -368,7 +390,7 @@ fun AppearanceToggle(isDarkMode: Boolean, onThemeToggle: (Boolean) -> Unit) {
             contentAlignment = Alignment.Center
         ) {
             Text(
-                text = "Claro",
+                text = stringResource(R.string.light_theme),
                 color = if (!isDarkMode) Color.White else (if (isThemeDark) Color(0xFF9BA4B5) else TextGray),
                 fontSize = 12.sp,
                 fontWeight = FontWeight.Bold
@@ -384,7 +406,7 @@ fun AppearanceToggle(isDarkMode: Boolean, onThemeToggle: (Boolean) -> Unit) {
             contentAlignment = Alignment.Center
         ) {
             Text(
-                text = "Oscuro",
+                text = stringResource(R.string.dark_theme),
                 color = if (isDarkMode) Color.White else (if (isThemeDark) Color(0xFF9BA4B5) else TextGray),
                 fontSize = 12.sp,
                 fontWeight = FontWeight.Bold
@@ -410,7 +432,7 @@ fun LogoutButton(onClick: () -> Unit) {
         elevation = ButtonDefaults.buttonElevation(defaultElevation = 0.dp)
     ) {
         Text(
-            text = "Cerrar sesión",
+            text = stringResource(R.string.profile_logout),
             fontSize = 16.sp,
             fontWeight = FontWeight.Bold
         )

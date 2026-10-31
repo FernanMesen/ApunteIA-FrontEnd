@@ -17,11 +17,13 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import ApunteIA.FrontEnd.R
 import ApunteIA.FrontEnd.domain.model.Assessment
 import ApunteIA.FrontEnd.domain.model.Note
 import ApunteIA.FrontEnd.domain.model.QuizDifficulty
@@ -95,13 +97,13 @@ fun ReinforcementScreen(
                 }
                 Spacer(modifier = Modifier.height(16.dp))
                 Text(
-                    text = "Reforzar con IA",
+                    text = stringResource(R.string.reinforce_title),
                     fontSize = 28.sp,
                     fontWeight = FontWeight.Bold,
                     color = MaterialTheme.colorScheme.onSurface
                 )
                 Text(
-                    text = "Elige un apunte y la IA te arma un quiz",
+                    text = stringResource(R.string.reinforce_subtitle),
                     fontSize = 16.sp,
                     color = MaterialTheme.colorScheme.onSurfaceVariant
                 )
@@ -118,8 +120,8 @@ fun ReinforcementScreen(
                         Column(modifier = Modifier.padding(16.dp)) {
                             Text(uiState.error.orEmpty(), color = MaterialTheme.colorScheme.onErrorContainer)
                             Row(modifier = Modifier.align(Alignment.End)) {
-                                TextButton(onClick = { viewModel.dismissError() }) { Text("Cerrar") }
-                                TextButton(onClick = { viewModel.load() }) { Text("Reintentar") }
+                                TextButton(onClick = { viewModel.dismissError() }) { Text(stringResource(R.string.close)) }
+                                TextButton(onClick = { viewModel.load() }) { Text(stringResource(R.string.retry)) }
                             }
                         }
                     }
@@ -128,7 +130,7 @@ fun ReinforcementScreen(
             }
 
             item {
-                ReinforcementConfigSection("Apunte") {
+                ReinforcementConfigSection(stringResource(R.string.select_note_label)) {
                     when {
                         uiState.isLoading && uiState.notes.isEmpty() -> Box(
                             modifier = Modifier.fillMaxWidth().padding(16.dp),
@@ -137,9 +139,9 @@ fun ReinforcementScreen(
 
                         uiState.visibleNotes.isEmpty() -> Text(
                             text = if (uiState.onlyWeak && uiState.notes.isNotEmpty()) {
-                                "No tienes temas débiles. ¡Buen trabajo!"
+                                stringResource(R.string.no_weak_topics)
                             } else {
-                                "Aún no tienes apuntes. Escanea uno con la cámara para poder generar un quiz."
+                                stringResource(R.string.no_notes_for_quiz)
                             },
                             color = MaterialTheme.colorScheme.onSurfaceVariant,
                             fontSize = 14.sp
@@ -158,7 +160,7 @@ fun ReinforcementScreen(
                 }
                 Spacer(modifier = Modifier.height(16.dp))
                 ToggleOption(
-                    text = "Solo temas débiles",
+                    text = stringResource(R.string.only_weak_topics),
                     checked = uiState.onlyWeak,
                     onToggle = { viewModel.toggleOnlyWeak() }
                 )
@@ -166,7 +168,7 @@ fun ReinforcementScreen(
             }
 
             item {
-                ReinforcementConfigSection("Preguntas") {
+                ReinforcementConfigSection(stringResource(R.string.questions_count_label)) {
                     Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
                         listOf(5, 10, 15).forEach { count ->
                             SegmentedOption(
@@ -181,7 +183,7 @@ fun ReinforcementScreen(
             }
 
             item {
-                ReinforcementConfigSection("Dificultad") {
+                ReinforcementConfigSection(stringResource(R.string.difficulty_label)) {
                     Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
                         QuizDifficulty.entries.forEach { difficulty ->
                             SegmentedOption(
@@ -211,9 +213,9 @@ fun ReinforcementScreen(
                             strokeWidth = 2.dp
                         )
                         Spacer(modifier = Modifier.width(12.dp))
-                        Text("La IA está creando tu quiz…", fontWeight = FontWeight.Bold)
+                        Text(stringResource(R.string.ai_creating_quiz), fontWeight = FontWeight.Bold)
                     } else {
-                        Text("Generar quiz con IA", fontWeight = FontWeight.Bold, fontSize = 16.sp)
+                        Text(stringResource(R.string.generate_ai_quiz), fontWeight = FontWeight.Bold, fontSize = 16.sp)
                     }
                 }
                 Spacer(modifier = Modifier.height(32.dp))
@@ -222,7 +224,7 @@ fun ReinforcementScreen(
             if (uiState.quizzes.isNotEmpty()) {
                 item {
                     Text(
-                        text = "QUIZZES DE TUS MATERIAS",
+                        text = stringResource(R.string.subject_quizzes_header),
                         fontSize = 14.sp,
                         fontWeight = FontWeight.Bold,
                         color = MaterialTheme.colorScheme.onSurfaceVariant,
@@ -286,6 +288,8 @@ private fun NoteOption(note: Note, isSelected: Boolean, onClick: () -> Unit) {
 
 @Composable
 private fun QuizRow(quiz: Assessment, onClick: () -> Unit) {
+    val questionsText = stringResource(R.string.questions_plural, quiz.totalQuestions)
+
     Card(
         modifier = Modifier.fillMaxWidth().clickable { onClick() },
         shape = RoundedCornerShape(12.dp),
@@ -304,7 +308,7 @@ private fun QuizRow(quiz: Assessment, onClick: () -> Unit) {
                     overflow = TextOverflow.Ellipsis
                 )
                 Text(
-                    text = listOf(quiz.className, "${quiz.totalQuestions} preguntas")
+                    text = listOf(quiz.className, questionsText)
                         .filter { it.isNotBlank() }
                         .joinToString(" · "),
                     fontSize = 12.sp,
@@ -313,7 +317,7 @@ private fun QuizRow(quiz: Assessment, onClick: () -> Unit) {
             }
             Icon(
                 imageVector = if (quiz.isCompleted) Icons.Default.CheckCircle else Icons.Default.PlayArrow,
-                contentDescription = if (quiz.isCompleted) "Ya lo resolviste" else "Resolver",
+                contentDescription = null,
                 tint = MaterialTheme.colorScheme.primary
             )
         }

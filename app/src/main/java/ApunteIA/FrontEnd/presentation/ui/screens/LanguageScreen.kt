@@ -9,19 +9,21 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import ApunteIA.FrontEnd.R
+import ApunteIA.FrontEnd.util.LanguageManager
 
-//falta desarrollar
 @Composable
 fun LanguageScreen(
     onBack: () -> Unit,
     onNext: () -> Unit
 ) {
 
-    var language by remember {
-        mutableStateOf("ES")
+    var currentLanguageCode by remember {
+        mutableStateOf(LanguageManager.getCurrentLanguageCode())
     }
 
     Column(
@@ -39,7 +41,7 @@ fun LanguageScreen(
         Spacer(modifier = Modifier.height(32.dp))
 
         Text(
-            text = "Idioma preferido",
+            text = stringResource(R.string.language_screen_title),
             color = ApuntesGreen,
             fontSize = 22.sp,
             fontWeight = FontWeight.Bold
@@ -47,36 +49,27 @@ fun LanguageScreen(
 
         Spacer(modifier = Modifier.height(22.dp))
 
-        Row(
-            modifier = Modifier
-                .background(
-                    color = Color.White,
-                    shape = RoundedCornerShape(28.dp)
-                )
-                .padding(4.dp)
+        Column(
+            verticalArrangement = Arrangement.spacedBy(12.dp),
+            modifier = Modifier.fillMaxWidth()
         ) {
-
-            LanguageChoice(
-                text = "ES",
-                selected = language == "ES",
-                onClick = {
-                    language = "ES"
-                }
-            )
-
-            LanguageChoice(
-                text = "EN",
-                selected = language == "EN",
-                onClick = {
-                    language = "EN"
-                }
-            )
+            LanguageManager.SUPPORTED_LANGUAGES.forEach { option ->
+                LanguageCardChoice(
+                    displayName = option.displayName,
+                    shortCode = option.shortCode,
+                    selected = currentLanguageCode == option.code,
+                    onClick = {
+                        currentLanguageCode = option.code
+                        LanguageManager.setLanguage(option.code)
+                    }
+                )
+            }
         }
 
         Spacer(modifier = Modifier.weight(1f))
 
         ApuntesPrimaryButton(
-            text = "Siguiente",
+            text = stringResource(R.string.next_button),
             onClick = onNext
         )
 
@@ -85,36 +78,41 @@ fun LanguageScreen(
 }
 
 @Composable
-private fun LanguageChoice(
-    text: String,
+private fun LanguageCardChoice(
+    displayName: String,
+    shortCode: String,
     selected: Boolean,
     onClick: () -> Unit
 ) {
 
     Box(
         modifier = Modifier
+            .fillMaxWidth()
             .background(
-                color = if (selected) {
-                    ApuntesGreen
-                } else {
-                    Color.Transparent
-                },
-                shape = RoundedCornerShape(24.dp)
+                color = if (selected) ApuntesGreen else Color.White,
+                shape = RoundedCornerShape(20.dp)
             )
-            .clickable {
-                onClick()
-            }
-            .padding(
-                horizontal = 22.dp,
-                vertical = 10.dp
-            ),
-        contentAlignment = Alignment.Center
+            .clickable { onClick() }
+            .padding(horizontal = 20.dp, vertical = 16.dp),
+        contentAlignment = Alignment.CenterStart
     ) {
-
-        Text(
-            text = text,
-            color = if (selected) Color.White else ApuntesGreen,
-            fontWeight = FontWeight.SemiBold
-        )
+        Row(
+            modifier = Modifier.fillMaxWidth(),
+            horizontalArrangement = Arrangement.SpaceBetween,
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            Text(
+                text = displayName,
+                color = if (selected) Color.White else ApuntesGreen,
+                fontWeight = FontWeight.Bold,
+                fontSize = 16.sp
+            )
+            Text(
+                text = shortCode,
+                color = if (selected) Color.White.copy(alpha = 0.8f) else Color.Gray,
+                fontWeight = FontWeight.SemiBold,
+                fontSize = 14.sp
+            )
+        }
     }
 }

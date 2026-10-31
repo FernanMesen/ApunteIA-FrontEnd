@@ -22,14 +22,16 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import ApunteIA.FrontEnd.R
 import ApunteIA.FrontEnd.domain.model.Note
 import ApunteIA.FrontEnd.domain.model.NoteStatus
+import ApunteIA.FrontEnd.domain.util.IsoDates
 import ApunteIA.FrontEnd.presentation.ui.theme.DarkGreen
 import ApunteIA.FrontEnd.presentation.ui.theme.SpaceCadet
-import ApunteIA.FrontEnd.presentation.ui.theme.TextGray
 
 /**
  * Chip de categoría usado en el filtro de la lista de notas.
@@ -63,11 +65,13 @@ fun FilterChip(text: String, isSelected: Boolean, onClick: () -> Unit) {
 }
 
 /**
- * Tarjeta que representa una nota dentro de la lista (equivalente al
- * "TaskItem" del ejemplo, pero para el dominio de Notas).
+ * Tarjeta que representa una nota dentro de la lista.
  */
 @Composable
 fun NoteCard(note: Note, onClick: () -> Unit) {
+    val classNumText = if (note.classNumber > 0) stringResource(R.string.class_number, note.classNumber) else ""
+    val scannedText = if (note.date.isNotBlank()) stringResource(R.string.scanned_date, IsoDates.shortDate(note.date)) else ""
+
     Card(
         modifier = Modifier.fillMaxWidth().clickable { onClick() },
         shape = RoundedCornerShape(24.dp),
@@ -97,8 +101,8 @@ fun NoteCard(note: Note, onClick: () -> Unit) {
             Text(
                 text = listOf(
                     note.className,
-                    if (note.classNumber > 0) "Clase ${note.classNumber}" else "",
-                    if (note.date.isNotBlank()) "Escaneado ${note.date}" else ""
+                    classNumText,
+                    scannedText
                 ).filter { it.isNotBlank() }.joinToString("  ·  "),
                 fontSize = 12.sp,
                 color = MaterialTheme.colorScheme.onSurfaceVariant,
@@ -138,12 +142,17 @@ fun StatusTag(status: NoteStatus) {
         if (isDark) Color(0xFF9BA4B5) else Color(0xFF4DB6AC)
     }
 
+    val localizedLabel = when (status) {
+        NoteStatus.WEAK -> stringResource(R.string.status_weak)
+        NoteStatus.SOLID -> stringResource(R.string.status_solid)
+    }
+
     Box(
         modifier = Modifier
             .clip(RoundedCornerShape(8.dp))
             .background(backgroundColor)
             .padding(horizontal = 8.dp, vertical = 4.dp)
     ) {
-        Text(text = status.label, color = textColor, fontSize = 12.sp, fontWeight = FontWeight.Bold)
+        Text(text = localizedLabel, color = textColor, fontSize = 12.sp, fontWeight = FontWeight.Bold)
     }
 }

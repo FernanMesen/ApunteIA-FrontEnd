@@ -10,9 +10,11 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import ApunteIA.FrontEnd.R
 
 @Composable
 fun PermissionsScreen(
@@ -35,7 +37,7 @@ fun PermissionsScreen(
         Spacer(modifier = Modifier.height(32.dp))
 
         Text(
-            text = "Terminar configuración",
+            text = stringResource(R.string.finish_setup_title),
             color = ApuntesGreen,
             fontSize = 22.sp,
             fontWeight = FontWeight.Bold
@@ -44,27 +46,23 @@ fun PermissionsScreen(
         Spacer(modifier = Modifier.height(22.dp))
 
         PermissionCard(
-            title = "Acceso a la cámara",
-            description = "Necesario para escanear tus notas manuscritas.",
-            onClick = {
-                // Después implementaremos el permiso real
-            }
+            title = stringResource(R.string.camera_permission_title),
+            description = stringResource(R.string.camera_permission_desc),
+            onClick = { }
         )
 
         Spacer(modifier = Modifier.height(18.dp))
 
         PermissionCard(
-            title = "Acceso a fotos",
-            description = "Importa escaneos desde fotos existentes.",
-            onClick = {
-                // Después implementaremos el permiso real
-            }
+            title = stringResource(R.string.photos_permission_title),
+            description = stringResource(R.string.photos_permission_desc),
+            onClick = { }
         )
 
         Spacer(modifier = Modifier.weight(1f))
 
         ApuntesPrimaryButton(
-            text = "Terminar configuración",
+            text = stringResource(R.string.finish_setup_title),
             onClick = onFinish
         )
 
@@ -120,11 +118,10 @@ private fun PermissionCard(
         ) {
 
             Text(
-                text = "Permitir",
+                text = stringResource(R.string.allow),
                 color = Color.White,
                 fontWeight = FontWeight.Bold
             )
         }
     }
 }
-

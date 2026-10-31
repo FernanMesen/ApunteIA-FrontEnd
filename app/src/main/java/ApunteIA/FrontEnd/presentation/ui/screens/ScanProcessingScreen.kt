@@ -21,10 +21,12 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import ApunteIA.FrontEnd.R
 import ApunteIA.FrontEnd.presentation.model.ProcessingError
 import ApunteIA.FrontEnd.presentation.model.ProcessingStep
 import ApunteIA.FrontEnd.presentation.ui.theme.BackgroundBeige
@@ -41,7 +43,6 @@ fun ScanProcessingScreen(
 ) {
     val state by viewModel.uiState.collectAsState()
 
-    // Arranca el análisis apenas se entra a esta pantalla (no se repite al rotar).
     LaunchedEffect(Unit) {
         viewModel.startProcessingIfNeeded()
     }
@@ -92,7 +93,7 @@ private fun ProcessingChecklist(completedSteps: Int) {
         Spacer(modifier = Modifier.height(48.dp))
 
         Text(
-            text = "La IA puede tardar hasta un minuto si el servidor estaba dormido.",
+            text = stringResource(R.string.ai_processing_notice),
             color = TextGray,
             fontSize = 12.sp,
             textAlign = TextAlign.Center
@@ -176,13 +177,13 @@ private fun ProcessingErrorContent(
             shape = RoundedCornerShape(26.dp),
             colors = ButtonDefaults.buttonColors(containerColor = DarkGreen)
         ) {
-            Text("Reintentar", color = Color.White, fontWeight = FontWeight.Bold)
+            Text(stringResource(R.string.retry), color = Color.White, fontWeight = FontWeight.Bold)
         }
 
         Spacer(modifier = Modifier.height(12.dp))
 
         Text(
-            text = "Cancelar",
+            text = stringResource(R.string.cancel),
             color = TextGray,
             fontSize = 14.sp,
             fontWeight = FontWeight.Medium,

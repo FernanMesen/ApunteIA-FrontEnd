@@ -12,15 +12,17 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import ApunteIA.FrontEnd.R
 import ApunteIA.FrontEnd.domain.model.AuditSummary
 import ApunteIA.FrontEnd.domain.model.Topic
 import ApunteIA.FrontEnd.domain.model.TopicStatus
+import ApunteIA.FrontEnd.domain.util.FormatUtils
 import ApunteIA.FrontEnd.presentation.ui.theme.DarkGreen
 import ApunteIA.FrontEnd.presentation.ui.theme.SpaceCadet
-import ApunteIA.FrontEnd.presentation.ui.theme.TextGray
 
 private val SolidBarColor = Color(0xFF1B6E63)
 private val WeakBarColor = Color(0xFFD08D74)
@@ -42,11 +44,16 @@ private fun TopicStatus.badgeColors(isDark: Boolean): Pair<Color, Color> = when 
 fun TopicStatusBadge(status: TopicStatus) {
     val isDark = MaterialTheme.colorScheme.primary == SpaceCadet
     val (backgroundColor, textColor) = status.badgeColors(isDark)
+    val localizedLabel = when (status) {
+        TopicStatus.SOLID -> stringResource(R.string.status_solid)
+        TopicStatus.WEAK -> stringResource(R.string.status_weak)
+        TopicStatus.MISSING -> stringResource(R.string.status_missing)
+    }
     Box(
         modifier = Modifier.clip(RoundedCornerShape(8.dp)).background(backgroundColor)
             .padding(horizontal = 10.dp, vertical = 4.dp)
     ) {
-        Text(text = status.label, color = textColor, fontSize = 12.sp, fontWeight = FontWeight.Bold)
+        Text(text = localizedLabel, color = textColor, fontSize = 12.sp, fontWeight = FontWeight.Bold)
     }
 }
 
@@ -78,6 +85,7 @@ private fun LegendItem(color: Color, label: String, count: Int) {
 fun AuditSummaryCard(summary: AuditSummary) {
     val isDark = MaterialTheme.colorScheme.primary == SpaceCadet
     val trackBg = if (isDark) Color(0xFF252B3B) else Color(0xFFEDEDE7)
+    val formattedPct = FormatUtils.formatPercentage(summary.percentCovered, maxFractionDigits = 0)
     
     Card(
         modifier = Modifier.fillMaxWidth(),
@@ -87,9 +95,9 @@ fun AuditSummaryCard(summary: AuditSummary) {
     ) {
         Column(modifier = Modifier.padding(20.dp)) {
             Row(verticalAlignment = Alignment.Bottom) {
-                Text(text = "${summary.percentCovered}%", fontSize = 34.sp, fontWeight = FontWeight.Bold, color = MaterialTheme.colorScheme.onSurface)
+                Text(text = formattedPct, fontSize = 34.sp, fontWeight = FontWeight.Bold, color = MaterialTheme.colorScheme.onSurface)
                 Spacer(modifier = Modifier.width(8.dp))
-                Text(text = "del programa cubierto", fontSize = 14.sp, color = MaterialTheme.colorScheme.onSurfaceVariant, modifier = Modifier.padding(bottom = 6.dp))
+                Text(text = stringResource(R.string.program_covered), fontSize = 14.sp, color = MaterialTheme.colorScheme.onSurfaceVariant, modifier = Modifier.padding(bottom = 6.dp))
             }
             Spacer(modifier = Modifier.height(16.dp))
 
@@ -106,9 +114,9 @@ fun AuditSummaryCard(summary: AuditSummary) {
             Spacer(modifier = Modifier.height(12.dp))
 
             Row(horizontalArrangement = Arrangement.spacedBy(16.dp)) {
-                LegendItem(TopicStatus.SOLID.barColor(isDark), "Sólido", summary.solidCount)
-                LegendItem(TopicStatus.WEAK.barColor(isDark), "Débil", summary.weakCount)
-                LegendItem(TopicStatus.MISSING.barColor(isDark), "Faltante", summary.missingCount)
+                LegendItem(TopicStatus.SOLID.barColor(isDark), stringResource(R.string.status_solid), summary.solidCount)
+                LegendItem(TopicStatus.WEAK.barColor(isDark), stringResource(R.string.status_weak), summary.weakCount)
+                LegendItem(TopicStatus.MISSING.barColor(isDark), stringResource(R.string.status_missing), summary.missingCount)
             }
         }
     }
@@ -148,7 +156,7 @@ fun TopicCard(topic: Topic, onPracticeClick: () -> Unit) {
                     border = if (isDark) BorderStroke(1.dp, Color(0xFF394867)) else null
                 ) {
                     Text(
-                        text = "Practicar esto →",
+                        text = stringResource(R.string.practice_this),
                         modifier = Modifier.padding(horizontal = 16.dp, vertical = 10.dp),
                         color = if (isDark) Color.White else DarkGreen, fontSize = 13.sp, fontWeight = FontWeight.Medium
                     )

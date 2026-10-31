@@ -26,10 +26,12 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import coil.compose.AsyncImage
+import ApunteIA.FrontEnd.R
 import ApunteIA.FrontEnd.presentation.model.CapturedPage
 import ApunteIA.FrontEnd.presentation.ui.theme.BackgroundBeige
 import ApunteIA.FrontEnd.presentation.ui.theme.DarkGreen
@@ -53,7 +55,7 @@ fun ScanPagesScreen(
             .padding(horizontal = 20.dp)
     ) {
         ScanTopBar(
-            title = "Páginas capturadas",
+            title = stringResource(R.string.captured_pages_title),
             onClose = onClose,
             trailingContent = { CountBadge(count = state.capturedPages.size) }
         )
@@ -89,7 +91,7 @@ fun ScanPagesScreen(
             border = BorderStroke(1.dp, Color(0xFFE0E0E0)),
             colors = ButtonDefaults.outlinedButtonColors(contentColor = DarkGreen)
         ) {
-            Text("Agregar más páginas", fontWeight = FontWeight.Medium)
+            Text(stringResource(R.string.add_more_pages), fontWeight = FontWeight.Medium)
         }
 
         Spacer(modifier = Modifier.height(12.dp))
@@ -107,7 +109,7 @@ fun ScanPagesScreen(
                 disabledContainerColor = DarkGreen.copy(alpha = 0.4f)
             )
         ) {
-            Text("Confirmar y procesar", color = Color.White, fontWeight = FontWeight.Bold, fontSize = 16.sp)
+            Text(stringResource(R.string.confirm_and_process), color = Color.White, fontWeight = FontWeight.Bold, fontSize = 16.sp)
         }
     }
 }
@@ -122,6 +124,8 @@ private fun CapturedPageRow(
     onMoveDown: () -> Unit,
     onRemove: () -> Unit
 ) {
+    val pageTitleText = stringResource(R.string.page_number_label, pageNumber)
+
     Surface(
         shape = RoundedCornerShape(16.dp),
         color = Color.White,
@@ -131,7 +135,6 @@ private fun CapturedPageRow(
             modifier = Modifier.padding(12.dp),
             verticalAlignment = Alignment.Top
         ) {
-            // Miniatura de la página (foto real capturada por la cámara)
             Box(
                 modifier = Modifier
                     .size(64.dp)
@@ -140,7 +143,7 @@ private fun CapturedPageRow(
             ) {
                 AsyncImage(
                     model = page.imageFile,
-                    contentDescription = "Página $pageNumber",
+                    contentDescription = pageTitleText,
                     contentScale = ContentScale.Crop,
                     modifier = Modifier
                         .fillMaxSize()
@@ -165,7 +168,7 @@ private fun CapturedPageRow(
 
             Column(modifier = Modifier.weight(1f)) {
                 Text(
-                    text = "Página $pageNumber",
+                    text = pageTitleText,
                     color = DarkGreen,
                     fontWeight = FontWeight.SemiBold,
                     fontSize = 15.sp
@@ -191,7 +194,7 @@ private fun CapturedPageRow(
                         .size(28.dp)
                         .background(Color(0xFFFDECEC), CircleShape)
                 ) {
-                    Icon(Icons.Default.Close, contentDescription = "Eliminar página", tint = StatusRed, modifier = Modifier.size(16.dp))
+                    Icon(Icons.Default.Close, contentDescription = stringResource(R.string.delete), tint = StatusRed, modifier = Modifier.size(16.dp))
                 }
             }
         }

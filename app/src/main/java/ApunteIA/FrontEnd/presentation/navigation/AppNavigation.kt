@@ -185,6 +185,7 @@ fun AppNavigation(
                     onPrivacy = { navController.navigate(Routes.PRIVACY) },
                     onExportData = { navController.navigate(Routes.EXPORT_DATA) },
                     onChangePassword = { navController.navigate(Routes.CHANGE_PASSWORD) },
+                    onLanguage = { navController.navigate(Routes.LANGUAGE) },
                     notesCount = statsState.userStats?.notesCount,
                     quizzesCount = statsState.userStats?.quizzesDoneCount
                 )

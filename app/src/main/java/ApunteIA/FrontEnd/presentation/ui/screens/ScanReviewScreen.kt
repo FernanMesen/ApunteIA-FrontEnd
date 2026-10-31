@@ -17,9 +17,11 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import ApunteIA.FrontEnd.R
 import ApunteIA.FrontEnd.presentation.model.NoteSection
 import ApunteIA.FrontEnd.presentation.ui.theme.BackgroundBeige
 import ApunteIA.FrontEnd.presentation.ui.theme.DarkGreen
@@ -48,7 +50,7 @@ fun ScanReviewScreen(
             .background(BackgroundBeige)
             .padding(horizontal = 20.dp)
     ) {
-        ScanTopBar(title = "Revisar nota", onClose = onClose)
+        ScanTopBar(title = stringResource(R.string.review_note_title), onClose = onClose)
 
         Spacer(modifier = Modifier.height(4.dp))
 
@@ -60,7 +62,7 @@ fun ScanReviewScreen(
                 modifier = Modifier.clickable { viewModel.setShowingOriginal(false) }
             ) {
                 Text(
-                    text = "Generado",
+                    text = stringResource(R.string.generated_tab),
                     modifier = Modifier.padding(horizontal = 18.dp, vertical = 9.dp),
                     color = if (!state.showingOriginal) Color.White else TextGray,
                     fontWeight = FontWeight.SemiBold,
@@ -74,7 +76,7 @@ fun ScanReviewScreen(
                 modifier = Modifier.clickable { viewModel.setShowingOriginal(true) }
             ) {
                 Text(
-                    text = "Original",
+                    text = stringResource(R.string.original_tab),
                     modifier = Modifier.padding(horizontal = 18.dp, vertical = 9.dp),
                     color = if (state.showingOriginal) DarkGreen else TextGray,
                     fontWeight = FontWeight.Medium,
@@ -90,7 +92,7 @@ fun ScanReviewScreen(
                 Column(horizontalAlignment = Alignment.CenterHorizontally) {
                     CircularProgressIndicator(color = DarkGreen)
                     Spacer(modifier = Modifier.height(12.dp))
-                    Text("Generando tu nota...", color = TextGray, fontSize = 14.sp)
+                    Text(stringResource(R.string.generating_your_note), color = TextGray, fontSize = 14.sp)
                 }
             }
         } else if (state.showingOriginal) {
@@ -112,12 +114,12 @@ fun ScanReviewScreen(
             }
         } else {
             Column(modifier = Modifier.weight(1f).verticalScroll(rememberScrollState())) {
-                SectionLabel("TÍTULO")
+                SectionLabel(stringResource(R.string.note_title_header))
                 Spacer(modifier = Modifier.height(8.dp))
                 ScanTextField(
                     value = state.title,
                     onValueChange = viewModel::onTitleChange,
-                    placeholder = "Título de la nota"
+                    placeholder = stringResource(R.string.note_title_placeholder)
                 )
 
                 Spacer(modifier = Modifier.height(20.dp))
@@ -127,9 +129,9 @@ fun ScanReviewScreen(
                     horizontalArrangement = Arrangement.SpaceBetween,
                     verticalAlignment = Alignment.CenterVertically
                 ) {
-                    Text("Texto reconocido", fontWeight = FontWeight.Bold, color = DarkGreen, fontSize = 16.sp)
+                    Text(stringResource(R.string.recognized_text_header), fontWeight = FontWeight.Bold, color = DarkGreen, fontSize = 16.sp)
                     Text(
-                        text = "+ Agregar sección",
+                        text = stringResource(R.string.add_section_action),
                         color = DarkGreen,
                         fontSize = 13.sp,
                         fontWeight = FontWeight.Medium,
@@ -151,7 +153,7 @@ fun ScanReviewScreen(
                     Spacer(modifier = Modifier.height(12.dp))
                 }
 
-                SectionLabel("MATERIA")
+                SectionLabel(stringResource(R.string.subject_header))
                 Spacer(modifier = Modifier.height(10.dp))
                 Row(
                     horizontalArrangement = Arrangement.spacedBy(8.dp),
@@ -168,13 +170,13 @@ fun ScanReviewScreen(
 
                 Spacer(modifier = Modifier.height(20.dp))
 
-                SectionLabel("ETIQUETAS")
+                SectionLabel(stringResource(R.string.tags_header))
                 Spacer(modifier = Modifier.height(10.dp))
                 Row(verticalAlignment = Alignment.CenterVertically) {
                     ScanTextField(
                         value = state.tagInput,
                         onValueChange = viewModel::onTagInputChange,
-                        placeholder = "Agregar etiqueta...",
+                        placeholder = stringResource(R.string.add_tag_placeholder),
                         modifier = Modifier.weight(1f)
                     )
                     Spacer(modifier = Modifier.width(8.dp))
@@ -185,7 +187,7 @@ fun ScanReviewScreen(
                         colors = ButtonDefaults.outlinedButtonColors(contentColor = DarkGreen),
                         modifier = Modifier.height(58.dp)
                     ) {
-                        Text("Agregar")
+                        Text(stringResource(R.string.add_button))
                     }
                 }
 
@@ -245,7 +247,7 @@ fun ScanReviewScreen(
                 border = BorderStroke(1.dp, Color(0xFFE0E0E0)),
                 colors = ButtonDefaults.outlinedButtonColors(contentColor = DarkGreen)
             ) {
-                Text("Procesar de nuevo", fontWeight = FontWeight.Medium, fontSize = 13.sp)
+                Text(stringResource(R.string.process_again), fontWeight = FontWeight.Medium, fontSize = 13.sp)
             }
             Button(
                 onClick = { viewModel.saveNote() },
@@ -257,7 +259,7 @@ fun ScanReviewScreen(
                 if (state.isSaving) {
                     CircularProgressIndicator(modifier = Modifier.size(24.dp), color = Color.White, strokeWidth = 2.dp)
                 } else {
-                    Text("Guardar nota", color = Color.White, fontWeight = FontWeight.Bold, fontSize = 14.sp)
+                    Text(stringResource(R.string.save_note), color = Color.White, fontWeight = FontWeight.Bold, fontSize = 14.sp)
                 }
             }
         }
@@ -329,7 +331,7 @@ private fun SectionCard(
             Spacer(modifier = Modifier.height(4.dp))
 
             Text(
-                text = "+ Agregar punto",
+                text = stringResource(R.string.add_bullet_action),
                 color = DarkGreen,
                 fontSize = 13.sp,
                 fontWeight = FontWeight.Medium,
@@ -339,7 +341,6 @@ private fun SectionCard(
     }
 }
 
-/** Texto editable "in place" sin el look de un campo de formulario clásico. */
 @Composable
 private fun InlineEditableText(
     value: String,

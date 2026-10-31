@@ -17,11 +17,14 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
+import ApunteIA.FrontEnd.R
 import ApunteIA.FrontEnd.domain.model.Course
+import ApunteIA.FrontEnd.domain.util.FormatUtils
 import ApunteIA.FrontEnd.presentation.ui.theme.*
 import ApunteIA.FrontEnd.presentation.viewmodel.ManageSubjectsViewModel
 
@@ -34,12 +37,13 @@ fun ManageSubjectsScreen(
 ) {
     val uiState by viewModel.uiState.collectAsState()
     val snackbarHostState = remember { SnackbarHostState() }
+    val retryText = stringResource(R.string.retry)
 
     LaunchedEffect(uiState.error) {
         uiState.error?.let { errorMessage ->
             val result = snackbarHostState.showSnackbar(
                 message = errorMessage,
-                actionLabel = "Reintentar",
+                actionLabel = retryText,
                 duration = SnackbarDuration.Indefinite
             )
             if (result == SnackbarResult.ActionPerformed) {
@@ -99,7 +103,7 @@ fun ManageSubjectsScreen(
                                 horizontalAlignment = Alignment.CenterHorizontally
                             ) {
                                 Text(
-                                    text = "Error al cargar materias: ${uiState.error}",
+                                    text = stringResource(R.string.error_loading_subjects, uiState.error.orEmpty()),
                                     color = MaterialTheme.colorScheme.onErrorContainer,
                                     fontSize = 14.sp
                                 )
@@ -110,7 +114,7 @@ fun ManageSubjectsScreen(
                                         containerColor = MaterialTheme.colorScheme.error
                                     )
                                 ) {
-                                    Text("Reintentar")
+                                    Text(stringResource(R.string.retry))
                                 }
                             }
                         }
@@ -126,7 +130,7 @@ fun ManageSubjectsScreen(
                             contentAlignment = Alignment.Center
                         ) {
                             Text(
-                                "No tienes materias registradas",
+                                stringResource(R.string.no_subjects_registered),
                                 color = MaterialTheme.colorScheme.onSurfaceVariant
                             )
                         }
@@ -166,7 +170,7 @@ fun ManageSubjectsTopBar(onBack: () -> Unit, onJoinCourse: () -> Unit) {
             ) {
                 Icon(
                     imageVector = Icons.Default.KeyboardArrowLeft,
-                    contentDescription = "Back",
+                    contentDescription = stringResource(R.string.back),
                     tint = MaterialTheme.colorScheme.onBackground,
                     modifier = Modifier.size(20.dp)
                 )
@@ -176,13 +180,13 @@ fun ManageSubjectsTopBar(onBack: () -> Unit, onJoinCourse: () -> Unit) {
 
             Column {
                 Text(
-                    text = "Materias",
+                    text = stringResource(R.string.subjects_title),
                     fontSize = 22.sp,
                     fontWeight = FontWeight.Bold,
                     color = MaterialTheme.colorScheme.onBackground
                 )
                 Text(
-                    text = "Administra tus cursos",
+                    text = stringResource(R.string.manage_courses_subtitle),
                     fontSize = 13.sp,
                     color = MaterialTheme.colorScheme.onSurfaceVariant
                 )
@@ -196,7 +200,7 @@ fun ManageSubjectsTopBar(onBack: () -> Unit, onJoinCourse: () -> Unit) {
             border = if (isDark) BorderStroke(0.5.dp, Color(0xFF394867)) else null
         ) {
             Text(
-                text = "Unirse",
+                text = stringResource(R.string.join_course_button),
                 modifier = Modifier.padding(horizontal = 16.dp, vertical = 8.dp),
                 color = if (isDark) Color.White else DarkGreen,
                 fontSize = 13.sp,
@@ -208,6 +212,8 @@ fun ManageSubjectsTopBar(onBack: () -> Unit, onJoinCourse: () -> Unit) {
 
 @Composable
 fun CourseCard(course: Course) {
+    val formattedProgress = FormatUtils.formatPercentage(course.progress, maxFractionDigits = 0)
+
     Card(
         modifier = Modifier.fillMaxWidth(),
         shape = RoundedCornerShape(24.dp),
@@ -252,7 +258,7 @@ fun CourseCard(course: Course) {
             }
 
             Text(
-                text = "${course.progress}%",
+                text = formattedProgress,
                 fontSize = 16.sp,
                 fontWeight = FontWeight.Medium,
                 color = MaterialTheme.colorScheme.onSurfaceVariant

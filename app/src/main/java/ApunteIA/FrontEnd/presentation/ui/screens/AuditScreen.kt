@@ -10,10 +10,12 @@ import androidx.compose.material3.pulltorefresh.PullToRefreshBox
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
+import ApunteIA.FrontEnd.R
 import ApunteIA.FrontEnd.presentation.ui.components.AuditSummaryCard
 import ApunteIA.FrontEnd.presentation.ui.components.FilterChip
 import ApunteIA.FrontEnd.presentation.ui.components.TopicCard
@@ -40,12 +42,13 @@ fun AuditScreen(
     val summary by viewModel.summary.collectAsState()
     val filteredTopics by viewModel.filteredTopics.collectAsState()
     val snackbarHostState = remember { SnackbarHostState() }
+    val retryText = stringResource(R.string.retry)
 
     LaunchedEffect(uiState.error) {
         uiState.error?.let { errorMessage ->
             val result = snackbarHostState.showSnackbar(
                 message = errorMessage,
-                actionLabel = "Reintentar",
+                actionLabel = retryText,
                 duration = SnackbarDuration.Indefinite
             )
             if (result == SnackbarResult.ActionPerformed) {
@@ -80,8 +83,8 @@ fun AuditScreen(
             ) {
                 item {
                     Spacer(modifier = Modifier.height(24.dp))
-                    Text(text = "Auditoría", fontSize = 32.sp, fontWeight = FontWeight.Bold, color = MaterialTheme.colorScheme.onBackground)
-                    Text(text = "Comparado con el programa de tu curso", fontSize = 14.sp, color = TextGray)
+                    Text(text = stringResource(R.string.audit_title), fontSize = 32.sp, fontWeight = FontWeight.Bold, color = MaterialTheme.colorScheme.onBackground)
+                    Text(text = stringResource(R.string.audit_subtitle), fontSize = 14.sp, color = TextGray)
                 }
 
                 if (uiState.isLoading && uiState.topics.isEmpty()) {
@@ -113,7 +116,7 @@ fun AuditScreen(
                                 horizontalAlignment = Alignment.CenterHorizontally
                             ) {
                                 Text(
-                                    text = "Error al cargar auditoría: ${uiState.error}",
+                                    text = stringResource(R.string.audit_error_loading, uiState.error.orEmpty()),
                                     color = MaterialTheme.colorScheme.onErrorContainer,
                                     fontSize = 14.sp
                                 )
@@ -124,7 +127,7 @@ fun AuditScreen(
                                         containerColor = MaterialTheme.colorScheme.error
                                     )
                                 ) {
-                                    Text("Reintentar")
+                                    Text(stringResource(R.string.retry))
                                 }
                             }
                         }
@@ -147,7 +150,7 @@ fun AuditScreen(
                 if (!uiState.isLoading && filteredTopics.isEmpty() && uiState.error == null) {
                     item {
                         Box(modifier = Modifier.fillMaxWidth().padding(top = 40.dp), contentAlignment = Alignment.Center) {
-                            Text("No hay temas para esta categoría", color = TextGray)
+                            Text(stringResource(R.string.no_topics_for_category), color = TextGray)
                         }
                     }
                 } else {

@@ -16,11 +16,13 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
+import ApunteIA.FrontEnd.R
 import ApunteIA.FrontEnd.presentation.ui.theme.SpaceCadet
 import ApunteIA.FrontEnd.presentation.viewmodel.JoinSubjectViewModel
 
@@ -33,7 +35,6 @@ fun JoinSubjectScreen(
 ) {
     var courseCode by remember { mutableStateOf("") }
     val uiState by viewModel.uiState.collectAsState()
-    val isDark = MaterialTheme.colorScheme.primary == SpaceCadet
 
     Scaffold(
         containerColor = MaterialTheme.colorScheme.background,
@@ -92,7 +93,7 @@ fun JoinSubjectScreen(
                                         containerColor = MaterialTheme.colorScheme.error
                                     )
                                 ) {
-                                    Text("Reintentar")
+                                    Text(stringResource(R.string.retry))
                                 }
                             }
                         }
@@ -101,7 +102,7 @@ fun JoinSubjectScreen(
 
                 item {
                     Text(
-                        text = "CURSOS DISPONIBLES",
+                        text = stringResource(R.string.available_courses_header),
                         fontSize = 13.sp,
                         fontWeight = FontWeight.Bold,
                         color = MaterialTheme.colorScheme.onSurfaceVariant,
@@ -129,7 +130,7 @@ fun JoinSubjectScreen(
                             contentAlignment = Alignment.Center
                         ) {
                             Text(
-                                "Ya estás inscrito en todos los cursos disponibles.",
+                                stringResource(R.string.already_enrolled_all),
                                 fontSize = 14.sp,
                                 color = MaterialTheme.colorScheme.onSurfaceVariant,
                                 textAlign = TextAlign.Center
@@ -150,7 +151,7 @@ fun JoinSubjectScreen(
 
                 item {
                     Text(
-                        text = "Los cursos los crea tu administrador. Únete a uno para empezar a estudiar.",
+                        text = stringResource(R.string.courses_info_notice),
                         fontSize = 13.sp,
                         color = MaterialTheme.colorScheme.onSurfaceVariant,
                         textAlign = TextAlign.Center,
@@ -185,7 +186,7 @@ fun JoinSubjectTopBar(onBack: () -> Unit) {
         ) {
             Icon(
                 imageVector = Icons.Default.KeyboardArrowLeft,
-                contentDescription = "Back",
+                contentDescription = stringResource(R.string.back),
                 tint = MaterialTheme.colorScheme.onBackground,
                 modifier = Modifier.size(20.dp)
             )
@@ -195,13 +196,13 @@ fun JoinSubjectTopBar(onBack: () -> Unit) {
 
         Column {
             Text(
-                text = "Unirse a un curso",
+                text = stringResource(R.string.join_course_title),
                 fontSize = 22.sp,
                 fontWeight = FontWeight.Bold,
                 color = MaterialTheme.colorScheme.onBackground
             )
             Text(
-                text = "Ingresa un código o elige del catálogo",
+                text = stringResource(R.string.join_course_subtitle),
                 fontSize = 13.sp,
                 color = MaterialTheme.colorScheme.onSurfaceVariant
             )
@@ -233,7 +234,7 @@ fun CodeJoinCard(
             OutlinedTextField(
                 value = value,
                 onValueChange = onValueChange,
-                placeholder = { Text("Código del curso", fontSize = 14.sp) },
+                placeholder = { Text(stringResource(R.string.course_code_placeholder), fontSize = 14.sp) },
                 modifier = Modifier
                     .weight(1f)
                     .height(52.dp),
@@ -267,7 +268,7 @@ fun CodeJoinCard(
                         strokeWidth = 2.dp
                     )
                 } else {
-                    Text("Unirse", fontWeight = FontWeight.Bold)
+                    Text(stringResource(R.string.join_course_button), fontWeight = FontWeight.Bold)
                 }
             }
         }
@@ -353,7 +354,7 @@ fun AvailableCourseCard(
                         strokeWidth = 2.dp
                     )
                 } else {
-                    Text("Unirme al curso", fontWeight = FontWeight.Bold)
+                    Text(stringResource(R.string.join_course_action), fontWeight = FontWeight.Bold)
                 }
             }
         }
@@ -362,12 +363,9 @@ fun AvailableCourseCard(
 
 data class AvailableCourse(
     val name: String,
-    /** Descripción del curso. */
     val professor: String,
     val term: String,
-    /** Código del curso (p. ej. "EIF411"). */
     val id: String,
     val colorHex: String,
-    /** Id del curso en el backend. */
     val courseId: Long = 0L
 )

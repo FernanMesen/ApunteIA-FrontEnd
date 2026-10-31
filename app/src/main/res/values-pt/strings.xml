@@ -1,0 +1,264 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">ApuntesIA</string>
+
+    <!-- General / Common -->
+    <string name="ok">OK</string>
+    <string name="cancel">Cancelar</string>
+    <string name="confirm">Confirmar</string>
+    <string name="retry">Tentar novamente</string>
+    <string name="close">Fechar</string>
+    <string name="back">Voltar</string>
+    <string name="next">Avançar</string>
+    <string name="finish">Concluir</string>
+    <string name="save">Salvar</string>
+    <string name="delete">Excluir</string>
+    <string name="search">Pesquisar</string>
+    <string name="allow">Permitir</string>
+    <string name="understood">Entendido</string>
+    <string name="coming_soon">Em breve</string>
+    <string name="next_button">Avançar</string>
+
+    <!-- Relative Time & Dates -->
+    <string name="time_just_now">Agora mesmo</string>
+    <string name="time_yesterday">Ontem</string>
+    <string name="time_minutes_ago">Há %1$d min</string>
+    <string name="time_hours_ago">Há %1$d h</string>
+    <string name="time_days_ago">Há %1$d dias</string>
+
+    <!-- Login -->
+    <string name="login_subtitle">Seu assistente de estudo com IA</string>
+    <string name="role_student">Estudante</string>
+    <string name="role_admin">Administrador</string>
+    <string name="email_placeholder">E-mail</string>
+    <string name="password_placeholder">Senha</string>
+    <string name="login_button">Entrar</string>
+    <string name="connecting_server_notice">Conectando ao servidor… a primeira vez pode levar até 1 minuto.</string>
+    <string name="forgot_password">Esqueceu sua senha?</string>
+    <string name="divider_or">ou</string>
+    <string name="continue_with_google">Continuar com o Google</string>
+    <string name="no_account">Não tem uma conta? </string>
+    <string name="register_here">Cadastre-se</string>
+
+    <!-- Language Screen -->
+    <string name="language_screen_title">Idioma preferido</string>
+    <string name="language_spanish">Español</string>
+    <string name="language_english">English</string>
+    <string name="language_portuguese">Português</string>
+    <string name="language_italian">Italiano</string>
+
+    <!-- Bottom Navigation -->
+    <string name="nav_home">Início</string>
+    <string name="nav_notes">Notas</string>
+    <string name="nav_audit">Auditoria</string>
+    <string name="nav_reinforce">Reforçar</string>
+
+    <!-- Greeting & Main Dashboard -->
+    <string name="greeting_morning">Bom dia</string>
+    <string name="greeting_afternoon">Boa tarde</string>
+    <string name="greeting_night">Boa noite</string>
+    <string name="streak_days">Sequência de %1$d dias</string>
+    <string name="covered_label">coberto</string>
+    <string name="notes_captured_stat">Notas capturadas</string>
+    <string name="pending_topics_stat">Tópicos pendentes</string>
+    <string name="quizzes_done_stat">Questionários feitos</string>
+    <string name="your_cycle_header">SEU CICLO</string>
+    <string name="cycle_step_1">Capturar</string>
+    <string name="cycle_step_2">Organizar</string>
+    <string name="cycle_step_3">Auditar</string>
+    <string name="cycle_step_4">Reforçar</string>
+    <string name="recent_activity_header">ATIVIDADE RECENTE</string>
+
+    <!-- Status Tags & Audit Summary -->
+    <string name="status_weak">Fraco</string>
+    <string name="status_solid">Sólido</string>
+    <string name="status_missing">Ausente</string>
+    <string name="program_covered">do programa coberto</string>
+    <string name="practice_this">Praticar isto →</string>
+    <string name="audit_title">Auditoria</string>
+    <string name="audit_subtitle">Comparado com o programa da sua disciplina</string>
+    <string name="no_topics_for_category">Nenhum tópico para esta categoria</string>
+    <string name="audit_error_loading">Erro ao carregar auditoria: %1$s</string>
+
+    <!-- Notes & Note Detail -->
+    <string name="notes_title">Notas</string>
+    <string name="notes_subtitle">Estruturadas por IA a partir das suas digitalizações</string>
+    <string name="search_notes_placeholder">Pesquisar notas</string>
+    <string name="class_number">Aula %1$d</string>
+    <string name="scanned_date">Digitalizado em %1$s</string>
+    <string name="no_notes_yet">Você ainda não tem notas. Toque na câmera para digitalizar sua primeira nota.</string>
+    <string name="no_notes_found">Nenhuma nota encontrada</string>
+    <string name="note_detail_title">Anotação</string>
+    <string name="delete_note_title">Excluir esta anotação?</string>
+    <string name="delete_note_message">A anotação e seu resumo serão excluídos. Esta ação não pode ser desfeita.</string>
+    <string name="ai_summary_header">Resumo da IA</string>
+    <string name="ai_reading_note">A IA está lendo sua anotação… pode levar alguns segundos.</string>
+    <string name="ai_summary_failed">A IA não pôde resumir esta anotação da última vez. Você pode tentar novamente.</string>
+    <string name="ai_summary_processing">Esta anotação está sendo processada. Volte em alguns segundos.</string>
+    <string name="ai_summary_none">Esta anotação ainda não tem resumo. A IA pode extrair os conceitos-chave para você.</string>
+    <string name="summarize_with_ai">Resumir com IA</string>
+    <string name="original_note_header">Anotação original</string>
+    <string name="no_content">(sem conteúdo)</string>
+    <string name="generating_questions">Gerando perguntas…</string>
+    <string name="practice_quiz_button">Praticar com um quiz de IA</string>
+    <string name="quiz_description_hint">5 perguntas de múltipla escolha geradas a partir desta anotação.</string>
+
+    <!-- Reinforcement -->
+    <string name="reinforce_title">Reforçar com IA</string>
+    <string name="reinforce_subtitle">Escolha uma anotação e a IA cria um quiz para você</string>
+    <string name="select_note_label">Anotação</string>
+    <string name="only_weak_topics">Apenas tópicos fracos</string>
+    <string name="no_weak_topics">Você não tem tópicos fracos. Bom trabalho!</string>
+    <string name="no_notes_for_quiz">Você ainda não tem anotações. Digitalize uma com a câmera para gerar um quiz.</string>
+    <string name="questions_count_label">Perguntas</string>
+    <string name="difficulty_label">Dificuldade</string>
+    <string name="ai_creating_quiz">A IA está criando seu quiz…</string>
+    <string name="generate_ai_quiz">Gerar quiz com IA</string>
+    <string name="subject_quizzes_header">QUIZZES DAS SUAS DISCIPLINAS</string>
+    <string name="questions_plural">%1$d perguntas</string>
+
+    <!-- Quiz Screen & Results -->
+    <string name="preparing_quiz">Preparando o questionário...</string>
+    <string name="grading_answers">Avaliando suas respostas...</string>
+    <string name="quiz_error">Não foi possível concluir o quiz: %1$s</string>
+    <string name="submit_quiz">Enviar</string>
+    <string name="see_results">Ver resultados</string>
+    <string name="quiz_completed_title">Quiz Concluído!</string>
+    <string name="your_score">Sua nota</string>
+    <string name="score_correct_format">%1$d de %2$d corretas</string>
+    <string name="review_header">Revisão</string>
+    <string name="repeat_incorrects">Repetir incorretas (%1$d)</string>
+    <string name="scan_more_notes">Digitalizar mais notas</string>
+    <string name="back_to_start">Voltar ao início</string>
+
+    <!-- Register, Onboarding & Profile Setup -->
+    <string name="register_title">Criar conta</string>
+    <string name="already_have_account">Já tem uma conta? </string>
+    <string name="login_here">Entrar</string>
+    <string name="full_name_placeholder">Nome completo</string>
+    <string name="setup_profile_title">Vamos configurar seu perfil</string>
+    <string name="your_name_header">SEU NOME</string>
+    <string name="education_level_header">NÍVEL EDUCACIONAL</string>
+    <string name="semester_header">SEMESTRE OU PERÍODO</string>
+    <string name="edu_high_school">Ensino Médio</string>
+    <string name="edu_bachelor">Licenciatura</string>
+    <string name="edu_postgraduate">Pós-graduação</string>
+    <string name="edu_other">Outro</string>
+    <string name="semester_placeholder">ex. 2º Semestre de 2026</string>
+    <string name="subjects_studied_title">Disciplinas que você estuda</string>
+    <string name="subject_placeholder">Disciplina %1$d</string>
+    <string name="study_goal_title">Meta de estudo</string>
+    <string name="goal_pass_exams">Passar nos exames</string>
+    <string name="goal_improve_grades">Melhorar notas</string>
+    <string name="goal_stay_organized">Manter-me organizado</string>
+    <string name="goal_review_consistently">Revisar constantemente</string>
+    <string name="finish_setup_title">Concluir configuração</string>
+    <string name="camera_permission_title">Acesso à câmera</string>
+    <string name="camera_permission_desc">Necessário para digitalizar suas notas manuscritas.</string>
+    <string name="photos_permission_title">Acesso às fotos</string>
+    <string name="photos_permission_desc">Importe digitalizações de fotos existentes.</string>
+
+    <!-- Manage Subjects & Join Subject -->
+    <string name="subjects_title">Disciplinas</string>
+    <string name="manage_courses_subtitle">Gerencie seus cursos</string>
+    <string name="join_course_button">Entrar</string>
+    <string name="error_loading_subjects">Erro ao carregar disciplinas: %1$s</string>
+    <string name="no_subjects_registered">Você não tem disciplinas registradas</string>
+    <string name="join_course_title">Entrar em um curso</string>
+    <string name="join_course_subtitle">Insira um código ou escolha do catálogo</string>
+    <string name="course_code_placeholder">Código do curso</string>
+    <string name="available_courses_header">CURSOS DISPONÍVEIS</string>
+    <string name="already_enrolled_all">Você já está inscrito em todos os cursos disponíveis.</string>
+    <string name="courses_info_notice">Os cursos são criados pelo seu administrador. Entre em um para começar a estudar.</string>
+    <string name="join_course_action">Entrar no curso</string>
+
+    <!-- Study History & Profile Extensions -->
+    <string name="study_history_title">Histórico de estudo</string>
+    <string name="study_history_subtitle">Seu progresso ao longo do tempo</string>
+    <string name="weekly">Semanal</string>
+    <string name="monthly">Mensal</string>
+    <string name="accuracy">Precisão</string>
+    <string name="streak_label">Sequência (dias)</string>
+    <string name="study_time">Tempo de estudo</string>
+    <string name="subject_progress_header">PROGRESSO POR DISCIPLINA</string>
+    <string name="not_enrolled_any_subject">Você ainda não está inscrito em nenhuma disciplina.</string>
+    <string name="strong_areas">Áreas fortes</string>
+    <string name="weak_areas">Áreas fracas</string>
+
+    <!-- Change Password & Notifications -->
+    <string name="change_password_title">Redefinir sua senha</string>
+    <string name="change_password_email_notice">Insira o e-mail da sua conta e enviaremos um link de recuperação.</string>
+    <string name="send_link">Enviar link</string>
+    <string name="check_email_title">Verifique seu e-mail</string>
+    <string name="check_email_message">Enviamos um link de recuperação. Siga-o para criar uma nova senha.</string>
+    <string name="create_new_password_title">Crie uma nova senha</string>
+    <string name="new_password_placeholder">Nova senha</string>
+    <string name="confirm_password_placeholder">Confirmar senha</string>
+    <string name="update_password_button">Atualizar senha</string>
+    <string name="password_updated_title">Senha atualizada</string>
+    <string name="password_updated_message">Sua senha foi alterada com sucesso.</string>
+    <string name="continue_to_start">Continuar para o início</string>
+    <string name="back_to_start_link">Voltar ao início</string>
+    <string name="notifications_title">Notificações</string>
+    <string name="mark_all_read">Marcar tudo como lido</string>
+    <string name="no_pending_notifications">Você não tem notificações pendentes</string>
+
+    <!-- Scan Flow -->
+    <string name="new_scan_title">Nova digitalização</string>
+    <string name="subject_header">DISCIPLINA</string>
+    <string name="class_name_number_header">NOME OU NÚMERO DA AULA</string>
+    <string name="class_name_placeholder">ex. Aula 7</string>
+    <string name="date_header">DATA</string>
+    <string name="material_type_header">TIPO DE MATERIAL</string>
+    <string name="mat_handwritten">Notas manuscritas</string>
+    <string name="mat_book_pages">Páginas de livro</string>
+    <string name="mat_slides">Slides</string>
+    <string name="mat_whiteboard">Lousa</string>
+    <string name="multipage_scan_option">Digitalização de várias páginas</string>
+    <string name="continue_action">Continuar</string>
+    <string name="align_notes_frame">Alinhe suas notas dentro do quadro</string>
+    <string name="ready_badge">Pronto (%1$d)</string>
+    <string name="camera_permission_needed">Precisamos de acesso à sua câmera para digitalizar as notas.</string>
+    <string name="allow_camera_access">Permitir acesso à câmera</string>
+    <string name="captured_pages_title">Páginas digitalizadas</string>
+    <string name="page_number_label">Página %1$d</string>
+    <string name="add_more_pages">Adicionar mais páginas</string>
+    <string name="confirm_and_process">Confirmar e processar</string>
+    <string name="ai_processing_notice">A IA pode levar até um minuto se o servidor estava inativo.</string>
+    <string name="review_note_title">Revisar anotação</string>
+    <string name="generated_tab">Gerado</string>
+    <string name="original_tab">Original</string>
+    <string name="generating_your_note">Gerando sua anotação...</string>
+    <string name="note_title_header">TÍTULO</string>
+    <string name="note_title_placeholder">Título da anotação</string>
+    <string name="recognized_text_header">Texto reconhecido</string>
+    <string name="add_section_action">+ Adicionar seção</string>
+    <string name="tags_header">TAGS</string>
+    <string name="add_tag_placeholder">Adicionar etiqueta...</string>
+    <string name="add_button">Adicionar</string>
+    <string name="process_again">Processar novamente</string>
+    <string name="save_note">Salvar anotação</string>
+    <string name="add_bullet_action">+ Adicionar ponto</string>
+    <string name="section_in_maintenance">Seção em manutenção</string>
+    <string name="working_on_section">Estamos trabalhando para concluir %1$s</string>
+
+    <!-- Profile Screen -->
+    <string name="profile_title">Perfil</string>
+    <string name="profile_config_header">CONFIGURAÇÃO</string>
+    <string name="profile_manage_subjects">Gerenciar disciplinas</string>
+    <string name="profile_study_history">Histórico de estudo</string>
+    <string name="profile_appearance">Aparência</string>
+    <string name="profile_camera_access">Acesso à câmera</string>
+    <string name="profile_privacy">Privacidade</string>
+    <string name="profile_export_data">Exportar meus dados</string>
+    <string name="profile_change_password">Alterar senha</string>
+    <string name="profile_language">Idioma</string>
+    <string name="profile_logout">Sair</string>
+    <string name="profile_delete_account">Excluir conta</string>
+    <string name="profile_delete_title">Excluir sua conta?</string>
+    <string name="profile_delete_message">Todas as notas, disciplinas e progresso serão excluídos permanentemente.</string>
+    <string name="light_theme">Claro</string>
+    <string name="dark_theme">Escuro</string>
+    <string name="notes_captured">Notas capturadas</string>
+    <string name="quizzes_done">Questionários feitos</string>
+</resources>

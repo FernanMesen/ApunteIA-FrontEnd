@@ -1,26 +1,31 @@
 package ApunteIA.FrontEnd.presentation.ui.screens
 
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.hilt.navigation.compose.hiltViewModel
+import ApunteIA.FrontEnd.R
 import ApunteIA.FrontEnd.presentation.ui.theme.SpaceCadet
 import ApunteIA.FrontEnd.presentation.viewmodel.RegisterViewModel
-import androidx.compose.foundation.text.KeyboardOptions
-import androidx.compose.ui.text.input.KeyboardType
-import androidx.hilt.navigation.compose.hiltViewModel
 
 @Composable
 fun RegisterScreen(
@@ -57,33 +62,33 @@ fun RegisterScreen(
             .fillMaxSize()
             .background(MaterialTheme.colorScheme.background)
             .verticalScroll(rememberScrollState())
+            .statusBarsPadding()
             .navigationBarsPadding()
             .padding(horizontal = 28.dp),
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
 
-        Spacer(modifier = Modifier.height(150.dp))
+        Spacer(
+            modifier = Modifier.height(60.dp)
+        )
 
         // Logo
-        Box(
-            modifier = Modifier
-                .size(76.dp)
-                .background(
-                    color = primaryColor,
-                    shape = RoundedCornerShape(22.dp)
-                ),
-            contentAlignment = Alignment.Center
-        ) {
-            Text(
-                text = "★",
-                color = MaterialTheme.colorScheme.onPrimary,
-                fontSize = 34.sp
-            )
-        }
 
-        Spacer(modifier = Modifier.height(16.dp))
+        Image(
+            painter = painterResource(
+                id = R.drawable.apuntesia_logo
+            ),
+            contentDescription = null,
+            modifier = Modifier.size(100.dp),
+            contentScale = ContentScale.Fit
+        )
+
+        Spacer(
+            modifier = Modifier.height(14.dp)
+        )
 
         // Nombre de la aplicación
+
         Text(
             text = "ApuntesIA",
             color = primaryColor,
@@ -91,17 +96,24 @@ fun RegisterScreen(
             fontWeight = FontWeight.Bold
         )
 
-        Spacer(modifier = Modifier.height(8.dp))
+        Spacer(
+            modifier = Modifier.height(8.dp)
+        )
 
         Text(
-            text = "Tu asistente de estudio con IA",
+            text = stringResource(
+                R.string.login_subtitle
+            ),
             color = MaterialTheme.colorScheme.onSurfaceVariant,
             fontSize = 15.sp
         )
 
-        Spacer(modifier = Modifier.height(28.dp))
+        Spacer(
+            modifier = Modifier.height(28.dp)
+        )
 
         // Nombre completo
+
         OutlinedTextField(
             value = fullName,
             onValueChange = {
@@ -109,7 +121,9 @@ fun RegisterScreen(
             },
             placeholder = {
                 Text(
-                    text = "Nombre completo",
+                    text = stringResource(
+                        R.string.full_name_placeholder
+                    ),
                     color = MaterialTheme.colorScheme.onSurfaceVariant
                 )
             },
@@ -119,28 +133,47 @@ fun RegisterScreen(
                 .fillMaxWidth()
                 .height(62.dp),
             colors = OutlinedTextFieldDefaults.colors(
-                focusedContainerColor = if (isDark) MaterialTheme.colorScheme.surfaceVariant else Color.White,
-                unfocusedContainerColor = if (isDark) MaterialTheme.colorScheme.surfaceVariant else Color.White,
+                focusedContainerColor = if (isDark) {
+                    MaterialTheme.colorScheme.surfaceVariant
+                } else {
+                    Color.White
+                },
+                unfocusedContainerColor = if (isDark) {
+                    MaterialTheme.colorScheme.surfaceVariant
+                } else {
+                    Color.White
+                },
                 focusedBorderColor = primaryColor,
-                unfocusedBorderColor = if (isDark) Color(0xFF394867) else Color(0xFFE2E2E2),
+                unfocusedBorderColor = if (isDark) {
+                    Color(0xFF394867)
+                } else {
+                    Color(0xFFE2E2E2)
+                },
                 cursorColor = primaryColor,
                 focusedTextColor = MaterialTheme.colorScheme.onSurface,
                 unfocusedTextColor = MaterialTheme.colorScheme.onSurface
             )
         )
 
-        Spacer(modifier = Modifier.height(14.dp))
+        Spacer(
+            modifier = Modifier.height(14.dp)
+        )
 
         // Correo
+
         OutlinedTextField(
             value = email,
             onValueChange = {
                 email = it
             },
-            keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Email),
+            keyboardOptions = KeyboardOptions(
+                keyboardType = KeyboardType.Email
+            ),
             placeholder = {
                 Text(
-                    text = "Correo electrónico",
+                    text = stringResource(
+                        R.string.email_placeholder
+                    ),
                     color = MaterialTheme.colorScheme.onSurfaceVariant
                 )
             },
@@ -150,19 +183,34 @@ fun RegisterScreen(
                 .fillMaxWidth()
                 .height(62.dp),
             colors = OutlinedTextFieldDefaults.colors(
-                focusedContainerColor = if (isDark) MaterialTheme.colorScheme.surfaceVariant else Color.White,
-                unfocusedContainerColor = if (isDark) MaterialTheme.colorScheme.surfaceVariant else Color.White,
+                focusedContainerColor = if (isDark) {
+                    MaterialTheme.colorScheme.surfaceVariant
+                } else {
+                    Color.White
+                },
+                unfocusedContainerColor = if (isDark) {
+                    MaterialTheme.colorScheme.surfaceVariant
+                } else {
+                    Color.White
+                },
                 focusedBorderColor = primaryColor,
-                unfocusedBorderColor = if (isDark) Color(0xFF394867) else Color(0xFFE2E2E2),
+                unfocusedBorderColor = if (isDark) {
+                    Color(0xFF394867)
+                } else {
+                    Color(0xFFE2E2E2)
+                },
                 cursorColor = primaryColor,
                 focusedTextColor = MaterialTheme.colorScheme.onSurface,
                 unfocusedTextColor = MaterialTheme.colorScheme.onSurface
             )
         )
 
-        Spacer(modifier = Modifier.height(14.dp))
+        Spacer(
+            modifier = Modifier.height(14.dp)
+        )
 
         // Contraseña
+
         OutlinedTextField(
             value = password,
             onValueChange = {
@@ -170,7 +218,9 @@ fun RegisterScreen(
             },
             placeholder = {
                 Text(
-                    text = "Contraseña",
+                    text = stringResource(
+                        R.string.password_placeholder
+                    ),
                     color = MaterialTheme.colorScheme.onSurfaceVariant
                 )
             },
@@ -181,20 +231,34 @@ fun RegisterScreen(
                 .fillMaxWidth()
                 .height(62.dp),
             colors = OutlinedTextFieldDefaults.colors(
-                focusedContainerColor = if (isDark) MaterialTheme.colorScheme.surfaceVariant else Color.White,
-                unfocusedContainerColor = if (isDark) MaterialTheme.colorScheme.surfaceVariant else Color.White,
+                focusedContainerColor = if (isDark) {
+                    MaterialTheme.colorScheme.surfaceVariant
+                } else {
+                    Color.White
+                },
+                unfocusedContainerColor = if (isDark) {
+                    MaterialTheme.colorScheme.surfaceVariant
+                } else {
+                    Color.White
+                },
                 focusedBorderColor = primaryColor,
-                unfocusedBorderColor = if (isDark) Color(0xFF394867) else Color(0xFFE2E2E2),
+                unfocusedBorderColor = if (isDark) {
+                    Color(0xFF394867)
+                } else {
+                    Color(0xFFE2E2E2)
+                },
                 cursorColor = primaryColor,
                 focusedTextColor = MaterialTheme.colorScheme.onSurface,
                 unfocusedTextColor = MaterialTheme.colorScheme.onSurface
             )
         )
 
-        Spacer(modifier = Modifier.height(26.dp))
-
         if (uiState.errorMessage != null) {
-            Spacer(modifier = Modifier.height(12.dp))
+
+            Spacer(
+                modifier = Modifier.height(12.dp)
+            )
+
             Text(
                 text = uiState.errorMessage.orEmpty(),
                 color = MaterialTheme.colorScheme.error,
@@ -203,10 +267,19 @@ fun RegisterScreen(
             )
         }
 
+        Spacer(
+            modifier = Modifier.height(26.dp)
+        )
+
         // Crear cuenta
+
         Button(
             onClick = {
-                viewModel.register(fullName, email, password)
+                viewModel.register(
+                    fullName,
+                    email,
+                    password
+                )
             },
             enabled = !uiState.isLoading,
             modifier = Modifier
@@ -217,15 +290,21 @@ fun RegisterScreen(
                 containerColor = primaryColor
             )
         ) {
+
             if (uiState.isLoading) {
+
                 CircularProgressIndicator(
                     modifier = Modifier.size(22.dp),
                     color = MaterialTheme.colorScheme.onPrimary,
                     strokeWidth = 2.dp
                 )
+
             } else {
+
                 Text(
-                    text = "Crear cuenta",
+                    text = stringResource(
+                        R.string.register_title
+                    ),
                     color = MaterialTheme.colorScheme.onPrimary,
                     fontSize = 16.sp,
                     fontWeight = FontWeight.Bold
@@ -233,21 +312,32 @@ fun RegisterScreen(
             }
         }
 
-        Spacer(modifier = Modifier.height(24.dp))
+        Spacer(
+            modifier = Modifier.height(24.dp)
+        )
 
         // Volver al login
+
         Row(
             verticalAlignment = Alignment.CenterVertically
         ) {
 
             Text(
-                text = "¿Ya tienes cuenta? ",
+                text = stringResource(
+                    R.string.already_have_account
+                ),
                 color = MaterialTheme.colorScheme.onSurfaceVariant,
                 fontSize = 14.sp
             )
 
+            Spacer(
+                modifier = Modifier.width(4.dp)
+            )
+
             Text(
-                text = "Inicia sesión",
+                text = stringResource(
+                    R.string.login_here
+                ),
                 color = primaryColor,
                 fontSize = 14.sp,
                 fontWeight = FontWeight.Medium,
@@ -258,6 +348,8 @@ fun RegisterScreen(
             )
         }
 
-        Spacer(modifier = Modifier.height(32.dp))
+        Spacer(
+            modifier = Modifier.height(32.dp)
+        )
     }
 }

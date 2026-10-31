@@ -1,5 +1,9 @@
 package ApunteIA.FrontEnd.domain.util
 
+import android.content.Context
+import ApunteIA.FrontEnd.R
+import ApunteIA.FrontEnd.util.LanguageManager
+import java.text.DateFormat
 import java.text.SimpleDateFormat
 import java.util.Calendar
 import java.util.Locale
@@ -33,29 +37,47 @@ object IsoDates {
         }
     }
 
-    /** "29/10/2026" en la zona horaria del teléfono. */
+    /** Fecha corta con formato sensible a Locale. */
     fun shortDate(iso: String?): String {
         val millis = parse(iso) ?: return ""
-        return SimpleDateFormat("dd/MM/yyyy", Locale.getDefault()).format(millis)
+        val locale = LanguageManager.getLocale()
+        return DateFormat.getDateInstance(DateFormat.SHORT, locale).format(millis)
     }
 
     /** Clave de día local ("2026-10-29") para agrupar actividad por día. */
     fun dayKey(millis: Long): String =
         SimpleDateFormat("yyyy-MM-dd", Locale.US).format(millis)
 
-    /** "Hace 5 min", "Hace 3 h", "Ayer", "Hace 4 días" o la fecha corta. */
-    fun relative(iso: String?, now: Long = System.currentTimeMillis()): String {
+    /** "Hace 5 min", "Ayer" o fecha corta, adaptado al contexto y Locale. */
+    fun relative(
+        iso: String?,
+        now: Long = System.currentTimeMillis(),
+        context: Context? = null
+    ): String {
         val millis = parse(iso) ?: return ""
         val diff = (now - millis).coerceAtLeast(0)
         val minutes = diff / 60_000
         val hours = minutes / 60
         val days = daysBetween(millis, now)
+
+        if (context == null) {
+            return when {
+                minutes < 1 -> "Justo ahora"
+                minutes < 60 -> "Hace $minutes min"
+                days == 0 -> "Hace $hours h"
+                days == 1 -> "Ayer"
+                days < 7 -> "Hace $days días"
+                else -> shortDate(iso)
+            }
+        }
+
+        val res = context.resources
         return when {
-            minutes < 1 -> "Justo ahora"
-            minutes < 60 -> "Hace $minutes min"
-            days == 0 -> "Hace $hours h"
-            days == 1 -> "Ayer"
-            days < 7 -> "Hace $days días"
+            minutes < 1 -> res.getString(R.string.time_just_now)
+            minutes < 60 -> res.getString(R.string.time_minutes_ago, minutes.toInt())
+            days == 0 -> res.getString(R.string.time_hours_ago, hours.toInt())
+            days == 1 -> res.getString(R.string.time_yesterday)
+            days < 7 -> res.getString(R.string.time_days_ago, days)
             else -> shortDate(iso)
         }
     }

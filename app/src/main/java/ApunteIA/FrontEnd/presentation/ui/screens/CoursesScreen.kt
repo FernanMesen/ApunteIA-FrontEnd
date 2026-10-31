@@ -20,8 +20,10 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
+import ApunteIA.FrontEnd.R
 import ApunteIA.FrontEnd.presentation.viewmodel.ManageSubjectsViewModel
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -43,7 +45,7 @@ fun CoursesScreen(
                 .padding(16.dp)
         ) {
             Text(
-                text = "Mis cursos",
+                text = stringResource(R.string.subjects_title),
                 style = MaterialTheme.typography.headlineMedium
             )
 
@@ -66,7 +68,7 @@ fun CoursesScreen(
                     contentAlignment = Alignment.Center
                 ) {
                     Text(
-                        text = "No tienes cursos registrados",
+                        text = stringResource(R.string.no_subjects_registered),
                         color = MaterialTheme.colorScheme.onSurfaceVariant
                     )
                 }

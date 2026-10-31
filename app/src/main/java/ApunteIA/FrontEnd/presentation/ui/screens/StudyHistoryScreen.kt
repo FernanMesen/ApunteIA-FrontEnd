@@ -15,12 +15,15 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
+import ApunteIA.FrontEnd.R
 import ApunteIA.FrontEnd.domain.model.RecentActivity
+import ApunteIA.FrontEnd.domain.util.FormatUtils
 import ApunteIA.FrontEnd.presentation.ui.theme.*
 import ApunteIA.FrontEnd.presentation.viewmodel.StudyHistoryViewModel
 import ApunteIA.FrontEnd.presentation.viewmodel.SubjectProgress
@@ -76,7 +79,7 @@ fun StudyHistoryScreen(
                                 horizontalAlignment = Alignment.CenterHorizontally
                             ) {
                                 Text(
-                                    text = "Error al cargar historial: ${uiState.error}",
+                                    text = uiState.error.orEmpty(),
                                     color = MaterialTheme.colorScheme.onErrorContainer,
                                     fontSize = 14.sp
                                 )
@@ -87,7 +90,7 @@ fun StudyHistoryScreen(
                                         containerColor = MaterialTheme.colorScheme.error
                                     )
                                 ) {
-                                    Text("Reintentar")
+                                    Text(stringResource(R.string.retry))
                                 }
                             }
                         }
@@ -141,7 +144,7 @@ fun StudyHistoryTopBar(onBack: () -> Unit) {
         ) {
             Icon(
                 imageVector = Icons.Default.KeyboardArrowLeft,
-                contentDescription = "Back",
+                contentDescription = stringResource(R.string.back),
                 tint = MaterialTheme.colorScheme.onBackground
             )
         }
@@ -150,13 +153,13 @@ fun StudyHistoryTopBar(onBack: () -> Unit) {
 
         Column {
             Text(
-                text = "Historial de estudio",
+                text = stringResource(R.string.study_history_title),
                 fontSize = 22.sp,
                 fontWeight = FontWeight.Bold,
                 color = MaterialTheme.colorScheme.onBackground
             )
             Text(
-                text = "Tu progreso a través del tiempo",
+                text = stringResource(R.string.study_history_subtitle),
                 fontSize = 14.sp,
                 color = MaterialTheme.colorScheme.onSurfaceVariant
             )
@@ -182,7 +185,7 @@ fun PeriodSelector(isWeekly: Boolean, onPeriodSelected: (Boolean) -> Unit) {
             contentAlignment = Alignment.Center
         ) {
             Text(
-                text = "Semanal",
+                text = stringResource(R.string.weekly),
                 color = if (isWeekly) Color.White else MaterialTheme.colorScheme.onSurfaceVariant,
                 fontSize = 14.sp,
                 fontWeight = FontWeight.Bold
@@ -198,7 +201,7 @@ fun PeriodSelector(isWeekly: Boolean, onPeriodSelected: (Boolean) -> Unit) {
             contentAlignment = Alignment.Center
         ) {
             Text(
-                text = "Mensual",
+                text = stringResource(R.string.monthly),
                 color = if (!isWeekly) Color.White else MaterialTheme.colorScheme.onSurfaceVariant,
                 fontSize = 14.sp,
                 fontWeight = FontWeight.Bold
@@ -209,13 +212,16 @@ fun PeriodSelector(isWeekly: Boolean, onPeriodSelected: (Boolean) -> Unit) {
 
 @Composable
 fun StatsOverviewRow(stats: StudyStats) {
+    val formattedAccuracy = FormatUtils.formatPercentage(stats.precision, maxFractionDigits = 0)
+    val formattedStreak = FormatUtils.formatNumber(stats.streak, maxFractionDigits = 0)
+
     Row(
         modifier = Modifier.fillMaxWidth(),
         horizontalArrangement = Arrangement.spacedBy(12.dp)
     ) {
-        StatBox(value = "${stats.precision}%", label = "Precisión", modifier = Modifier.weight(1f))
-        StatBox(value = "${stats.streak}", label = "Racha (días)", modifier = Modifier.weight(1f))
-        StatBox(value = stats.studyTime, label = "Tiempo de estudio", modifier = Modifier.weight(1f))
+        StatBox(value = formattedAccuracy, label = stringResource(R.string.accuracy), modifier = Modifier.weight(1f))
+        StatBox(value = formattedStreak, label = stringResource(R.string.streak_label), modifier = Modifier.weight(1f))
+        StatBox(value = stats.studyTime, label = stringResource(R.string.study_time), modifier = Modifier.weight(1f))
     }
 }
 
@@ -282,7 +288,7 @@ fun WeeklyChartCard(progress: List<Float>) {
 fun SubjectProgressSection(subjects: List<SubjectProgress>) {
     Column(verticalArrangement = Arrangement.spacedBy(16.dp)) {
         Text(
-            text = "PROGRESO POR MATERIA",
+            text = stringResource(R.string.subject_progress_header),
             fontSize = 14.sp,
             fontWeight = FontWeight.Bold,
             color = MaterialTheme.colorScheme.onSurfaceVariant
@@ -290,7 +296,7 @@ fun SubjectProgressSection(subjects: List<SubjectProgress>) {
 
         if (subjects.isEmpty()) {
             Text(
-                text = "Aún no estás inscrito en ninguna materia.",
+                text = stringResource(R.string.not_enrolled_any_subject),
                 fontSize = 14.sp,
                 color = MaterialTheme.colorScheme.onSurfaceVariant
             )
@@ -308,11 +314,12 @@ fun SubjectProgressSection(subjects: List<SubjectProgress>) {
 @Composable
 fun SubjectProgressItem(name: String, progress: Int, color: Color) {
     val isDark = MaterialTheme.colorScheme.primary == SpaceCadet
+    val formattedProgress = FormatUtils.formatPercentage(progress, maxFractionDigits = 0)
 
     Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
         Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween) {
             Text(text = name, fontSize = 15.sp, color = MaterialTheme.colorScheme.onSurface)
-            Text(text = "$progress%", fontSize = 15.sp, color = MaterialTheme.colorScheme.onSurfaceVariant)
+            Text(text = formattedProgress, fontSize = 15.sp, color = MaterialTheme.colorScheme.onSurfaceVariant)
         }
         Box(
             modifier = Modifier
@@ -338,15 +345,15 @@ fun SummaryCards(stats: StudyStats) {
         horizontalArrangement = Arrangement.spacedBy(16.dp)
     ) {
         SummaryCard(
-            label = "Áreas fuertes",
-            value = stats.strongAreas.toString(),
+            label = stringResource(R.string.strong_areas),
+            value = FormatUtils.formatNumber(stats.strongAreas, maxFractionDigits = 0),
             color = Color(0xFF2E3B3B),
             textColor = Color(0xFF5D7B92),
             modifier = Modifier.weight(1f)
         )
         SummaryCard(
-            label = "Áreas débiles",
-            value = stats.weakAreas.toString(),
+            label = stringResource(R.string.weak_areas),
+            value = FormatUtils.formatNumber(stats.weakAreas, maxFractionDigits = 0),
             color = Color(0xFF3B2525),
             textColor = Color(0xFFC07B7B),
             modifier = Modifier.weight(1f)
@@ -377,7 +384,7 @@ fun SummaryCard(label: String, value: String, color: Color, textColor: Color, mo
 fun RecentActivityHistory(activities: List<RecentActivity>) {
     Column {
         Text(
-            text = "ACTIVIDAD RECIENTE",
+            text = stringResource(R.string.recent_activity_header),
             style = MaterialTheme.typography.titleSmall,
             color = MaterialTheme.colorScheme.onSurfaceVariant,
             fontWeight = FontWeight.Bold

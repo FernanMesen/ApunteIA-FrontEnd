@@ -15,12 +15,15 @@ import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import ApunteIA.FrontEnd.R
 import ApunteIA.FrontEnd.domain.model.Note
 import ApunteIA.FrontEnd.domain.model.ProcessingStatus
+import ApunteIA.FrontEnd.domain.util.IsoDates
 import ApunteIA.FrontEnd.presentation.ui.components.StatusTag
 import ApunteIA.FrontEnd.presentation.viewmodel.NoteDetailUiState
 import ApunteIA.FrontEnd.presentation.viewmodel.NoteDetailViewModel
@@ -53,16 +56,16 @@ fun NoteDetailScreen(
     if (showDeleteDialog) {
         AlertDialog(
             onDismissRequest = { showDeleteDialog = false },
-            title = { Text("¿Eliminar esta nota?") },
-            text = { Text("Se eliminará el apunte y su resumen. Esta acción no se puede deshacer.") },
+            title = { Text(stringResource(R.string.delete_note_title)) },
+            text = { Text(stringResource(R.string.delete_note_message)) },
             confirmButton = {
                 TextButton(onClick = {
                     showDeleteDialog = false
                     viewModel.delete()
-                }) { Text("Eliminar", color = MaterialTheme.colorScheme.error) }
+                }) { Text(stringResource(R.string.delete), color = MaterialTheme.colorScheme.error) }
             },
             dismissButton = {
-                TextButton(onClick = { showDeleteDialog = false }) { Text("Cancelar") }
+                TextButton(onClick = { showDeleteDialog = false }) { Text(stringResource(R.string.cancel)) }
             }
         )
     }
@@ -72,7 +75,7 @@ fun NoteDetailScreen(
             TopAppBar(
                 title = {
                     Text(
-                        "Apunte",
+                        stringResource(R.string.note_detail_title),
                         fontSize = 18.sp,
                         color = MaterialTheme.colorScheme.primary,
                         fontWeight = FontWeight.Bold
@@ -82,7 +85,7 @@ fun NoteDetailScreen(
                     IconButton(onClick = onBack) {
                         Icon(
                             Icons.Default.ArrowBack,
-                            contentDescription = "Atrás",
+                            contentDescription = stringResource(R.string.back),
                             tint = MaterialTheme.colorScheme.primary
                         )
                     }
@@ -95,7 +98,7 @@ fun NoteDetailScreen(
                         ) {
                             Icon(
                                 Icons.Default.Delete,
-                                contentDescription = "Eliminar nota",
+                                contentDescription = stringResource(R.string.delete),
                                 tint = MaterialTheme.colorScheme.primary
                             )
                         }
@@ -121,12 +124,12 @@ fun NoteDetailScreen(
                 verticalArrangement = Arrangement.Center
             ) {
                 Text(
-                    uiState.error ?: "No se encontró la nota.",
+                    uiState.error ?: stringResource(R.string.no_notes_found),
                     color = MaterialTheme.colorScheme.onSurfaceVariant,
                     textAlign = TextAlign.Center
                 )
                 Spacer(modifier = Modifier.height(16.dp))
-                Button(onClick = { viewModel.load() }) { Text("Reintentar") }
+                Button(onClick = { viewModel.load() }) { Text(stringResource(R.string.retry)) }
             }
 
             else -> NoteDetailContent(
@@ -150,6 +153,9 @@ private fun NoteDetailContent(
     onGenerateQuiz: () -> Unit,
     onDismissError: () -> Unit
 ) {
+    val classNumText = if (note.classNumber > 0) stringResource(R.string.class_number, note.classNumber) else ""
+    val formattedDate = IsoDates.shortDate(note.date)
+
     Column(
         modifier = modifier
             .fillMaxSize()
@@ -170,9 +176,9 @@ private fun NoteDetailContent(
             Spacer(modifier = Modifier.width(12.dp))
             Text(
                 text = listOf(
-                    if (note.classNumber > 0) "Clase ${note.classNumber}" else "",
+                    classNumText,
                     note.className,
-                    note.date
+                    formattedDate
                 ).filter { it.isNotBlank() }.joinToString("  ·  "),
                 color = MaterialTheme.colorScheme.onSurfaceVariant,
                 fontSize = 14.sp
@@ -193,7 +199,7 @@ private fun NoteDetailContent(
                         fontSize = 14.sp
                     )
                     TextButton(onClick = onDismissError, modifier = Modifier.align(Alignment.End)) {
-                        Text("Entendido")
+                        Text(stringResource(R.string.understood))
                     }
                 }
             }
@@ -201,7 +207,7 @@ private fun NoteDetailContent(
 
         Spacer(modifier = Modifier.height(24.dp))
 
-        SectionTitle("Resumen de la IA")
+        SectionTitle(stringResource(R.string.ai_summary_header))
         Spacer(modifier = Modifier.height(12.dp))
 
         val summary = note.summary
@@ -211,7 +217,7 @@ private fun NoteDetailContent(
                     CircularProgressIndicator(modifier = Modifier.size(22.dp), strokeWidth = 2.dp)
                     Spacer(modifier = Modifier.width(12.dp))
                     Text(
-                        "La IA está leyendo tu apunte… puede tardar unos segundos.",
+                        stringResource(R.string.ai_reading_note),
                         color = MaterialTheme.colorScheme.onSurface,
                         fontSize = 15.sp
                     )
@@ -223,9 +229,9 @@ private fun NoteDetailContent(
             else -> InfoCard {
                 Text(
                     text = when (note.processingStatus) {
-                        ProcessingStatus.FAILED -> "La IA no pudo resumir esta nota la última vez. Puedes intentarlo de nuevo."
-                        ProcessingStatus.PROCESSING -> "Esta nota se está procesando. Vuelve en unos segundos."
-                        else -> "Esta nota todavía no tiene resumen. La IA puede sacar los conceptos clave por ti."
+                        ProcessingStatus.FAILED -> stringResource(R.string.ai_summary_failed)
+                        ProcessingStatus.PROCESSING -> stringResource(R.string.ai_summary_processing)
+                        else -> stringResource(R.string.ai_summary_none)
                     },
                     color = MaterialTheme.colorScheme.onSurfaceVariant,
                     fontSize = 15.sp,
@@ -240,7 +246,7 @@ private fun NoteDetailContent(
                     ) {
                         Icon(Icons.Default.AutoAwesome, contentDescription = null, modifier = Modifier.size(18.dp))
                         Spacer(modifier = Modifier.width(8.dp))
-                        Text("Resumir con IA")
+                        Text(stringResource(R.string.summarize_with_ai))
                     }
                 }
             }
@@ -248,11 +254,11 @@ private fun NoteDetailContent(
 
         Spacer(modifier = Modifier.height(24.dp))
 
-        SectionTitle("Apunte original")
+        SectionTitle(stringResource(R.string.original_note_header))
         Spacer(modifier = Modifier.height(12.dp))
         InfoCard {
             Text(
-                text = note.content.ifBlank { "(sin contenido)" },
+                text = note.content.ifBlank { stringResource(R.string.no_content) },
                 fontSize = 15.sp,
                 color = MaterialTheme.colorScheme.onSurface,
                 lineHeight = 22.sp
@@ -275,12 +281,12 @@ private fun NoteDetailContent(
                     strokeWidth = 2.dp
                 )
                 Spacer(modifier = Modifier.width(12.dp))
-                Text("Generando preguntas…", color = MaterialTheme.colorScheme.onPrimary)
+                Text(stringResource(R.string.generating_questions), color = MaterialTheme.colorScheme.onPrimary)
             } else {
                 Icon(Icons.Default.Quiz, contentDescription = null, tint = MaterialTheme.colorScheme.onPrimary)
                 Spacer(modifier = Modifier.width(8.dp))
                 Text(
-                    "Practicar con un quiz de IA",
+                    stringResource(R.string.practice_quiz_button),
                     color = MaterialTheme.colorScheme.onPrimary,
                     fontWeight = FontWeight.Bold
                 )
@@ -289,7 +295,7 @@ private fun NoteDetailContent(
 
         Spacer(modifier = Modifier.height(8.dp))
         Text(
-            "5 preguntas de opción múltiple generadas a partir de este apunte.",
+            stringResource(R.string.quiz_description_hint),
             fontSize = 12.sp,
             color = MaterialTheme.colorScheme.onSurfaceVariant,
             modifier = Modifier.fillMaxWidth(),

@@ -17,10 +17,12 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
+import ApunteIA.FrontEnd.R
 import ApunteIA.FrontEnd.domain.model.Notification
 import ApunteIA.FrontEnd.presentation.ui.theme.*
 import ApunteIA.FrontEnd.presentation.viewmodel.NotificationViewModel
@@ -86,7 +88,7 @@ fun NotificationsScreen(
                                 horizontalAlignment = Alignment.CenterHorizontally
                             ) {
                                 Text(
-                                    text = "Error al cargar notificaciones: ${uiState.error}",
+                                    text = uiState.error.orEmpty(),
                                     color = MaterialTheme.colorScheme.onErrorContainer,
                                     fontSize = 14.sp
                                 )
@@ -97,7 +99,7 @@ fun NotificationsScreen(
                                         containerColor = MaterialTheme.colorScheme.error
                                     )
                                 ) {
-                                    Text("Reintentar")
+                                    Text(stringResource(R.string.retry))
                                 }
                             }
                         }
@@ -113,7 +115,7 @@ fun NotificationsScreen(
                             contentAlignment = Alignment.Center
                         ) {
                             Text(
-                                "No tienes notificaciones pendientes",
+                                stringResource(R.string.no_pending_notifications),
                                 color = MaterialTheme.colorScheme.onSurfaceVariant
                             )
                         }
@@ -156,7 +158,7 @@ fun NotificationsTopBar(onBack: () -> Unit, onMarkAllAsRead: () -> Unit) {
             ) {
                 Icon(
                     imageVector = Icons.Default.KeyboardArrowLeft,
-                    contentDescription = "Back",
+                    contentDescription = stringResource(R.string.back),
                     tint = MaterialTheme.colorScheme.onBackground,
                     modifier = Modifier.size(20.dp)
                 )
@@ -165,7 +167,7 @@ fun NotificationsTopBar(onBack: () -> Unit, onMarkAllAsRead: () -> Unit) {
             Spacer(modifier = Modifier.width(12.dp))
 
             Text(
-                text = "Notificaciones",
+                text = stringResource(R.string.notifications_title),
                 fontSize = 22.sp,
                 fontWeight = FontWeight.Bold,
                 color = MaterialTheme.colorScheme.onBackground
@@ -173,7 +175,7 @@ fun NotificationsTopBar(onBack: () -> Unit, onMarkAllAsRead: () -> Unit) {
         }
 
         Text(
-            text = "Marcar todo leído",
+            text = stringResource(R.string.mark_all_read),
             fontSize = 13.sp,
             color = if (isDark) Color(0xFF5D7B92) else DarkGreen,
             modifier = Modifier.clickable { onMarkAllAsRead() }
@@ -235,7 +237,7 @@ fun NotificationItem(notification: Notification, onDelete: () -> Unit) {
             ) {
                 Icon(
                     imageVector = Icons.Default.Close,
-                    contentDescription = "Eliminar",
+                    contentDescription = stringResource(R.string.delete),
                     tint = MaterialTheme.colorScheme.onSurfaceVariant,
                     modifier = Modifier.size(14.dp)
                 )

@@ -16,11 +16,14 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import ApunteIA.FrontEnd.R
 import ApunteIA.FrontEnd.domain.model.Question
 import ApunteIA.FrontEnd.domain.model.UserAnswer
+import ApunteIA.FrontEnd.domain.util.FormatUtils
 import ApunteIA.FrontEnd.presentation.ui.theme.*
 import ApunteIA.FrontEnd.presentation.viewmodel.QuizViewModel
 
@@ -52,7 +55,7 @@ fun QuizScreen(
                 CircularProgressIndicator()
                 Spacer(modifier = Modifier.height(16.dp))
                 Text(
-                    if (uiState.isSubmitting) "Calificando tus respuestas..." else "Preparando el cuestionario...",
+                    if (uiState.isSubmitting) stringResource(R.string.grading_answers) else stringResource(R.string.preparing_quiz),
                     color = MaterialTheme.colorScheme.onSurfaceVariant
                 )
             }
@@ -79,14 +82,14 @@ fun QuizScreen(
                     horizontalAlignment = Alignment.CenterHorizontally
                 ) {
                     Text(
-                        text = "No se pudo completar el cuestionario: ${uiState.error}",
+                        text = stringResource(R.string.quiz_error, uiState.error.orEmpty()),
                         color = MaterialTheme.colorScheme.onErrorContainer,
                         fontSize = 15.sp
                     )
                     Spacer(modifier = Modifier.height(16.dp))
                     Row(horizontalArrangement = Arrangement.spacedBy(12.dp)) {
                         OutlinedButton(onClick = onClose) {
-                            Text("Cerrar")
+                            Text(stringResource(R.string.close))
                         }
                         Button(
                             onClick = { viewModel.refresh() },
@@ -94,7 +97,7 @@ fun QuizScreen(
                                 containerColor = MaterialTheme.colorScheme.error
                             )
                         ) {
-                            Text("Reintentar")
+                            Text(stringResource(R.string.retry))
                         }
                     }
                 }
@@ -111,8 +114,6 @@ fun QuizScreen(
         )
     } else if (questions.isNotEmpty()) {
         val currentQuestion = questions[currentQuestionIndex.coerceIn(0, questions.lastIndex)]
-        // Durante la evaluación real el backend no revela la respuesta correcta (-1):
-        // se elige una opción y se califica al entregar.
         val revealsAnswer = currentQuestion.correctAnswerIndex >= 0
         val isLastQuestion = currentQuestionIndex >= questions.lastIndex
 
@@ -136,9 +137,9 @@ fun QuizScreen(
                         ) {
                             Text(
                                 when {
-                                    isLastQuestion && !revealsAnswer -> "Entregar"
-                                    isLastQuestion -> "Ver resultados"
-                                    else -> "Siguiente"
+                                    isLastQuestion && !revealsAnswer -> stringResource(R.string.submit_quiz)
+                                    isLastQuestion -> stringResource(R.string.see_results)
+                                    else -> stringResource(R.string.next)
                                 },
                                 color = MaterialTheme.colorScheme.onPrimary,
                                 fontWeight = FontWeight.Bold
@@ -168,7 +169,7 @@ fun QuizScreen(
                     ) {
                         Icon(
                             Icons.Default.Close,
-                            contentDescription = "Cerrar",
+                            contentDescription = stringResource(R.string.close),
                             tint = MaterialTheme.colorScheme.primary
                         )
                     }
@@ -258,6 +259,7 @@ fun ResultsScreen(
     val correctCount = userAnswers.count { it.isCorrect }
     val incorrectCount = questions.size - correctCount
     val score = if (questions.isNotEmpty()) (correctCount.toFloat() / questions.size * 100).toInt() else 0
+    val formattedScore = FormatUtils.formatPercentage(score, maxFractionDigits = 0)
 
     Scaffold(
         containerColor = MaterialTheme.colorScheme.background,
@@ -284,7 +286,7 @@ fun ResultsScreen(
                             contentPadding = PaddingValues(vertical = 12.dp)
                         ) {
                             Text(
-                                text = "Repetir incorrectas ($incorrectCount)",
+                                text = stringResource(R.string.repeat_incorrects, incorrectCount),
                                 color = if (isDarkMode) Color(0xFFF44336) else StatusRed,
                                 fontWeight = FontWeight.Bold,
                                 fontSize = 14.sp
@@ -307,7 +309,7 @@ fun ResultsScreen(
                         contentPadding = PaddingValues(vertical = 12.dp)
                     ) {
                         Text(
-                            text = "Escanear más notas",
+                            text = stringResource(R.string.scan_more_notes),
                             color = MaterialTheme.colorScheme.onSurface,
                             fontWeight = FontWeight.Medium,
                             fontSize = 14.sp
@@ -328,7 +330,7 @@ fun ResultsScreen(
                     contentPadding = PaddingValues(vertical = 12.dp)
                 ) {
                     Text(
-                        text = "Volver al inicio",
+                        text = stringResource(R.string.back_to_start),
                         color = MaterialTheme.colorScheme.onPrimary,
                         fontWeight = FontWeight.Bold
                     )
@@ -347,7 +349,7 @@ fun ResultsScreen(
             item {
                 Spacer(modifier = Modifier.height(32.dp))
                 Text(
-                    text = "¡Quiz Finalizado!",
+                    text = stringResource(R.string.quiz_completed_title),
                     fontSize = 24.sp,
                     fontWeight = FontWeight.Bold,
                     color = MaterialTheme.colorScheme.primary,
@@ -368,18 +370,18 @@ fun ResultsScreen(
                         horizontalAlignment = Alignment.CenterHorizontally
                     ) {
                         Text(
-                            text = "Tu nota",
+                            text = stringResource(R.string.your_score),
                             fontSize = 16.sp,
                             color = MaterialTheme.colorScheme.onSurfaceVariant
                         )
                         Text(
-                            text = "$score%",
+                            text = formattedScore,
                             fontSize = 48.sp,
                             fontWeight = FontWeight.Bold,
                             color = MaterialTheme.colorScheme.primary
                         )
                         Text(
-                            text = "$correctCount de ${questions.size} correctas",
+                            text = stringResource(R.string.score_correct_format, correctCount, questions.size),
                             fontSize = 14.sp,
                             color = MaterialTheme.colorScheme.onSurfaceVariant
                         )
@@ -388,7 +390,7 @@ fun ResultsScreen(
 
                 Spacer(modifier = Modifier.height(32.dp))
                 Text(
-                    text = "Revisión",
+                    text = stringResource(R.string.review_header),
                     fontSize = 18.sp,
                     fontWeight = FontWeight.Bold,
                     color = MaterialTheme.colorScheme.primary
@@ -448,7 +450,6 @@ fun ReviewItem(
 
             question.options.forEachIndexed { optIndex, option ->
                 val isSelected = userAnswer?.selectedOptionIndex == optIndex
-                // Si el backend no envió la opción correcta, solo se sabe si la elegida acertó.
                 val isCorrect = if (question.correctAnswerIndex >= 0) {
                     optIndex == question.correctAnswerIndex
                 } else {

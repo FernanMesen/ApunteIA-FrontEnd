@@ -39,6 +39,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.StrokeCap
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalLifecycleOwner
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -46,6 +47,7 @@ import androidx.compose.ui.viewinterop.AndroidView
 import androidx.core.content.ContextCompat
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.activity.compose.rememberLauncherForActivityResult
+import ApunteIA.FrontEnd.R
 import ApunteIA.FrontEnd.presentation.ui.theme.BackgroundBeige
 import ApunteIA.FrontEnd.presentation.ui.theme.DarkGreen
 import ApunteIA.FrontEnd.presentation.viewmodel.ScanViewModel
@@ -129,7 +131,7 @@ fun ScanCameraScreen(
                     )
                     ViewfinderCorners()
                     Text(
-                        text = "Alinea tus notas dentro del marco",
+                        text = stringResource(R.string.align_notes_frame),
                         color = Color.White,
                         fontSize = 13.sp,
                         modifier = Modifier
@@ -153,7 +155,7 @@ fun ScanCameraScreen(
                         .size(48.dp)
                         .background(Color(0xFFEDEDED), RoundedCornerShape(14.dp))
                 ) {
-                    Icon(Icons.Default.Image, contentDescription = "Galería", tint = DarkGreen)
+                    Icon(Icons.Default.Image, contentDescription = null, tint = DarkGreen)
                 }
 
                 Spacer(modifier = Modifier.weight(1f))
@@ -186,7 +188,7 @@ fun ScanCameraScreen(
                         modifier = Modifier.clickable { onDone() }
                     ) {
                         Text(
-                            text = "Listo (${state.capturedPages.size})",
+                            text = stringResource(R.string.ready_badge, state.capturedPages.size),
                             modifier = Modifier.padding(horizontal = 18.dp, vertical = 14.dp),
                             color = Color.White,
                             fontWeight = FontWeight.Bold,
@@ -198,7 +200,6 @@ fun ScanCameraScreen(
                 }
             }
         } else {
-            // Sin permiso de cámara: mostramos el pedido en vez de una preview vacía.
             Column(
                 modifier = Modifier.weight(1f).fillMaxWidth(),
                 horizontalAlignment = Alignment.CenterHorizontally,
@@ -207,7 +208,7 @@ fun ScanCameraScreen(
                 Icon(Icons.Default.CameraAlt, contentDescription = null, tint = DarkGreen, modifier = Modifier.size(48.dp))
                 Spacer(modifier = Modifier.height(12.dp))
                 Text(
-                    text = "Necesitamos acceso a tu cámara para escanear las notas.",
+                    text = stringResource(R.string.camera_permission_needed),
                     color = DarkGreen,
                     fontSize = 15.sp,
                     fontWeight = FontWeight.Medium
@@ -218,7 +219,7 @@ fun ScanCameraScreen(
                     shape = RoundedCornerShape(24.dp),
                     colors = ButtonDefaults.buttonColors(containerColor = DarkGreen)
                 ) {
-                    Text("Permitir acceso a la cámara", color = Color.White, fontWeight = FontWeight.Bold)
+                    Text(stringResource(R.string.allow_camera_access), color = Color.White, fontWeight = FontWeight.Bold)
                 }
             }
         }
