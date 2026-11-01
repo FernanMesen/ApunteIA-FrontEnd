@@ -45,8 +45,9 @@ class ProcessNoteWithAiUseCase @Inject constructor(
     private val repository: NoteRepository,
     private val aiLanguagePreferenceManager: AiLanguagePreferenceManager
 ) {
-    suspend operator fun invoke(id: Long): Resource<Note> {
-        val lang = aiLanguagePreferenceManager.getEffectiveLanguageCode()
+    suspend operator fun invoke(id: Long, language: String? = null): Resource<Note> {
+        val lang = language?.takeIf { it.isNotBlank() }
+            ?: aiLanguagePreferenceManager.getEffectiveLanguageCode()
         return repository.processWithAi(id, lang)
     }
 }
@@ -59,9 +60,11 @@ class GenerateQuizFromNoteUseCase @Inject constructor(
     suspend operator fun invoke(
         noteId: Long,
         questionCount: Int = 5,
-        difficulty: QuizDifficulty = QuizDifficulty.MEDIUM
+        difficulty: QuizDifficulty = QuizDifficulty.MEDIUM,
+        language: String? = null
     ): Resource<Long> {
-        val lang = aiLanguagePreferenceManager.getEffectiveLanguageCode()
+        val lang = language?.takeIf { it.isNotBlank() }
+            ?: aiLanguagePreferenceManager.getEffectiveLanguageCode()
         return repository.generateQuiz(noteId, questionCount.coerceIn(1, 20), difficulty, lang)
     }
 }

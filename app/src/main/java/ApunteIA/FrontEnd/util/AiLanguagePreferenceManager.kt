@@ -6,21 +6,26 @@ import javax.inject.Inject
 import javax.inject.Singleton
 
 @Singleton
-class AiLanguagePreferenceManager @Inject constructor(
-    @ApplicationContext context: Context
+open class AiLanguagePreferenceManager @Inject constructor(
+    @ApplicationContext context: Context?
 ) {
-    private val prefs = context.getSharedPreferences("apunteia_ai_language", Context.MODE_PRIVATE)
+    private val prefs = context?.getSharedPreferences("apunteia_ai_language", Context.MODE_PRIVATE)
+    private var memoryOption: AiLanguageOption? = null
 
-    var aiLanguageOption: AiLanguageOption
+    open var aiLanguageOption: AiLanguageOption
         get() {
-            val name = prefs.getString(KEY_AI_LANGUAGE, AiLanguageOption.SAME_AS_APP.name)
-            return AiLanguageOption.fromString(name)
+            memoryOption?.let { return it }
+            val name = prefs?.getString(KEY_AI_LANGUAGE, AiLanguageOption.SAME_AS_APP.name)
+            val option = AiLanguageOption.fromString(name)
+            memoryOption = option
+            return option
         }
         set(value) {
-            prefs.edit().putString(KEY_AI_LANGUAGE, value.name).apply()
+            memoryOption = value
+            prefs?.edit()?.putString(KEY_AI_LANGUAGE, value.name)?.apply()
         }
 
-    fun getEffectiveLanguageCode(): String {
+    open fun getEffectiveLanguageCode(): String {
         return when (aiLanguageOption) {
             AiLanguageOption.SAME_AS_APP -> LanguageManager.getCurrentLanguageCode()
             AiLanguageOption.ES -> "es"

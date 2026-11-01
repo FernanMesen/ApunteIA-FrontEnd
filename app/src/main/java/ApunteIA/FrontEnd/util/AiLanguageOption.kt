@@ -9,7 +9,11 @@ enum class AiLanguageOption {
 
     companion object {
         fun fromString(value: String?): AiLanguageOption {
-            return entries.firstOrNull { it.name == value } ?: SAME_AS_APP
+            if (value.isNullOrBlank()) return SAME_AS_APP
+            val clean = value.trim()
+            return entries.firstOrNull {
+                it.name.equals(clean, ignoreCase = true)
+            } ?: SAME_AS_APP
         }
     }
 }
