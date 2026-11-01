@@ -40,7 +40,9 @@ data class GenerateAssessmentRequestDto(
     val questionCount: Int,
     /** EASY | MEDIUM | HARD */
     @SerializedName("difficulty")
-    val difficulty: String
+    val difficulty: String,
+    @SerializedName("language")
+    val language: String
 )
 
 data class StartAttemptRequestDto(

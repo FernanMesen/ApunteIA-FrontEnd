@@ -28,8 +28,8 @@ interface NoteRepository {
     suspend fun deleteNote(id: Long): Resource<Unit>
 
     /** IA: genera el resumen de la nota. */
-    suspend fun processWithAi(id: Long): Resource<Note>
+    suspend fun processWithAi(id: Long, language: String): Resource<Note>
 
     /** IA: genera un quiz a partir de la nota. Devuelve el id de la evaluación creada. */
-    suspend fun generateQuiz(noteId: Long, questionCount: Int, difficulty: QuizDifficulty): Resource<Long>
+    suspend fun generateQuiz(noteId: Long, questionCount: Int, difficulty: QuizDifficulty, language: String): Resource<Long>
 }

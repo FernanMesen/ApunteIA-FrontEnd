@@ -94,6 +94,8 @@ class FakeNoteDataSource(var notes: MutableList<NoteDto> = mutableListOf()) : No
     var processError: Throwable? = null
     var lastCreate: CreateNoteRequestDto? = null
     var lastUpdate: UpdateNoteRequestDto? = null
+    var lastProcessedLanguage: String? = null
+    var lastAssessmentLanguage: String? = null
     val deleted = mutableListOf<Long>()
 
     override suspend fun getNotes(userId: Long): List<NoteDto> = notes.filter { it.userId == userId }
@@ -111,14 +113,17 @@ class FakeNoteDataSource(var notes: MutableList<NoteDto> = mutableListOf()) : No
         return updated
     }
     override suspend fun deleteNote(id: Long) { deleted += id; notes.removeAll { it.id == id } }
-    override suspend fun processNote(id: Long): NoteDto {
+    override suspend fun processNote(id: Long, language: String): NoteDto {
         processError?.let { throw it }
-        val processed = getNote(id).copy(summary = "- Punto clave", processingStatus = "COMPLETED")
+        lastProcessedLanguage = language
+        val processed = getNote(id).copy(summary = "- Punto clave ($language)", processingStatus = "COMPLETED")
         notes.replaceAll { if (it.id == id) processed else it }
         return processed
     }
-    override suspend fun generateAssessment(noteId: Long, questionCount: Int, difficulty: String): AssessmentDto =
-        assessment(id = 50, title = "Quiz IA - ${getNote(noteId).title}", questions = questionCount)
+    override suspend fun generateAssessment(noteId: Long, questionCount: Int, difficulty: String, language: String): AssessmentDto {
+        lastAssessmentLanguage = language
+        return assessment(id = 50, title = "Quiz IA - ${getNote(noteId).title} ($language)", questions = questionCount)
+    }
 
     companion object {
         fun note(

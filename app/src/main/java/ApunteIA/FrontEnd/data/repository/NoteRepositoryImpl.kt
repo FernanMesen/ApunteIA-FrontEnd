@@ -70,16 +70,17 @@ class NoteRepositoryImpl @Inject constructor(
         dataSource.deleteNote(id)
     }
 
-    override suspend fun processWithAi(id: Long): Resource<Note> = safeApiCall(errorMapper) {
+    override suspend fun processWithAi(id: Long, language: String): Resource<Note> = safeApiCall(errorMapper) {
         loader.invalidate()
-        dataSource.processNote(id).toDomain(catalog.byId())
+        dataSource.processNote(id, language).toDomain(catalog.byId())
     }
 
     override suspend fun generateQuiz(
         noteId: Long,
         questionCount: Int,
-        difficulty: QuizDifficulty
+        difficulty: QuizDifficulty,
+        language: String
     ): Resource<Long> = safeApiCall(errorMapper) {
-        dataSource.generateAssessment(noteId, questionCount, difficulty.name).id
+        dataSource.generateAssessment(noteId, questionCount, difficulty.name, language).id
     }
 }

@@ -10,6 +10,7 @@ import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Check
+import androidx.compose.material.icons.filled.KeyboardArrowDown
 import androidx.compose.material.icons.filled.KeyboardArrowLeft
 import androidx.compose.material.icons.filled.KeyboardArrowRight
 import androidx.compose.material3.*
@@ -26,6 +27,7 @@ import androidx.compose.ui.unit.sp
 import ApunteIA.FrontEnd.R
 import ApunteIA.FrontEnd.presentation.ui.theme.*
 import ApunteIA.FrontEnd.presentation.ui.components.LocalCurrentUser
+import ApunteIA.FrontEnd.util.AiLanguageOption
 import ApunteIA.FrontEnd.util.LanguageManager
 
 @Composable
@@ -34,6 +36,8 @@ fun ProfileScreen(
     onLogout: () -> Unit = {},
     isDarkMode: Boolean = false,
     onThemeToggle: (Boolean) -> Unit = {},
+    aiLanguageOption: AiLanguageOption = AiLanguageOption.SAME_AS_APP,
+    onAiLanguageChange: (AiLanguageOption) -> Unit = {},
     onManageSubjects: () -> Unit = {},
     onStudyHistory: () -> Unit = {},
     onCameraAccess: () -> Unit = {},
@@ -124,6 +128,8 @@ fun ProfileScreen(
                 ConfigSection(
                     isDarkMode = isDarkMode,
                     onThemeToggle = onThemeToggle,
+                    aiLanguageOption = aiLanguageOption,
+                    onAiLanguageChange = onAiLanguageChange,
                     onManageSubjects = onManageSubjects,
                     onStudyHistory = onStudyHistory,
                     onCameraAccess = onCameraAccess,
@@ -262,6 +268,8 @@ fun StatItem(label: String, value: String) {
 fun ConfigSection(
     isDarkMode: Boolean,
     onThemeToggle: (Boolean) -> Unit,
+    aiLanguageOption: AiLanguageOption,
+    onAiLanguageChange: (AiLanguageOption) -> Unit,
     onManageSubjects: () -> Unit,
     onStudyHistory: () -> Unit,
     onCameraAccess: () -> Unit,
@@ -323,6 +331,11 @@ fun ConfigSection(
                 )
                 HorizontalDivider(color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.08f), thickness = 0.5.dp)
                 ConfigItem(
+                    label = stringResource(R.string.profile_ai_language),
+                    trailing = { AiLanguageDropdown(aiLanguageOption, onAiLanguageChange) }
+                )
+                HorizontalDivider(color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.08f), thickness = 0.5.dp)
+                ConfigItem(
                     label = stringResource(R.string.profile_camera_access),
                     onClick = onCameraAccess,
                     trailing = { Icon(Icons.Default.Check, null, tint = MaterialTheme.colorScheme.onSurfaceVariant, modifier = Modifier.size(16.dp)) }
@@ -344,6 +357,65 @@ fun ConfigSection(
                     label = stringResource(R.string.profile_change_password),
                     onClick = onChangePassword,
                     trailing = { Icon(Icons.Default.KeyboardArrowRight, null, tint = MaterialTheme.colorScheme.onSurfaceVariant, modifier = Modifier.size(14.dp)) }
+                )
+            }
+        }
+    }
+}
+
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+fun AiLanguageDropdown(
+    currentOption: AiLanguageOption,
+    onOptionSelected: (AiLanguageOption) -> Unit
+) {
+    var expanded by remember { mutableStateOf(false) }
+    val isThemeDark = MaterialTheme.colorScheme.primary == SpaceCadet
+    val options = listOf(
+        AiLanguageOption.SAME_AS_APP to stringResource(R.string.ai_lang_same_as_app),
+        AiLanguageOption.ES to stringResource(R.string.ai_lang_spanish),
+        AiLanguageOption.EN to stringResource(R.string.ai_lang_english),
+        AiLanguageOption.PT to stringResource(R.string.ai_lang_portuguese),
+        AiLanguageOption.IT to stringResource(R.string.ai_lang_italian)
+    )
+    val currentLabel = options.firstOrNull { it.first == currentOption }?.second ?: stringResource(R.string.ai_lang_same_as_app)
+
+    Box {
+        Surface(
+            modifier = Modifier.clickable { expanded = true },
+            shape = RoundedCornerShape(16.dp),
+            color = if (isThemeDark) Color(0xFF1E2532) else Color(0xFFF5F5F5)
+        ) {
+            Row(
+                modifier = Modifier.padding(horizontal = 14.dp, vertical = 8.dp),
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                Text(
+                    text = currentLabel,
+                    fontSize = 13.sp,
+                    fontWeight = FontWeight.Bold,
+                    color = MaterialTheme.colorScheme.primary
+                )
+                Spacer(modifier = Modifier.width(4.dp))
+                Icon(
+                    imageVector = Icons.Default.KeyboardArrowDown,
+                    contentDescription = null,
+                    tint = MaterialTheme.colorScheme.primary,
+                    modifier = Modifier.size(16.dp)
+                )
+            }
+        }
+        DropdownMenu(
+            expanded = expanded,
+            onDismissRequest = { expanded = false }
+        ) {
+            options.forEach { (option, label) ->
+                DropdownMenuItem(
+                    text = { Text(label) },
+                    onClick = {
+                        onOptionSelected(option)
+                        expanded = false
+                    }
                 )
             }
         }

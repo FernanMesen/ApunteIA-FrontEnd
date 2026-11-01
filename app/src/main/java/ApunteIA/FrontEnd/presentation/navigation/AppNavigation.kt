@@ -170,6 +170,7 @@ fun AppNavigation(
             composable(Routes.PROFILE) {
                 val statsViewModel: MainViewModel = hiltViewModel()
                 val statsState by statsViewModel.uiState.collectAsState()
+                val aiLanguageOption by themeViewModel.aiLanguageOption.collectAsState()
                 RefreshOnResume { statsViewModel.refresh() }
                 ProfileScreen(
                     onBack = { navController.popBackStack() },
@@ -178,6 +179,8 @@ fun AppNavigation(
                         navController.resetTo(Routes.LOGIN)
                     },
                     isDarkMode = isDarkMode,
+                    aiLanguageOption = aiLanguageOption,
+                    onAiLanguageChange = { themeViewModel.setAiLanguageOption(it) },
                     onThemeToggle = { themeViewModel.toggleTheme(it) },
                     onManageSubjects = { navController.navigate(Routes.MANAGE_SUBJECTS) },
                     onStudyHistory = { navController.navigate(Routes.STUDY_HISTORY) },

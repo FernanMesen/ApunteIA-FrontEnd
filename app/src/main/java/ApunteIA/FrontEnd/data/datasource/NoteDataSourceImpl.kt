@@ -30,8 +30,8 @@ class NoteDataSourceImpl @Inject constructor(
         if (!response.isSuccessful && response.code() != 404) throw HttpException(response)
     }
 
-    override suspend fun processNote(id: Long): NoteDto = apiService.processNote(id)
+    override suspend fun processNote(id: Long, language: String): NoteDto = apiService.processNote(id, language)
 
-    override suspend fun generateAssessment(noteId: Long, questionCount: Int, difficulty: String): AssessmentDto =
-        apiService.generateAssessment(noteId, GenerateAssessmentRequestDto(questionCount, difficulty))
+    override suspend fun generateAssessment(noteId: Long, questionCount: Int, difficulty: String, language: String): AssessmentDto =
+        apiService.generateAssessment(noteId, GenerateAssessmentRequestDto(questionCount, difficulty, language))
 }

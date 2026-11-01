@@ -68,10 +68,20 @@ class NoteRepositoryImplTest {
         val backend = TestBackend()
         backend.notes.notes += note(1)
 
-        val note = (repository(backend).processWithAi(1) as Resource.Success).data
+        val note = (repository(backend).processWithAi(1, "es") as Resource.Success).data
 
         assertEquals(ProcessingStatus.COMPLETED, note.processingStatus)
-        assertEquals("- Punto clave", note.summary)
+        assertEquals("- Punto clave (es)", note.summary)
+    }
+
+    @Test
+    fun `processWithAi sends correct language parameter`() = runBlocking {
+        val backend = TestBackend()
+        backend.notes.notes += note(1)
+
+        repository(backend).processWithAi(1, "en")
+
+        assertEquals("en", backend.notes.lastProcessedLanguage)
     }
 
     @Test
@@ -80,7 +90,7 @@ class NoteRepositoryImplTest {
         backend.notes.notes += note(1)
         backend.notes.processError = httpError(503, "La IA no está configurada (falta AI_API_KEY)")
 
-        val result = repository(backend).processWithAi(1)
+        val result = repository(backend).processWithAi(1, "es")
 
         assertEquals("La IA no está configurada (falta AI_API_KEY)", (result as Resource.Error).message)
     }
@@ -90,9 +100,19 @@ class NoteRepositoryImplTest {
         val backend = TestBackend()
         backend.notes.notes += note(1, title = "JPA")
 
-        val result = repository(backend).generateQuiz(1, 5, QuizDifficulty.HARD)
+        val result = repository(backend).generateQuiz(1, 5, QuizDifficulty.HARD, "en")
 
         assertEquals(50L, (result as Resource.Success).data)
+    }
+
+    @Test
+    fun `generateQuiz sends correct language parameter`() = runBlocking {
+        val backend = TestBackend()
+        backend.notes.notes += note(1, title = "JPA")
+
+        repository(backend).generateQuiz(1, 5, QuizDifficulty.HARD, "pt")
+
+        assertEquals("pt", backend.notes.lastAssessmentLanguage)
     }
 
     @Test

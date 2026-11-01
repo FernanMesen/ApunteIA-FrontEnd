@@ -5,6 +5,7 @@ import ApunteIA.FrontEnd.domain.model.QuizDifficulty
 import ApunteIA.FrontEnd.domain.repository.NoteRepository
 import ApunteIA.FrontEnd.domain.repository.TextRecognizer
 import ApunteIA.FrontEnd.domain.util.Resource
+import ApunteIA.FrontEnd.util.AiLanguagePreferenceManager
 import java.io.File
 import javax.inject.Inject
 
@@ -41,20 +42,28 @@ class DeleteNoteUseCase @Inject constructor(
 
 /** IA: resumen de la nota (OpenAI desde el backend). */
 class ProcessNoteWithAiUseCase @Inject constructor(
-    private val repository: NoteRepository
+    private val repository: NoteRepository,
+    private val aiLanguagePreferenceManager: AiLanguagePreferenceManager
 ) {
-    suspend operator fun invoke(id: Long): Resource<Note> = repository.processWithAi(id)
+    suspend operator fun invoke(id: Long): Resource<Note> {
+        val lang = aiLanguagePreferenceManager.getEffectiveLanguageCode()
+        return repository.processWithAi(id, lang)
+    }
 }
 
-/** IA: genera un quiz de opción múltiple a partir de la nota. Devuelve el id de la evaluación. */
+/** IA: genera un quiz de opción múltiple a partir de la nota. Devuelve el id de la evaluación creada. */
 class GenerateQuizFromNoteUseCase @Inject constructor(
-    private val repository: NoteRepository
+    private val repository: NoteRepository,
+    private val aiLanguagePreferenceManager: AiLanguagePreferenceManager
 ) {
     suspend operator fun invoke(
         noteId: Long,
         questionCount: Int = 5,
         difficulty: QuizDifficulty = QuizDifficulty.MEDIUM
-    ): Resource<Long> = repository.generateQuiz(noteId, questionCount.coerceIn(1, 20), difficulty)
+    ): Resource<Long> {
+        val lang = aiLanguagePreferenceManager.getEffectiveLanguageCode()
+        return repository.generateQuiz(noteId, questionCount.coerceIn(1, 20), difficulty, lang)
+    }
 }
 
 /** OCR de las páginas escaneadas. */

@@ -261,4 +261,10 @@
     <string name="dark_theme">Dark</string>
     <string name="notes_captured">Captured notes</string>
     <string name="quizzes_done">Quizzes completed</string>
+    <string name="profile_ai_language">AI response language</string>
+    <string name="ai_lang_same_as_app">Same as app</string>
+    <string name="ai_lang_spanish">Spanish</string>
+    <string name="ai_lang_english">English</string>
+    <string name="ai_lang_portuguese">Portuguese</string>
+    <string name="ai_lang_italian">Italian</string>
 </resources>

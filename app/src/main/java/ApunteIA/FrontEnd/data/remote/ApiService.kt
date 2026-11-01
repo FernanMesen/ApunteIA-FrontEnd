@@ -77,7 +77,10 @@ interface ApiService {
 
     /** IA: genera el resumen de la nota (PENDING → COMPLETED / FAILED). */
     @POST("notes/{id}/process")
-    suspend fun processNote(@Path("id") id: Long): NoteDto
+    suspend fun processNote(
+        @Path("id") id: Long,
+        @Query("language") language: String
+    ): NoteDto
 
     /** IA: genera un quiz de opción múltiple a partir de la nota. */
     @POST("notes/{id}/assessments/generate")

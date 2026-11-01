@@ -14,6 +14,6 @@ interface NoteDataSource {
     suspend fun createNote(request: CreateNoteRequestDto): NoteDto
     suspend fun updateNote(id: Long, request: UpdateNoteRequestDto): NoteDto
     suspend fun deleteNote(id: Long)
-    suspend fun processNote(id: Long): NoteDto
-    suspend fun generateAssessment(noteId: Long, questionCount: Int, difficulty: String): AssessmentDto
+    suspend fun processNote(id: Long, language: String): NoteDto
+    suspend fun generateAssessment(noteId: Long, questionCount: Int, difficulty: String, language: String): AssessmentDto
 }
