@@ -208,7 +208,7 @@ fun ScanReviewScreen(
                                     Spacer(modifier = Modifier.width(6.dp))
                                     Icon(
                                         Icons.Default.Close,
-                                        contentDescription = "Quitar etiqueta",
+                                        contentDescription = stringResource(R.string.delete),
                                         tint = TextGray,
                                         modifier = Modifier
                                             .size(14.dp)
@@ -298,7 +298,7 @@ private fun SectionCard(
                     onClick = onRemoveSection,
                     modifier = Modifier.size(26.dp).background(Color(0xFFFDECEC), CircleShape)
                 ) {
-                    Icon(Icons.Default.Close, contentDescription = "Eliminar sección", tint = StatusRed, modifier = Modifier.size(14.dp))
+                    Icon(Icons.Default.Close, contentDescription = stringResource(R.string.delete_section), tint = StatusRed, modifier = Modifier.size(14.dp))
                 }
             }
 
@@ -319,7 +319,7 @@ private fun SectionCard(
                     )
                     Icon(
                         Icons.Default.Close,
-                        contentDescription = "Eliminar punto",
+                        contentDescription = stringResource(R.string.delete_bullet),
                         tint = Color(0xFFCCCCCC),
                         modifier = Modifier
                             .size(16.dp)

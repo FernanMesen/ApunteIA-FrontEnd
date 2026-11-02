@@ -1,5 +1,6 @@
 package ApunteIA.FrontEnd.presentation.viewmodel
 
+import ApunteIA.FrontEnd.R
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import ApunteIA.FrontEnd.data.di.ApplicationScope
@@ -11,6 +12,7 @@ import ApunteIA.FrontEnd.domain.usecase.ProcessNoteWithAiUseCase
 import ApunteIA.FrontEnd.domain.usecase.RecognizeTextUseCase
 import ApunteIA.FrontEnd.domain.usecase.UpdateNoteUseCase
 import ApunteIA.FrontEnd.util.AiLanguagePreferenceManager
+import ApunteIA.FrontEnd.util.L10n
 import ApunteIA.FrontEnd.domain.util.Resource
 import ApunteIA.FrontEnd.presentation.model.CapturedPage
 import ApunteIA.FrontEnd.presentation.model.MaterialType
@@ -271,14 +273,7 @@ class ScanViewModel @Inject constructor(
             // 3. Resumen con IA (OpenAI, desde el backend)
             val effectiveLang = aiLanguagePreferenceManager.getEffectiveLanguageCode()
             val summary = when (val processed = processNoteWithAi(noteId, effectiveLang)) {
-                is Resource.Success -> {
-                    val rawSummary = processed.data.summary.orEmpty()
-                    try {
-                        val snippet = rawSummary.take(30)
-                        android.util.Log.d("AiLanguage", "AI_RESULT_RESPONSE summary=$snippet")
-                    } catch (_: Throwable) {}
-                    rawSummary
-                }
+                is Resource.Success -> processed.data.summary.orEmpty()
                 is Resource.Error -> {
                     keepDraft = true // la nota queda guardada (FAILED) y se puede reintentar desde Notas
                     fail(ProcessingError.ai(processed.message))
@@ -291,13 +286,9 @@ class ScanViewModel @Inject constructor(
             // 4. Estructurar el resumen en secciones editables
             val sections = parseSummary(summary).ifEmpty {
                 if (summary.isNotBlank()) {
-                    listOf(NoteSection(id = nextSectionId++, title = "Resumen de la IA", bullets = listOf(NoteBullet(id = nextBulletId++, text = summary))))
+                    listOf(NoteSection(id = nextSectionId++, title = L10n.get(R.string.ai_summary_header), bullets = listOf(NoteBullet(id = nextBulletId++, text = summary))))
                 } else emptyList()
             }
-            val generatedSnippet = sections.firstOrNull()?.bullets?.firstOrNull()?.text?.take(30) ?: summary.take(30)
-            try {
-                android.util.Log.d("AiLanguage", "AI_RESULT_UI generated=$generatedSnippet")
-            } catch (_: Throwable) {}
 
             _uiState.update {
                 it.copy(
@@ -326,7 +317,7 @@ class ScanViewModel @Inject constructor(
      */
     private fun parseSummary(summary: String): List<NoteSection> {
         val sections = mutableListOf<NoteSection>()
-        var currentTitle = "Resumen de la IA"
+        var currentTitle = L10n.get(R.string.ai_summary_header)
         var currentBullets = mutableListOf<NoteBullet>()
 
         fun flush() {
@@ -381,7 +372,7 @@ class ScanViewModel @Inject constructor(
 
     fun addSection() {
         _uiState.update { state ->
-            val newSection = NoteSection(id = nextSectionId++, title = "Nueva sección", bullets = emptyList())
+            val newSection = NoteSection(id = nextSectionId++, title = L10n.get(R.string.new_section), bullets = emptyList())
             state.copy(sections = state.sections + newSection)
         }
     }
@@ -463,22 +454,17 @@ class ScanViewModel @Inject constructor(
                 append(state.tags.joinToString(", "))
             }
         }
-
+        val summary = sectionsToSummary(state.sections)
         viewModelScope.launch {
             _uiState.update { it.copy(isSaving = true, saveError = null) }
-            val result = updateNote(
-                id = noteId,
-                title = state.title.ifBlank { "Nota sin título" },
-                content = content,
-                courseId = course.id,
-                summary = sectionsToSummary(state.sections)
-            )
-            when (result) {
+            when (val result = updateNote(noteId, state.title, content, course.id, summary)) {
                 is Resource.Success -> {
                     keepDraft = true
                     _uiState.update { it.copy(isSaving = false, saved = true) }
                 }
-                is Resource.Error -> _uiState.update { it.copy(isSaving = false, saveError = result.message) }
+                is Resource.Error -> {
+                    _uiState.update { it.copy(isSaving = false, saveError = result.message) }
+                }
                 is Resource.Loading -> Unit
             }
         }
@@ -486,6 +472,6 @@ class ScanViewModel @Inject constructor(
 
     private companion object {
         val BULLET_PREFIX = Regex("^([-*•·–]|\\d+[.)])\\s+")
-        val BOLD_HEADING = Regex("^\\*\\*(.+?)\\*\\*:?$")
+        val BOLD_HEADING = Regex("^\\*\\*(.+)\\*\\*$")
     }
 }

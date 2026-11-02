@@ -1,5 +1,6 @@
 package ApunteIA.FrontEnd.presentation.viewmodel
 
+import ApunteIA.FrontEnd.R
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import ApunteIA.FrontEnd.domain.model.RecentActivity
@@ -9,6 +10,7 @@ import ApunteIA.FrontEnd.domain.usecase.GetMainDashboardUseCase
 import ApunteIA.FrontEnd.domain.usecase.StudyInsights
 import ApunteIA.FrontEnd.domain.util.IsoDates
 import ApunteIA.FrontEnd.domain.util.Resource
+import ApunteIA.FrontEnd.util.L10n
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -39,7 +41,7 @@ data class StudyHistoryUiState(
     val stats: StudyStats = StudyStats(
         precision = 0,
         streak = 0,
-        studyTime = "0 min",
+        studyTime = L10n.get(R.string.study_time_minutes, 0),
         weeklyProgress = List(7) { 0f },
         strongAreas = 0,
         weakAreas = 0
@@ -134,7 +136,7 @@ class StudyHistoryViewModel @Inject constructor(
     }
 
     private fun formatDuration(seconds: Long): String = when {
-        seconds < 3600 -> "${seconds / 60} min"
+        seconds < 3600 -> L10n.get(R.string.study_time_minutes, seconds / 60)
         else -> String.format(Locale.US, "%.1fh", seconds / 3600.0)
     }
 

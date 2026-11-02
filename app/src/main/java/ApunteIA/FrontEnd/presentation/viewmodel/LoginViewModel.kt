@@ -1,7 +1,9 @@
 package ApunteIA.FrontEnd.presentation.viewmodel
 
+import ApunteIA.FrontEnd.R
 import ApunteIA.FrontEnd.domain.usecase.LoginUseCase
 import ApunteIA.FrontEnd.domain.util.Resource
+import ApunteIA.FrontEnd.util.L10n
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -32,7 +34,7 @@ class LoginViewModel @Inject constructor(
     fun login(email: String, password: String) {
         if (email.isBlank() || password.isBlank()) {
             _uiState.value = _uiState.value.copy(
-                errorMessage = "Ingresa tu correo y contraseña."
+                errorMessage = L10n.getString(R.string.login_error_empty)
             )
             return
         }

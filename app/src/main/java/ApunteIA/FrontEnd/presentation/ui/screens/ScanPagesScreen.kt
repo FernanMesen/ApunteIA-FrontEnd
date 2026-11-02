@@ -175,10 +175,10 @@ private fun CapturedPageRow(
                 )
                 Spacer(modifier = Modifier.height(8.dp))
                 Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
-                    PageToolIcon(Icons.Default.Crop, "Recortar")
-                    PageToolIcon(Icons.Default.Refresh, "Rotar")
-                    PageToolIcon(Icons.Default.WbSunny, "Brillo/contraste")
-                    PageToolIcon(Icons.Default.CameraAlt, "Volver a capturar")
+                    PageToolIcon(Icons.Default.Crop, stringResource(R.string.tool_crop))
+                    PageToolIcon(Icons.Default.Refresh, stringResource(R.string.tool_rotate))
+                    PageToolIcon(Icons.Default.WbSunny, stringResource(R.string.tool_brightness))
+                    PageToolIcon(Icons.Default.CameraAlt, stringResource(R.string.tool_recapture))
                 }
             }
 

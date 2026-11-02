@@ -1,5 +1,6 @@
 package ApunteIA.FrontEnd.data.repository
 
+import ApunteIA.FrontEnd.R
 import ApunteIA.FrontEnd.data.datasource.CourseDataSource
 import ApunteIA.FrontEnd.data.datasource.NoteDataSource
 import ApunteIA.FrontEnd.data.datasource.QuizDataSource
@@ -12,6 +13,7 @@ import ApunteIA.FrontEnd.domain.model.Note
 import ApunteIA.FrontEnd.domain.model.StudyOverview
 import ApunteIA.FrontEnd.domain.usecase.StudyInsights
 import ApunteIA.FrontEnd.util.LanguageManager
+import ApunteIA.FrontEnd.util.L10n
 import kotlinx.coroutines.async
 import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.sync.Mutex
@@ -74,7 +76,7 @@ class StudyDataLoader @Inject constructor(
             CourseInfo(
                 id = enrollment.courseId,
                 code = known?.code.orEmpty().ifBlank { enrollment.courseCode.orEmpty() },
-                name = known?.name?.takeIf { it.isNotBlank() } ?: enrollment.courseName ?: "Curso ${enrollment.courseId}",
+                name = known?.name?.takeIf { it.isNotBlank() } ?: enrollment.courseName ?: L10n.get(R.string.fallback_course_id, enrollment.courseId),
                 description = known?.description.orEmpty()
             )
         }.distinctBy { it.id }

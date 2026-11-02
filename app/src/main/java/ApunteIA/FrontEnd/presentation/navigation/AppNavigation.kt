@@ -16,7 +16,9 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.navigation
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
+import ApunteIA.FrontEnd.R
 import ApunteIA.FrontEnd.presentation.ui.components.LocalCurrentUser
+import ApunteIA.FrontEnd.util.L10n
 import ApunteIA.FrontEnd.presentation.ui.components.RefreshOnResume
 import ApunteIA.FrontEnd.presentation.ui.screens.*
 import ApunteIA.FrontEnd.presentation.viewmodel.AuditViewModel
@@ -64,7 +66,7 @@ fun AppNavigation(
     LaunchedEffect(Unit) {
         sessionViewModel.sessionExpired.collect {
             sessionViewModel.refreshUser()
-            Toast.makeText(context, "Tu sesión expiró. Inicia sesión de nuevo.", Toast.LENGTH_LONG).show()
+            Toast.makeText(context, L10n.getString(R.string.api_error_session), Toast.LENGTH_LONG).show()
             navController.resetTo(Routes.LOGIN)
         }
     }

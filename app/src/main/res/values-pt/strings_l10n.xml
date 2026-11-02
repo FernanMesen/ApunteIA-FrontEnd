@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Scan Steps -->
+    <string name="step_reading">Lendo o texto das suas páginas</string>
+    <string name="step_uploading">Salvando nota na nuvem</string>
+    <string name="step_organizing">Resumindo com IA</string>
+    <string name="step_generating">Gerando nota estruturada</string>
+
+    <string name="error_no_course_title">Escolha uma matéria</string>
+    <string name="error_no_course_msg">Selecione a matéria da anotação antes de processá-la.</string>
+    <string name="error_no_text_title">Texto não encontrado</string>
+    <string name="error_no_text_msg">Não foi possível ler texto nas fotos. Tente com melhor luz, focando a folha de frente e sem sombras.</string>
+    <string name="error_unreadable_title">Arquivo inválido</string>
+    <string name="error_unreadable_msg">Uma das fotos não pôde ser aberta. Tire-a novamente e tente outra vez.</string>
+    <string name="error_upload_title">Não foi possível salvar</string>
+    <string name="error_ai_title">A IA não respondeu</string>
+    <string name="error_ai_msg">Sua anotação foi salva: você pode tentar o resumo agora ou mais tarde em Anotações.</string>
+
+    <!-- Login & Register ViewModel -->
+    <string name="login_error_empty">Digite seu e-mail e senha.</string>
+    <string name="register_error_name">Digite seu nome completo.</string>
+    <string name="register_error_email">Digite um e-mail válido.</string>
+    <string name="register_error_password_len">A senha deve ter pelo menos 6 caracteres.</string>
+    <string name="register_error_password_max">A senha não pode ter mais de 72 caracteres.</string>
+
+    <!-- Domain & API Errors -->
+    <string name="auth_error_credentials">E-mail ou senha incorretos.</string>
+    <string name="auth_error_connection">Sem conexão com o servidor. Se for a primeira vez em um tempo, aguarde ~1 min: o servidor está acordando.</string>
+    <string name="auth_error_server">O servidor de autenticação falhou (Erro %1$d).</string>
+    <string name="auth_error_unknown">Ocorreu um erro inesperado ao fazer login.</string>
+
+    <string name="note_error_connection">Sem conexão com a internet. Verifique sua rede.</string>
+    <string name="note_error_client">Houve um problema com a solicitação (Erro %1$d).</string>
+    <string name="note_error_502">A IA não conseguiu processar a anotação. Tente novamente.</string>
+    <string name="note_error_503">A IA não está disponível no momento.</string>
+    <string name="note_error_server">O servidor de anotações está com problemas (Erro %1$d).</string>
+    <string name="note_error_invalid_data">Os dados recebidos não são válidos.</string>
+    <string name="note_error_unknown">Ocorreu un erro inesperado ao gerenciar suas anotações.</string>
+
+    <string name="main_error_connection">Sem conexão para atualizar o painel.</string>
+    <string name="main_error_server">O servidor principal falhou (Erro %1$d).</string>
+    <string name="main_error_unknown">Erro inesperado no painel.</string>
+
+    <string name="quiz_error_connection">Sem conexão para carregar o questionário.</string>
+    <string name="quiz_error_server">O servidor de questionários falhou (Erro %1$d).</string>
+    <string name="quiz_error_unknown">Ocorreu um erro ao carregar as perguntas.</string>
+
+    <string name="topic_error_connection">Sem conexão para carregar seus tópicos.</string>
+    <string name="topic_error_data">Não foi possível carregar as matérias no momento.</string>
+    <string name="topic_error_unknown">Ocorreu um erro inesperado com os tópicos de estudo.</string>
+
+    <string name="api_error_session">Sua sessão expiró. Faça login novamente.</string>
+    <string name="api_error_permissions">Você não tem permissões para realizar esta ação.</string>
+    <string name="api_error_default">%1$s (Erro %2$d)</string>
+    <string name="api_error_login_required">Faça login para continuar.</string>
+    <string name="note_login_required">Faça login para ver suas anotações.</string>
+
+    <!-- Additional L10n additions -->
+    <string name="new_section">Nova seção</string>
+    <string name="quiz_correct_answer_prefix">Resposta correta: %1$s</string>
+    <string name="study_time_minutes">%1$d min</string>
+    <string name="activity_saved_note">Anotação salva · %1$s</string>
+    <string name="activity_completed_quiz">Questionário concluído · %1$s</string>
+    <string name="activity_score_format">Nota: %1$d%%</string>
+    <string name="error_loading_courses">Não foi possível carregar os cursos</string>
+    <string name="error_enroll_course">Não foi possível se inscrever no curso</string>
+    <string name="error_course_not_found">Não existe um curso com o código \"%1$s\".</string>
+    <string name="fallback_course_id">Curso %1$d</string>
+
+    <!-- Fallbacks -->
+    <string name="fallback_untitled_note">Anotação sem título</string>
+    <string name="fallback_no_course">Sem curso</string>
+</resources>

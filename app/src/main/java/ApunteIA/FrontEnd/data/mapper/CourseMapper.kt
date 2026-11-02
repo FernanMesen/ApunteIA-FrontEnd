@@ -1,8 +1,10 @@
 package ApunteIA.FrontEnd.data.mapper
 
+import ApunteIA.FrontEnd.R
 import ApunteIA.FrontEnd.data.datasource.model.CourseDto
 import ApunteIA.FrontEnd.domain.model.CourseInfo
 import ApunteIA.FrontEnd.util.LanguageManager
+import ApunteIA.FrontEnd.util.L10n
 
 fun CourseDto.toDomain(): CourseInfo {
     val lang = LanguageManager.getCurrentLanguageCode().lowercase()
@@ -28,7 +30,7 @@ fun CourseDto.toDomain(): CourseInfo {
             else -> "Programación distribuida" to "Conceptos y sistemas distribuidos"
         }
         else -> {
-            val fallbackName = name?.takeIf { it.isNotBlank() } ?: code.orEmpty().ifBlank { "Curso $id" }
+            val fallbackName = name?.takeIf { it.isNotBlank() } ?: code.orEmpty().ifBlank { L10n.get(R.string.fallback_course_id, id) }
             val fallbackDesc = description.orEmpty()
             fallbackName to fallbackDesc
         }

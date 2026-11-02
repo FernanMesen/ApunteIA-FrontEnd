@@ -1,5 +1,6 @@
 package ApunteIA.FrontEnd.presentation.viewmodel
 
+import ApunteIA.FrontEnd.R
 import androidx.compose.runtime.mutableStateListOf
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
@@ -9,6 +10,7 @@ import ApunteIA.FrontEnd.domain.model.UserAnswer
 import ApunteIA.FrontEnd.domain.usecase.StartQuizUseCase
 import ApunteIA.FrontEnd.domain.usecase.SubmitQuizUseCase
 import ApunteIA.FrontEnd.domain.util.Resource
+import ApunteIA.FrontEnd.util.L10n
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -159,7 +161,7 @@ class QuizViewModel @Inject constructor(
                         question.copy(
                             correctAnswerIndex = correct ?: -1,
                             explanation = if (correct != null) {
-                                "Respuesta correcta: ${question.options.getOrNull(correct).orEmpty()}"
+                                L10n.get(R.string.quiz_correct_answer_prefix, question.options.getOrNull(correct).orEmpty())
                             } else {
                                 ""
                             }
