@@ -1,8 +1,6 @@
 package ApunteIA.FrontEnd.domain.model
 
-/**
- * Representa una evaluación o cuestionario de diagnóstico/repaso.
- */
+
 data class Assessment(
     val id: Int,
     val title: String,

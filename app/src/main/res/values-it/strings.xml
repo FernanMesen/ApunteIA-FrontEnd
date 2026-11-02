@@ -157,6 +157,20 @@
     <string name="camera_permission_desc">Necessario per scansionare le tue note manoscritte.</string>
     <string name="photos_permission_title">Accesso alle foto</string>
     <string name="photos_permission_desc">Importa scansioni da foto esistenti.</string>
+    <string name="camera_permission_dialog_title">Consentire a ApuntesIA di scattare foto e registrare video?</string>
+    <string name="photos_permission_dialog_title">Consentire a ApuntesIA di accedere alle foto e ai file su questo dispositivo?</string>
+    <string name="permission_full_access">Accesso completo</string>
+    <string name="permission_while_using_app">Mentre l\'app è in uso</string>
+    <string name="permission_deny">Nega</string>
+    <string name="permission_msg_full_camera">Accesso fotocamera: Accesso completo concesso</string>
+    <string name="permission_msg_while_camera">Accesso fotocamera: Concesso mentre l\'app è in uso</string>
+    <string name="permission_msg_denied_camera">Accesso fotocamera: Negato</string>
+    <string name="permission_msg_full_photos">Accesso foto: Accesso completo concesso</string>
+    <string name="permission_msg_while_photos">Accesso foto: Concesso mentre l\'app è in uso</string>
+    <string name="permission_msg_denied_photos">Accesso foto: Negato</string>
+    <string name="permission_status_full">Accesso completo concesso</string>
+    <string name="permission_status_while">Concesso mentre l\'app è in uso</string>
+    <string name="permission_status_denied">Accesso negato</string>
 
     <!-- Manage Subjects & Join Subject -->
     <string name="subjects_title">Materie</string>

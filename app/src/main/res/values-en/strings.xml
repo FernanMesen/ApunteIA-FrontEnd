@@ -157,6 +157,20 @@
     <string name="camera_permission_desc">Needed to scan your handwritten notes.</string>
     <string name="photos_permission_title">Photos access</string>
     <string name="photos_permission_desc">Import scans from existing photos.</string>
+    <string name="camera_permission_dialog_title">Allow ApuntesIA to take photos and record video?</string>
+    <string name="photos_permission_dialog_title">Allow ApuntesIA to access photos and files on this device?</string>
+    <string name="permission_full_access">Full access</string>
+    <string name="permission_while_using_app">While using the app</string>
+    <string name="permission_deny">Deny</string>
+    <string name="permission_msg_full_camera">Camera access: Full access granted</string>
+    <string name="permission_msg_while_camera">Camera access: Granted while using the app</string>
+    <string name="permission_msg_denied_camera">Camera access: Denied</string>
+    <string name="permission_msg_full_photos">Photos access: Full access granted</string>
+    <string name="permission_msg_while_photos">Photos access: Granted while using the app</string>
+    <string name="permission_msg_denied_photos">Photos access: Denied</string>
+    <string name="permission_status_full">Full access granted</string>
+    <string name="permission_status_while">Granted while using the app</string>
+    <string name="permission_status_denied">Access denied</string>
 
     <!-- Manage Subjects & Join Subject -->
     <string name="subjects_title">Subjects</string>

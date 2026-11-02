@@ -1,8 +1,6 @@
 package ApunteIA.FrontEnd.domain.model
 
-/**
- * Representa un intento realizado por el usuario para resolver una evaluación.
- */
+
 data class AssessmentAttempt(
     val id: Int,
     val assessmentId: String,

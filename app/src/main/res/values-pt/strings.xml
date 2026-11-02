@@ -157,6 +157,20 @@
     <string name="camera_permission_desc">Necessário para digitalizar suas notas manuscritas.</string>
     <string name="photos_permission_title">Acesso às fotos</string>
     <string name="photos_permission_desc">Importe digitalizações de fotos existentes.</string>
+    <string name="camera_permission_dialog_title">Permitir que o ApuntesIA tire fotos e grave vídeos?</string>
+    <string name="photos_permission_dialog_title">Permitir que o ApuntesIA acesse fotos e arquivos neste dispositivo?</string>
+    <string name="permission_full_access">Acesso completo</string>
+    <string name="permission_while_using_app">Durante o uso do app</string>
+    <string name="permission_deny">Negar</string>
+    <string name="permission_msg_full_camera">Acesso à câmera: Acesso completo concedido</string>
+    <string name="permission_msg_while_camera">Acesso à câmera: Concedido durante o uso do app</string>
+    <string name="permission_msg_denied_camera">Acesso à câmera: Negado</string>
+    <string name="permission_msg_full_photos">Acesso a fotos: Acesso completo concedido</string>
+    <string name="permission_msg_while_photos">Acesso a fotos: Concedido durante o uso do app</string>
+    <string name="permission_msg_denied_photos">Acesso a fotos: Negado</string>
+    <string name="permission_status_full">Acesso completo concedido</string>
+    <string name="permission_status_while">Concedido durante o uso do app</string>
+    <string name="permission_status_denied">Acesso negado</string>
 
     <!-- Manage Subjects & Join Subject -->
     <string name="subjects_title">Disciplinas</string>
