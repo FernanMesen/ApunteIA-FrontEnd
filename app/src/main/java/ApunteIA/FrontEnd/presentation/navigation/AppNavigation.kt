@@ -245,11 +245,11 @@ fun AppNavigation(
             }
 
             composable(Routes.PRIVACY) {
-                PlaceholderScreen(title = "Privacidad", onBack = { navController.popBackStack() })
+                PrivacyScreen(onBack = { navController.popBackStack() })
             }
 
             composable(Routes.EXPORT_DATA) {
-                PlaceholderScreen(title = "Exportar mis datos", onBack = { navController.popBackStack() })
+                ExportDataScreen(onBack = { navController.popBackStack() })
             }
 
             composable(Routes.CHANGE_PASSWORD) {

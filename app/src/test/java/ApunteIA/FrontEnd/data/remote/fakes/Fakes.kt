@@ -81,7 +81,7 @@ class FakeCourseDataSource(
     var enrollError: Throwable? = null
     val enrolled = mutableListOf<Pair<Long, Long>>()
 
-    override suspend fun getCourses(): List<CourseDto> = courses
+    override suspend fun getCourses(language: String?): List<CourseDto> = courses
     override suspend fun getEnrollments(userId: Long): List<EnrollmentDto> = enrollments
     override suspend fun enroll(courseId: Long, userId: Long): EnrollmentDto {
         enrollError?.let { throw it }

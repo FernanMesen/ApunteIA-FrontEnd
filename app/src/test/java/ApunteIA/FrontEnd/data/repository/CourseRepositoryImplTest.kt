@@ -21,7 +21,7 @@ class CourseRepositoryImplTest {
         val mine = (repository(backend).getMyCourses() as Resource.Success).data
 
         assertEquals(listOf("EIF411", "EIF412"), mine.map { it.code })
-        assertEquals("Persistencia", mine.first().description)
+        assertEquals("Persistencia y servicios backend", mine.first().description)
     }
 
     @Test

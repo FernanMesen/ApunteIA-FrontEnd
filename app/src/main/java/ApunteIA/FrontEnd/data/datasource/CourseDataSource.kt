@@ -4,7 +4,7 @@ import ApunteIA.FrontEnd.data.datasource.model.CourseDto
 import ApunteIA.FrontEnd.data.datasource.model.EnrollmentDto
 
 interface CourseDataSource {
-    suspend fun getCourses(): List<CourseDto>
+    suspend fun getCourses(language: String? = null): List<CourseDto>
     suspend fun getEnrollments(userId: Long): List<EnrollmentDto>
     suspend fun enroll(courseId: Long, userId: Long): EnrollmentDto
 }

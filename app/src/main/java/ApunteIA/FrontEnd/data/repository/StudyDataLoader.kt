@@ -11,6 +11,7 @@ import ApunteIA.FrontEnd.domain.model.CourseInfo
 import ApunteIA.FrontEnd.domain.model.Note
 import ApunteIA.FrontEnd.domain.model.StudyOverview
 import ApunteIA.FrontEnd.domain.usecase.StudyInsights
+import ApunteIA.FrontEnd.util.LanguageManager
 import kotlinx.coroutines.async
 import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.sync.Mutex
@@ -24,14 +25,15 @@ class CourseCatalog @Inject constructor(
     private val dataSource: CourseDataSource
 ) {
     private val mutex = Mutex()
-    private var cache: List<CourseInfo>? = null
+    private val cache = mutableMapOf<String, List<CourseInfo>>()
 
     suspend fun all(forceRefresh: Boolean = false): List<CourseInfo> = mutex.withLock {
-        val cached = cache
+        val currentLang = LanguageManager.getCurrentLanguageCode()
+        val cached = cache[currentLang]
         if (!forceRefresh && cached != null) {
             cached
         } else {
-            dataSource.getCourses().toDomain().also { cache = it }
+            dataSource.getCourses(currentLang).toDomain().also { cache[currentLang] = it }
         }
     }
 
@@ -71,8 +73,8 @@ class StudyDataLoader @Inject constructor(
             val known = byId[enrollment.courseId]
             CourseInfo(
                 id = enrollment.courseId,
-                code = enrollment.courseCode ?: known?.code.orEmpty(),
-                name = enrollment.courseName ?: known?.name ?: "Curso ${enrollment.courseId}",
+                code = known?.code.orEmpty().ifBlank { enrollment.courseCode.orEmpty() },
+                name = known?.name?.takeIf { it.isNotBlank() } ?: enrollment.courseName ?: "Curso ${enrollment.courseId}",
                 description = known?.description.orEmpty()
             )
         }.distinctBy { it.id }

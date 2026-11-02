@@ -47,7 +47,7 @@ interface ApiService {
     // ---------- Cursos e inscripciones ----------
 
     @GET("courses")
-    suspend fun getCourses(): List<CourseDto>
+    suspend fun getCourses(@Query("language") language: String? = null): List<CourseDto>
 
     @GET("users/{id}/enrollments")
     suspend fun getUserEnrollments(@Path("id") userId: Long): List<EnrollmentDto>
