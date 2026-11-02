@@ -245,7 +245,15 @@ fun StatBox(value: String, label: String, modifier: Modifier = Modifier) {
 
 @Composable
 fun WeeklyChartCard(progress: List<Float>) {
-    val days = listOf("L", "M", "M", "J", "V", "S", "D")
+    val days = listOf(
+        stringResource(R.string.day_mon_short),
+        stringResource(R.string.day_tue_short),
+        stringResource(R.string.day_wed_short),
+        stringResource(R.string.day_thu_short),
+        stringResource(R.string.day_fri_short),
+        stringResource(R.string.day_sat_short),
+        stringResource(R.string.day_sun_short)
+    )
     val isDark = MaterialTheme.colorScheme.primary == SpaceCadet
 
     Card(

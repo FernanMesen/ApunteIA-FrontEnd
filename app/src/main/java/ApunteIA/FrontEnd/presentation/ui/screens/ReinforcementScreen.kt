@@ -186,8 +186,13 @@ fun ReinforcementScreen(
                 ReinforcementConfigSection(stringResource(R.string.difficulty_label)) {
                     Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
                         QuizDifficulty.entries.forEach { difficulty ->
+                            val diffTextRes = when (difficulty) {
+                                QuizDifficulty.EASY -> R.string.diff_easy
+                                QuizDifficulty.MEDIUM -> R.string.diff_medium
+                                QuizDifficulty.HARD -> R.string.diff_hard
+                            }
                             SegmentedOption(
-                                text = difficulty.label,
+                                text = stringResource(diffTextRes),
                                 isSelected = uiState.difficulty == difficulty,
                                 onClick = { viewModel.selectDifficulty(difficulty) }
                             )

@@ -39,6 +39,7 @@ import ApunteIA.FrontEnd.presentation.ui.theme.SpaceCadet
 @Composable
 fun FilterChip(text: String, isSelected: Boolean, onClick: () -> Unit) {
     val isDark = MaterialTheme.colorScheme.primary == SpaceCadet
+    val displayText = if (text == "Todos") stringResource(R.string.category_all) else text
 
     Surface(
         modifier = Modifier.clickable { onClick() },
@@ -51,7 +52,7 @@ fun FilterChip(text: String, isSelected: Boolean, onClick: () -> Unit) {
         border = BorderStroke(1.dp, if (isSelected) (if (isDark) Color.White else DarkGreen) else Color.Transparent)
     ) {
         Text(
-            text = text,
+            text = displayText,
             modifier = Modifier.padding(horizontal = 16.dp, vertical = 8.dp),
             color = if (isSelected) {
                 if (isDark) Color.White else DarkGreen
