@@ -36,4 +36,21 @@ class AiLanguagePreferenceManagerTest {
         manager.aiLanguageOption = AiLanguageOption.IT
         assertEquals("it", manager.getEffectiveLanguageCode())
     }
+
+    @Test
+    fun `change languages immediately without restart for PT IT EN without app restart`() {
+        val manager = AiLanguagePreferenceManager(null)
+
+        // PT seleccionado -> effective = pt
+        manager.aiLanguageOption = AiLanguageOption.PT
+        assertEquals("pt", manager.getEffectiveLanguageCode())
+
+        // cambiar a IT -> effective = it inmediatamente
+        manager.aiLanguageOption = AiLanguageOption.IT
+        assertEquals("it", manager.getEffectiveLanguageCode())
+
+        // cambiar a EN -> effective = en
+        manager.aiLanguageOption = AiLanguageOption.EN
+        assertEquals("en", manager.getEffectiveLanguageCode())
+    }
 }

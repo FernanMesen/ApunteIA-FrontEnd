@@ -24,6 +24,7 @@ class ThemeViewModel @Inject constructor(
     }
 
     fun setAiLanguageOption(option: AiLanguageOption) {
+        try { android.util.Log.d("AiLanguage", "AI_LANG_PROFILE selected=${option.name}") } catch (_: Throwable) {}
         aiLanguagePreferenceManager.aiLanguageOption = option
         _aiLanguageOption.value = option
     }

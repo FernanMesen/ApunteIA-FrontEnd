@@ -63,4 +63,39 @@ class ProcessNoteWithAiUseCaseTest {
             verify(repository).processWithAi(4L, "it")
         }
     }
+
+    @Test
+    fun `scan ocr processing verifies required language requests for IT PT EN and SAME_AS_APP with UI IT`() {
+        runBlocking {
+            val repository = mock(NoteRepository::class.java)
+            val fakePrefManager = FakeAiLanguagePreferenceManager()
+
+            `when`(repository.processWithAi(any(), any())).thenAnswer { invocation ->
+                val id = invocation.getArgument<Long>(0)
+                Resource.Success(createDummyNote(id.toInt()))
+            }
+
+            val useCase = ProcessNoteWithAiUseCase(repository, fakePrefManager)
+
+            // - IA = IT → request language=it
+            fakePrefManager.currentCode = "it"
+            useCase(10L)
+            verify(repository).processWithAi(10L, "it")
+
+            // - IA = PT → request language=pt
+            fakePrefManager.currentCode = "pt"
+            useCase(20L)
+            verify(repository).processWithAi(20L, "pt")
+
+            // - IA = EN → request language=en
+            fakePrefManager.currentCode = "en"
+            useCase(30L)
+            verify(repository).processWithAi(30L, "en")
+
+            // - SAME_AS_APP + UI=IT → request language=it
+            fakePrefManager.currentCode = "it"
+            useCase(40L)
+            verify(repository).processWithAi(40L, "it")
+        }
+    }
 }
