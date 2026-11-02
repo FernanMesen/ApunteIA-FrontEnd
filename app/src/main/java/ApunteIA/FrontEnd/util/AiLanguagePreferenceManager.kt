@@ -10,7 +10,6 @@ open class AiLanguagePreferenceManager @Inject constructor(
     @ApplicationContext context: Context?
 ) {
     private val prefs = context?.getSharedPreferences("apunteia_ai_language", Context.MODE_PRIVATE)
-    private var memoryOption: AiLanguageOption? = null
 
     open var aiLanguageOption: AiLanguageOption
         get() {
@@ -22,20 +21,24 @@ open class AiLanguagePreferenceManager @Inject constructor(
         }
         set(value) {
             memoryOption = value
-            prefs?.edit()?.putString(KEY_AI_LANGUAGE, value.name)?.apply()
+            prefs?.edit()?.putString(KEY_AI_LANGUAGE, value.name)?.commit()
+            try { android.util.Log.d("AiLanguage", "AI_LANG_MANAGER saved=${value.name}") } catch (_: Throwable) {}
         }
 
     open fun getEffectiveLanguageCode(): String {
-        return when (aiLanguageOption) {
+        val code = when (aiLanguageOption) {
             AiLanguageOption.SAME_AS_APP -> LanguageManager.getCurrentLanguageCode()
             AiLanguageOption.ES -> "es"
             AiLanguageOption.EN -> "en"
             AiLanguageOption.PT -> "pt"
             AiLanguageOption.IT -> "it"
         }
+        try { android.util.Log.d("AiLanguage", "AI_LANG_SCAN effective=$code") } catch (_: Throwable) {}
+        return code
     }
 
     companion object {
         private const val KEY_AI_LANGUAGE = "ai_language_option"
+        private var memoryOption: AiLanguageOption? = null
     }
 }

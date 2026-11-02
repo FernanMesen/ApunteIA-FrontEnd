@@ -10,6 +10,7 @@ import ApunteIA.FrontEnd.domain.usecase.GetMyCoursesUseCase
 import ApunteIA.FrontEnd.domain.usecase.ProcessNoteWithAiUseCase
 import ApunteIA.FrontEnd.domain.usecase.RecognizeTextUseCase
 import ApunteIA.FrontEnd.domain.usecase.UpdateNoteUseCase
+import ApunteIA.FrontEnd.util.AiLanguagePreferenceManager
 import ApunteIA.FrontEnd.domain.util.Resource
 import ApunteIA.FrontEnd.presentation.model.CapturedPage
 import ApunteIA.FrontEnd.presentation.model.MaterialType
@@ -87,6 +88,7 @@ class ScanViewModel @Inject constructor(
     private val processNoteWithAi: ProcessNoteWithAiUseCase,
     private val updateNote: UpdateNoteUseCase,
     private val deleteNote: DeleteNoteUseCase,
+    private val aiLanguagePreferenceManager: AiLanguagePreferenceManager,
     @ApplicationScope private val appScope: CoroutineScope
 ) : ViewModel() {
 
@@ -267,8 +269,16 @@ class ScanViewModel @Inject constructor(
             step()
 
             // 3. Resumen con IA (OpenAI, desde el backend)
-            val summary = when (val processed = processNoteWithAi(noteId)) {
-                is Resource.Success -> processed.data.summary.orEmpty()
+            val effectiveLang = aiLanguagePreferenceManager.getEffectiveLanguageCode()
+            val summary = when (val processed = processNoteWithAi(noteId, effectiveLang)) {
+                is Resource.Success -> {
+                    val rawSummary = processed.data.summary.orEmpty()
+                    try {
+                        val snippet = rawSummary.take(30)
+                        android.util.Log.d("AiLanguage", "AI_RESULT_RESPONSE summary=$snippet")
+                    } catch (_: Throwable) {}
+                    rawSummary
+                }
                 is Resource.Error -> {
                     keepDraft = true // la nota queda guardada (FAILED) y se puede reintentar desde Notas
                     fail(ProcessingError.ai(processed.message))
@@ -279,7 +289,16 @@ class ScanViewModel @Inject constructor(
             step()
 
             // 4. Estructurar el resumen en secciones editables
-            val sections = parseSummary(summary)
+            val sections = parseSummary(summary).ifEmpty {
+                if (summary.isNotBlank()) {
+                    listOf(NoteSection(id = nextSectionId++, title = "Resumen de la IA", bullets = listOf(NoteBullet(id = nextBulletId++, text = summary))))
+                } else emptyList()
+            }
+            val generatedSnippet = sections.firstOrNull()?.bullets?.firstOrNull()?.text?.take(30) ?: summary.take(30)
+            try {
+                android.util.Log.d("AiLanguage", "AI_RESULT_UI generated=$generatedSnippet")
+            } catch (_: Throwable) {}
+
             _uiState.update {
                 it.copy(
                     isProcessing = false,
