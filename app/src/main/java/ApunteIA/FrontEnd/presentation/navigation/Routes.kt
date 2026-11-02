@@ -25,6 +25,7 @@ object Routes {
     const val SUBJECTS = "subjects"
     const val STUDY_GOAL = "study_goal"
     const val LANGUAGE = "language"
+    const val PROFILE_LANGUAGE = "profile_language"
     const val PERMISSIONS = "permissions"
 
     // =========================

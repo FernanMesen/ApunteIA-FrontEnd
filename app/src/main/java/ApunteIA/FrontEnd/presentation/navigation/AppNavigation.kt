@@ -134,7 +134,16 @@ fun AppNavigation(
             composable(Routes.LANGUAGE) {
                 LanguageScreen(
                     onBack = { navController.popBackStack() },
-                    onNext = { navController.navigate(Routes.PERMISSIONS) }
+                    onNext = { navController.navigate(Routes.PERMISSIONS) },
+                    isFromProfile = false
+                )
+            }
+
+            composable(Routes.PROFILE_LANGUAGE) {
+                LanguageScreen(
+                    onBack = { navController.popBackStack() },
+                    onNext = { navController.popBackStack() },
+                    isFromProfile = true
                 )
             }
 
@@ -188,7 +197,7 @@ fun AppNavigation(
                     onPrivacy = { navController.navigate(Routes.PRIVACY) },
                     onExportData = { navController.navigate(Routes.EXPORT_DATA) },
                     onChangePassword = { navController.navigate(Routes.CHANGE_PASSWORD) },
-                    onLanguage = { navController.navigate(Routes.LANGUAGE) },
+                    onLanguage = { navController.navigate(Routes.PROFILE_LANGUAGE) },
                     notesCount = statsState.userStats?.notesCount,
                     quizzesCount = statsState.userStats?.quizzesDoneCount
                 )
@@ -229,7 +238,10 @@ fun AppNavigation(
             }
 
             composable(Routes.CAMERA_ACCESS) {
-                PlaceholderScreen(title = "Acceso a cámara", onBack = { navController.popBackStack() })
+                PermissionsScreen(
+                    onBack = { navController.popBackStack() },
+                    onFinish = { navController.popBackStack() }
+                )
             }
 
             composable(Routes.PRIVACY) {
