@@ -298,4 +298,36 @@
     <string name="ai_lang_english">Inglese</string>
     <string name="ai_lang_portuguese">Portoghese</string>
     <string name="ai_lang_italian">Italiano</string>
+
+    <!-- Privacy & Export -->
+    <string name="privacy_header">Protezione e Privacy dei Dati</string>
+    <string name="privacy_subtitle">In ApunteIA prendiamo molto sul serio la sicurezza e la riservatezza delle tue note e dei tuoi dati accademici.</string>
+    <string name="privacy_card1_title">Crittografia dei dati in transito e a riposo</string>
+    <string name="privacy_card1_desc">Tutte le informazioni che condividi, incluse le note scansionate e i quiz, sono protette con standard di crittografia robusti.</string>
+    <string name="privacy_card2_title">Utilizzo dell\'Intelligenza Artificiale</string>
+    <string name="privacy_card2_desc">Le tue note vengono elaborate dai nostri modelli di IA esclusivamente per generare riassunti, audit e quiz di studio. Non utilizziamo le tue informazioni personali per addestrare modelli pubblici senza il tuo consenso.</string>
+    <string name="privacy_card3_title">I tuoi diritti sui dati</string>
+    <string name="privacy_card3_desc">Hai il controllo totale delle tue informazioni. Puoi esportare tutti i tuoi dati o eliminare definitivamente il tuo account dalle impostazioni del profilo in qualsiasi momento.</string>
+    <string name="privacy_preferences_header">Preferenze sulla Privacy</string>
+    <string name="privacy_analytics_title">Analisi di utilizzo anonimo</string>
+    <string name="privacy_analytics_desc">Aiutaci a migliorare l\'applicazione condividendo statistiche di utilizzo senza dati personali.</string>
+    <string name="privacy_personalization_title">Personalizzazione intelligente</string>
+    <string name="privacy_personalization_desc">Consenti all\'IA di adattare i quiz in base alla tua cronologia di studio.</string>
+    <string name="privacy_version">Versione dell\'informativa sulla privacy: 2.6.0\nAggiornato a novembre 2026</string>
+
+    <string name="export_header">Download e Backup delle Informazioni</string>
+    <string name="export_subtitle">Seleziona il formato in cui desideri esportare tutte le tue note, riassunti, quiz e cronologia di studio.</string>
+    <string name="export_json_title">Backup Completo (JSON)</string>
+    <string name="export_json_desc">Include tutti i tuoi dati utente, note, trascrizioni, riassunti e voti in formato JSON strutturato.</string>
+    <string name="export_json_button">Esporta JSON</string>
+    <string name="export_json_success">Backup JSON generato e salvato nei Download!</string>
+    <string name="export_pdf_title">Note e Riassunti (PDF)</string>
+    <string name="export_pdf_desc">Genera un documento PDF organizzato con tutte le tue note acquisite e i riassunti generati dall\'IA.</string>
+    <string name="export_pdf_button">Genera PDF</string>
+    <string name="export_pdf_success">Documento PDF delle note generato con successo!</string>
+    <string name="export_csv_title">Cronologia e Progressi (CSV)</string>
+    <string name="export_csv_desc">Esporta la cronologia dei quiz completati, le serie di studio e le metriche di audit in formato foglio di calcolo.</string>
+    <string name="export_csv_button">Esporta CSV</string>
+    <string name="export_csv_success">Cronologia esportata con successo in formato CSV!</string>
+    <string name="export_notice">I file esportati saranno disponibili immediatamente nella cartella dei download del tuo dispositivo.</string>
 </resources>

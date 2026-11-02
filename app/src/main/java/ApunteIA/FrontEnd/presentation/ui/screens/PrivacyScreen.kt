@@ -19,13 +19,11 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import ApunteIA.FrontEnd.R
-import ApunteIA.FrontEnd.presentation.ui.theme.SpaceCadet
 
 @Composable
 fun PrivacyScreen(
     onBack: () -> Unit
 ) {
-    val isDark = MaterialTheme.colorScheme.primary == SpaceCadet
     var analyticsEnabled by remember { mutableStateOf(true) }
     var aiPersonalizationEnabled by remember { mutableStateOf(true) }
 
@@ -77,14 +75,14 @@ fun PrivacyScreen(
             item {
                 Spacer(modifier = Modifier.height(8.dp))
                 Text(
-                    text = "Protección y Privacidad de Datos",
+                    text = stringResource(R.string.privacy_header),
                     fontSize = 18.sp,
                     fontWeight = FontWeight.Bold,
                     color = MaterialTheme.colorScheme.primary
                 )
                 Spacer(modifier = Modifier.height(4.dp))
                 Text(
-                    text = "En ApunteIA nos tomamos muy en serio la seguridad y confidencialidad de tus apuntes y datos académicos.",
+                    text = stringResource(R.string.privacy_subtitle),
                     fontSize = 14.sp,
                     color = MaterialTheme.colorScheme.onSurfaceVariant
                 )
@@ -92,22 +90,22 @@ fun PrivacyScreen(
 
             item {
                 PrivacyCard(
-                    title = "Cifrado de datos en tránsito y reposo",
-                    description = "Toda la información que compartes, incluyendo tus apuntes escaneados y cuestionarios, está protegida con estándares de cifrado robustos."
+                    title = stringResource(R.string.privacy_card1_title),
+                    description = stringResource(R.string.privacy_card1_desc)
                 )
             }
 
             item {
                 PrivacyCard(
-                    title = "Uso de Inteligencia Artificial",
-                    description = "Tus apuntes son procesados por nuestros modelos de IA exclusivamente para generar resúmenes, auditorías y cuestionarios de estudio. No utilizamos tu información personal para entrenar modelos públicos sin tu consentimiento."
+                    title = stringResource(R.string.privacy_card2_title),
+                    description = stringResource(R.string.privacy_card2_desc)
                 )
             }
 
             item {
                 PrivacyCard(
-                    title = "Derechos sobre tus datos",
-                    description = "Tienes el control total de tu información. Puedes exportar todos tus datos o eliminar tu cuenta de forma permanente desde la configuración de tu perfil en cualquier momento."
+                    title = stringResource(R.string.privacy_card3_title),
+                    description = stringResource(R.string.privacy_card3_desc)
                 )
             }
 
@@ -125,7 +123,7 @@ fun PrivacyScreen(
                         verticalArrangement = Arrangement.spacedBy(16.dp)
                     ) {
                         Text(
-                            text = "Preferencias de Privacidad",
+                            text = stringResource(R.string.privacy_preferences_header),
                             fontSize = 16.sp,
                             fontWeight = FontWeight.Bold,
                             color = MaterialTheme.colorScheme.onSurface
@@ -138,13 +136,13 @@ fun PrivacyScreen(
                         ) {
                             Column(modifier = Modifier.weight(1f).padding(end = 16.dp)) {
                                 Text(
-                                    text = "Análisis de uso anónimo",
+                                    text = stringResource(R.string.privacy_analytics_title),
                                     fontSize = 14.sp,
                                     fontWeight = FontWeight.SemiBold,
                                     color = MaterialTheme.colorScheme.onSurface
                                 )
                                 Text(
-                                    text = "Ayúdanos a mejorar la aplicación compartiendo estadísticas de uso sin datos personales.",
+                                    text = stringResource(R.string.privacy_analytics_desc),
                                     fontSize = 12.sp,
                                     color = MaterialTheme.colorScheme.onSurfaceVariant
                                 )
@@ -164,13 +162,13 @@ fun PrivacyScreen(
                         ) {
                             Column(modifier = Modifier.weight(1f).padding(end = 16.dp)) {
                                 Text(
-                                    text = "Personalización inteligente",
+                                    text = stringResource(R.string.privacy_personalization_title),
                                     fontSize = 14.sp,
                                     fontWeight = FontWeight.SemiBold,
                                     color = MaterialTheme.colorScheme.onSurface
                                 )
                                 Text(
-                                    text = "Permitir que la IA adapte los cuestionarios basándose en tu historial de estudio.",
+                                    text = stringResource(R.string.privacy_personalization_desc),
                                     fontSize = 12.sp,
                                     color = MaterialTheme.colorScheme.onSurfaceVariant
                                 )
@@ -187,7 +185,7 @@ fun PrivacyScreen(
             item {
                 Spacer(modifier = Modifier.height(16.dp))
                 Text(
-                    text = "Versión de política de privacidad: 2.6.0\nActualizado en noviembre de 2026",
+                    text = stringResource(R.string.privacy_version),
                     fontSize = 12.sp,
                     color = MaterialTheme.colorScheme.onSurfaceVariant,
                     textAlign = TextAlign.Center,

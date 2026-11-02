@@ -298,4 +298,36 @@
     <string name="ai_lang_english">English</string>
     <string name="ai_lang_portuguese">Portuguese</string>
     <string name="ai_lang_italian">Italian</string>
+
+    <!-- Privacy & Export -->
+    <string name="privacy_header">Data Protection and Privacy</string>
+    <string name="privacy_subtitle">At ApunteIA we take the security and confidentiality of your notes and academic data very seriously.</string>
+    <string name="privacy_card1_title">Data encryption in transit and at rest</string>
+    <string name="privacy_card1_desc">All information you share, including scanned notes and quizzes, is protected with robust encryption standards.</string>
+    <string name="privacy_card2_title">Artificial Intelligence Usage</string>
+    <string name="privacy_card2_desc">Your notes are processed by our AI models exclusively to generate summaries, audits, and study quizzes. We do not use your personal information to train public models without your consent.</string>
+    <string name="privacy_card3_title">Your data rights</string>
+    <string name="privacy_card3_desc">You have total control over your information. You can export all your data or permanently delete your account from your profile settings at any time.</string>
+    <string name="privacy_preferences_header">Privacy Preferences</string>
+    <string name="privacy_analytics_title">Anonymous usage analytics</string>
+    <string name="privacy_analytics_desc">Help us improve the app by sharing usage statistics without personal data.</string>
+    <string name="privacy_personalization_title">Smart personalization</string>
+    <string name="privacy_personalization_desc">Allow AI to adapt quizzes based on your study history.</string>
+    <string name="privacy_version">Privacy policy version: 2.6.0\nUpdated in November 2026</string>
+
+    <string name="export_header">Information Download and Backup</string>
+    <string name="export_subtitle">Select the format in which you want to export all your notes, summaries, quizzes, and study history.</string>
+    <string name="export_json_title">Full Backup (JSON)</string>
+    <string name="export_json_desc">Includes all your user data, notes, transcripts, summaries, and grades in structured JSON format.</string>
+    <string name="export_json_button">Export JSON</string>
+    <string name="export_json_success">JSON backup generated and saved to Downloads!</string>
+    <string name="export_pdf_title">Notes and Summaries (PDF)</string>
+    <string name="export_pdf_desc">Generate an organized PDF document with all your captured notes and AI-generated summaries.</string>
+    <string name="export_pdf_button">Generate PDF</string>
+    <string name="export_pdf_success">Notes PDF document successfully generated!</string>
+    <string name="export_csv_title">History and Progress (CSV)</string>
+    <string name="export_csv_desc">Export your completed quiz history, study streaks, and audit metrics in spreadsheet format.</string>
+    <string name="export_csv_button">Export CSV</string>
+    <string name="export_csv_success">History successfully exported to CSV format!</string>
+    <string name="export_notice">Exported files will be available immediately in your device\'s downloads folder.</string>
 </resources>

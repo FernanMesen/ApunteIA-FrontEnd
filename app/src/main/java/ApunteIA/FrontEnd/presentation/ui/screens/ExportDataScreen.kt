@@ -30,6 +30,10 @@ fun ExportDataScreen(
     val snackbarHostState = remember { SnackbarHostState() }
     val coroutineScope = rememberCoroutineScope()
 
+    val jsonSuccessMsg = stringResource(R.string.export_json_success)
+    val pdfSuccessMsg = stringResource(R.string.export_pdf_success)
+    val csvSuccessMsg = stringResource(R.string.export_csv_success)
+
     Scaffold(
         snackbarHost = { SnackbarHost(snackbarHostState) },
         containerColor = MaterialTheme.colorScheme.background,
@@ -79,14 +83,14 @@ fun ExportDataScreen(
             item {
                 Spacer(modifier = Modifier.height(8.dp))
                 Text(
-                    text = "Descarga y Respaldo de Información",
+                    text = stringResource(R.string.export_header),
                     fontSize = 18.sp,
                     fontWeight = FontWeight.Bold,
                     color = MaterialTheme.colorScheme.primary
                 )
                 Spacer(modifier = Modifier.height(4.dp))
                 Text(
-                    text = "Selecciona el formato en el que deseas exportar todos tus apuntes, resúmenes, cuestionarios e historial de estudio.",
+                    text = stringResource(R.string.export_subtitle),
                     fontSize = 14.sp,
                     color = MaterialTheme.colorScheme.onSurfaceVariant
                 )
@@ -94,12 +98,12 @@ fun ExportDataScreen(
 
             item {
                 ExportOptionCard(
-                    title = "Respaldo Completo (JSON)",
-                    description = "Incluye todos tus datos de usuario, apuntes, transcripciones, resúmenes y calificaciones en formato estructurado JSON.",
-                    buttonText = "Exportar JSON",
+                    title = stringResource(R.string.export_json_title),
+                    description = stringResource(R.string.export_json_desc),
+                    buttonText = stringResource(R.string.export_json_button),
                     onClick = {
                         coroutineScope.launch {
-                            snackbarHostState.showSnackbar("¡Respaldo JSON generado y guardado en Descargas!")
+                            snackbarHostState.showSnackbar(jsonSuccessMsg)
                         }
                     }
                 )
@@ -107,12 +111,12 @@ fun ExportDataScreen(
 
             item {
                 ExportOptionCard(
-                    title = "Apuntes y Resúmenes (PDF)",
-                    description = "Genera un documento PDF organizado con todos tus apuntes capturados y los resúmenes generados por la IA.",
-                    buttonText = "Generar PDF",
+                    title = stringResource(R.string.export_pdf_title),
+                    description = stringResource(R.string.export_pdf_desc),
+                    buttonText = stringResource(R.string.export_pdf_button),
                     onClick = {
                         coroutineScope.launch {
-                            snackbarHostState.showSnackbar("¡Documento PDF de apuntes generado con éxito!")
+                            snackbarHostState.showSnackbar(pdfSuccessMsg)
                         }
                     }
                 )
@@ -120,12 +124,12 @@ fun ExportDataScreen(
 
             item {
                 ExportOptionCard(
-                    title = "Historial y Progreso (CSV)",
-                    description = "Exporta tu historial de cuestionarios resueltos, rachas de estudio y métricas de auditoría en formato de hoja de cálculo.",
-                    buttonText = "Exportar CSV",
+                    title = stringResource(R.string.export_csv_title),
+                    description = stringResource(R.string.export_csv_desc),
+                    buttonText = stringResource(R.string.export_csv_button),
                     onClick = {
                         coroutineScope.launch {
-                            snackbarHostState.showSnackbar("¡Historial exportado en formato CSV correctamente!")
+                            snackbarHostState.showSnackbar(csvSuccessMsg)
                         }
                     }
                 )
@@ -155,7 +159,7 @@ fun ExportDataScreen(
                         )
                         Spacer(modifier = Modifier.width(12.dp))
                         Text(
-                            text = "Los archivos exportados estarán disponibles inmediatamente en la carpeta de descargas de tu dispositivo.",
+                            text = stringResource(R.string.export_notice),
                             fontSize = 13.sp,
                             color = MaterialTheme.colorScheme.onSurface,
                             lineHeight = 18.sp

@@ -298,4 +298,36 @@
     <string name="ai_lang_english">English</string>
     <string name="ai_lang_portuguese">Português</string>
     <string name="ai_lang_italian">Italiano</string>
+
+    <!-- Privacy & Export -->
+    <string name="privacy_header">Protección y Privacidad de Datos</string>
+    <string name="privacy_subtitle">En ApunteIA nos tomamos muy en serio la seguridad y confidencialidad de tus apuntes y datos académicos.</string>
+    <string name="privacy_card1_title">Cifrado de datos en tránsito y reposo</string>
+    <string name="privacy_card1_desc">Toda la información que compartes, incluyendo tus apuntes escaneados y cuestionarios, está protegida con estándares de cifrado robustos.</string>
+    <string name="privacy_card2_title">Uso de Inteligencia Artificial</string>
+    <string name="privacy_card2_desc">Tus apuntes son procesados por nuestros modelos de IA exclusivamente para generar resúmenes, auditorías y cuestionarios de estudio. No utilizamos tu información personal para entrenar modelos públicos sin tu consentimiento.</string>
+    <string name="privacy_card3_title">Derechos sobre tus datos</string>
+    <string name="privacy_card3_desc">Tienes el control total de tu información. Puedes exportar todos tus datos o eliminar tu cuenta de forma permanente desde la configuración de tu perfil en cualquier momento.</string>
+    <string name="privacy_preferences_header">Preferencias de Privacidad</string>
+    <string name="privacy_analytics_title">Análisis de uso anónimo</string>
+    <string name="privacy_analytics_desc">Ayúdanos a mejorar la aplicación compartiendo estadísticas de uso sin datos personales.</string>
+    <string name="privacy_personalization_title">Personalización inteligente</string>
+    <string name="privacy_personalization_desc">Permitir que la IA adapte los cuestionarios basándose en tu historial de estudio.</string>
+    <string name="privacy_version">Versión de política de privacidad: 2.6.0\nActualizado en noviembre de 2026</string>
+
+    <string name="export_header">Descarga y Respaldo de Información</string>
+    <string name="export_subtitle">Selecciona el formato en el que deseas exportar todos tus apuntes, resúmenes, cuestionarios e historial de estudio.</string>
+    <string name="export_json_title">Respaldo Completo (JSON)</string>
+    <string name="export_json_desc">Incluye todos tus datos de usuario, apuntes, transcripciones, resúmenes y calificaciones en formato estructurado JSON.</string>
+    <string name="export_json_button">Exportar JSON</string>
+    <string name="export_json_success">¡Respaldo JSON generado y guardado en Descargas!</string>
+    <string name="export_pdf_title">Apuntes y Resúmenes (PDF)</string>
+    <string name="export_pdf_desc">Genera un documento PDF organizado con todos tus apuntes capturados y los resúmenes generados por la IA.</string>
+    <string name="export_pdf_button">Generar PDF</string>
+    <string name="export_pdf_success">¡Documento PDF de apuntes generado con éxito!</string>
+    <string name="export_csv_title">Historial y Progreso (CSV)</string>
+    <string name="export_csv_desc">Exporta tu historial de cuestionarios resueltos, rachas de estudio y métricas de auditoría en formato de hoja de cálculo.</string>
+    <string name="export_csv_button">Exportar CSV</string>
+    <string name="export_csv_success">¡Historial exportado en formato CSV correctamente!</string>
+    <string name="export_notice">Los archivos exportados estarán disponibles inmediatamente en la carpeta de descargas de tu dispositivo.</string>
 </resources>
