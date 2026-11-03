@@ -37,4 +37,9 @@
     <string name="admin_error_course_has_relations">Il corso non può essere eliminato perché ha record correlati (valutazioni, argomenti o iscrizioni). Elimina prima gli elementi associati.</string>
     <string name="admin_course_deleted">Corso eliminato con successo</string>
     <string name="admin_course_archived">Il corso ha uno storico accademico. È stato archiviato per preservare valutazioni e voti.</string>
+    <string name="admin_student_detail_title">Dettaglio studente</string>
+    <string name="admin_student_final_grade">Voto finale del corso: %1$s</string>
+    <string name="admin_student_quizzes_history">Storico quiz</string>
+    <string name="admin_student_no_quizzes">Nessun record di quiz per questo corso.</string>
+    <string name="admin_quiz_score">Punteggio: %1$s</string>
 </resources>

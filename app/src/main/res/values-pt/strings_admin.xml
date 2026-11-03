@@ -37,4 +37,9 @@
     <string name="admin_error_course_has_relations">O curso não pode ser excluído porque possui registros relacionados (avaliações, tópicos ou inscrições). Exclua os itens associados primeiro.</string>
     <string name="admin_course_deleted">Curso excluído com sucesso</string>
     <string name="admin_course_archived">O curso possui histórico acadêmico. Foi arquivado para preservar avaliações e notas.</string>
+    <string name="admin_student_detail_title">Detalhe do aluno</string>
+    <string name="admin_student_final_grade">Nota final do curso: %1$s</string>
+    <string name="admin_student_quizzes_history">Histórico de quizzes</string>
+    <string name="admin_student_no_quizzes">Não há registros de quizzes para este curso.</string>
+    <string name="admin_quiz_score">Nota: %1$s</string>
 </resources>

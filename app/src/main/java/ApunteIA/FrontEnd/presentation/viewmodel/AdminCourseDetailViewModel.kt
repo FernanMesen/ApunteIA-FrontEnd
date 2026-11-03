@@ -20,8 +20,24 @@ import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
+import ApunteIA.FrontEnd.data.datasource.QuizDataSource
 import ApunteIA.FrontEnd.domain.repository.TextRecognizer
 import java.io.File
+import kotlin.math.roundToInt
+
+data class StudentQuizAttempt(
+    val title: String,
+    val scorePercent: Int,
+    val status: String,
+    val completedAt: String?
+)
+
+data class StudentCourseDetail(
+    val student: CourseStudent,
+    val finalGrade: Double?,
+    val attempts: List<StudentQuizAttempt>,
+    val isLoadingAttempts: Boolean = false
+)
 
 data class AdminCourseDetailUiState(
     /** null mientras se crea un curso nuevo. */
@@ -35,6 +51,7 @@ data class AdminCourseDetailUiState(
     val isSaving: Boolean = false,
     /** Inscripción que se está quitando (para mostrar el progreso en esa fila). */
     val removingEnrollmentId: Long? = null,
+    val selectedStudentDetail: StudentCourseDetail? = null,
     /** Error de validación local (texto en strings.xml). */
     @StringRes val validationError: Int? = null,
     /** Error que viene del backend o de la red (ya traducido o con el mensaje del backend). */
@@ -57,6 +74,7 @@ class AdminCourseDetailViewModel @Inject constructor(
     private val getCourseStudents: GetCourseStudentsUseCase,
     private val removeStudentFromCourse: RemoveStudentFromCourseUseCase,
     private val deleteCourseUseCase: DeleteCourseUseCase,
+    private val quizDataSource: QuizDataSource,
     private val textRecognizer: TextRecognizer
 ) : ViewModel() {
 
@@ -201,6 +219,66 @@ class AdminCourseDetailViewModel @Inject constructor(
                 is Resource.Loading -> Unit
             }
         }
+    }
+
+    fun selectStudent(student: CourseStudent) {
+        val courseId = _uiState.value.courseId ?: return
+        viewModelScope.launch {
+            _uiState.update {
+                it.copy(
+                    selectedStudentDetail = StudentCourseDetail(
+                        student = student,
+                        finalGrade = student.averageGrade,
+                        attempts = emptyList(),
+                        isLoadingAttempts = true
+                    )
+                )
+            }
+            try {
+                val courseAssessments = quizDataSource.getCourseAssessments(courseId)
+                val assessmentIds = courseAssessments.map { it.id }.toSet()
+                val allAttempts = quizDataSource.getUserAttempts(student.userId)
+
+                val courseAttempts = if (assessmentIds.isNotEmpty()) {
+                    allAttempts.filter { it.assessmentId in assessmentIds }
+                } else {
+                    allAttempts
+                }
+
+                val completed = courseAttempts.filter { it.status.equals("COMPLETED", ignoreCase = true) && it.score != null }
+                val finalGrade = if (completed.isNotEmpty()) completed.mapNotNull { it.score }.average() else student.averageGrade
+
+                val attemptItems = courseAttempts.map { att ->
+                    StudentQuizAttempt(
+                        title = att.assessmentTitle.takeIf { !it.isNullOrBlank() } ?: "Evaluación #${att.assessmentId}",
+                        scorePercent = (att.score ?: 0.0).roundToInt(),
+                        status = att.status.orEmpty(),
+                        completedAt = att.completedAt
+                    )
+                }
+
+                _uiState.update { state ->
+                    state.copy(
+                        selectedStudentDetail = StudentCourseDetail(
+                            student = student,
+                            finalGrade = finalGrade,
+                            attempts = attemptItems,
+                            isLoadingAttempts = false
+                        )
+                    )
+                }
+            } catch (_: Exception) {
+                _uiState.update { state ->
+                    state.copy(
+                        selectedStudentDetail = state.selectedStudentDetail?.copy(isLoadingAttempts = false)
+                    )
+                }
+            }
+        }
+    }
+
+    fun dismissStudentDetail() {
+        _uiState.update { it.copy(selectedStudentDetail = null) }
     }
 
     fun onSavedEventHandled() = _uiState.update { it.copy(savedEvent = false) }

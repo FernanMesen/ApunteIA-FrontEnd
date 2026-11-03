@@ -16,6 +16,7 @@ import ApunteIA.FrontEnd.util.L10n
 import javax.inject.Inject
 
 import ApunteIA.FrontEnd.data.datasource.QuizDataSource
+import ApunteIA.FrontEnd.data.datasource.model.AssessmentDto
 
 class CourseRepositoryImpl @Inject constructor(
     private val dataSource: CourseDataSource,
@@ -79,12 +80,20 @@ class CourseRepositoryImpl @Inject constructor(
     override suspend fun getCourseStudents(courseId: Long): Resource<List<CourseStudent>> =
         safeApiCall(errorMapper) {
             val enrollments: List<EnrollmentDto> = dataSource.getCourseEnrollments(courseId)
+            val courseAssessments = try { quizDataSource.getCourseAssessments(courseId) } catch (_: Exception) { emptyList<AssessmentDto>() }
+            val assessmentIds = courseAssessments.map { it.id }.toSet()
+
             enrollments.map { enrollment ->
                 val userId = enrollment.userId ?: 0L
                 val avgGrade = try {
                     if (userId > 0L) {
                         val attempts = quizDataSource.getUserAttempts(userId)
-                        val completed = attempts.filter { it.status.equals("COMPLETED", ignoreCase = true) && it.score != null }
+                        val courseAttempts = if (assessmentIds.isNotEmpty()) {
+                            attempts.filter { it.assessmentId in assessmentIds }
+                        } else {
+                            attempts
+                        }
+                        val completed = courseAttempts.filter { it.status.equals("COMPLETED", ignoreCase = true) && it.score != null }
                         if (completed.isNotEmpty()) completed.mapNotNull { it.score }.average() else null
                     } else null
                 } catch (_: Exception) {
@@ -102,7 +111,7 @@ class CourseRepositoryImpl @Inject constructor(
 
     override suspend fun deleteCourse(id: Long): Resource<String> = safeApiCall(errorMapper) {
         val students = dataSource.getCourseEnrollments(id)
-        val assessments = try { quizDataSource.getCourseAssessments(id) } catch (_: Exception) { emptyList<Any>() }
+        val assessments = try { quizDataSource.getCourseAssessments(id) } catch (_: Exception) { emptyList<AssessmentDto>() }
 
         if (students.isNotEmpty() || assessments.isNotEmpty()) {
             val course = catalog.all(false).firstOrNull { it.id == id }

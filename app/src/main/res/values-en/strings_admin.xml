@@ -37,4 +37,9 @@
     <string name="admin_error_course_has_relations">The course cannot be deleted because it has related records (assessments, topics, or enrollments). Delete associated items first.</string>
     <string name="admin_course_deleted">Course deleted successfully</string>
     <string name="admin_course_archived">The course has academic history. It has been archived to preserve evaluations and grades.</string>
+    <string name="admin_student_detail_title">Student detail</string>
+    <string name="admin_student_final_grade">Final course grade: %1$s</string>
+    <string name="admin_student_quizzes_history">Quiz history</string>
+    <string name="admin_student_no_quizzes">No quiz records for this course.</string>
+    <string name="admin_quiz_score">Score: %1$s</string>
 </resources>

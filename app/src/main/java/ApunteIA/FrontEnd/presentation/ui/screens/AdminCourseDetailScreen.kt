@@ -50,6 +50,7 @@ import ApunteIA.FrontEnd.R
 import ApunteIA.FrontEnd.domain.model.CourseStudent
 import ApunteIA.FrontEnd.presentation.ui.theme.*
 import ApunteIA.FrontEnd.presentation.viewmodel.AdminCourseDetailViewModel
+import ApunteIA.FrontEnd.presentation.viewmodel.StudentCourseDetail
 
 /**
  * Administración de un curso: código, nombre, descripción, plan de estudios
@@ -213,6 +214,13 @@ fun AdminCourseDetailScreen(
                     Text(stringResource(R.string.cancel))
                 }
             }
+        )
+    }
+
+    uiState.selectedStudentDetail?.let { detail ->
+        StudentDetailDialog(
+            detail = detail,
+            onDismiss = viewModel::dismissStudentDetail
         )
     }
 
@@ -398,6 +406,7 @@ fun AdminCourseDetailScreen(
                     StudentRow(
                         student = student,
                         isRemoving = uiState.removingEnrollmentId == student.enrollmentId,
+                        onClick = { viewModel.selectStudent(student) },
                         onRemove = { studentToRemove = student }
                     )
                 }
@@ -407,12 +416,19 @@ fun AdminCourseDetailScreen(
 }
 
 @Composable
-private fun StudentRow(student: CourseStudent, isRemoving: Boolean, onRemove: () -> Unit) {
+private fun StudentRow(
+    student: CourseStudent,
+    isRemoving: Boolean,
+    onClick: () -> Unit,
+    onRemove: () -> Unit
+) {
     val isDark = MaterialTheme.colorScheme.primary == SpaceCadet
     val displayName = student.fullName.ifBlank { student.email }
 
     Card(
-        modifier = Modifier.fillMaxWidth(),
+        modifier = Modifier
+            .fillMaxWidth()
+            .clickable { onClick() },
         shape = RoundedCornerShape(16.dp),
         colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surfaceVariant),
         elevation = CardDefaults.cardElevation(defaultElevation = 0.dp)
@@ -478,4 +494,142 @@ private fun StudentRow(student: CourseStudent, isRemoving: Boolean, onRemove: ()
             }
         }
     }
+}
+
+@Composable
+private fun StudentDetailDialog(
+    detail: StudentCourseDetail,
+    onDismiss: () -> Unit
+) {
+    val isDark = MaterialTheme.colorScheme.primary == SpaceCadet
+    val studentName = detail.student.fullName.ifBlank { detail.student.email }
+
+    AlertDialog(
+        onDismissRequest = onDismiss,
+        title = {
+            Column {
+                Text(
+                    text = stringResource(R.string.admin_student_detail_title),
+                    fontWeight = FontWeight.Bold,
+                    fontSize = 20.sp
+                )
+                Text(
+                    text = studentName,
+                    fontSize = 14.sp,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant
+                )
+            }
+        },
+        text = {
+            Column(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .heightIn(max = 400.dp),
+                verticalArrangement = Arrangement.spacedBy(16.dp)
+            ) {
+                val finalGradeText = detail.finalGrade?.let {
+                    FormatUtils.formatPercentage(it.roundToInt(), maxFractionDigits = 0)
+                } ?: "—"
+
+                Surface(
+                    shape = RoundedCornerShape(14.dp),
+                    color = if (isDark) Color(0xFF252B3B) else Color(0xFFF5F5F5),
+                    modifier = Modifier.fillMaxWidth()
+                ) {
+                    Row(
+                        modifier = Modifier.padding(16.dp),
+                        horizontalArrangement = Arrangement.SpaceBetween,
+                        verticalAlignment = Alignment.CenterVertically
+                    ) {
+                        Text(
+                            text = stringResource(R.string.admin_student_final_grade, ""),
+                            fontWeight = FontWeight.Medium,
+                            fontSize = 15.sp
+                        )
+                        Text(
+                            text = finalGradeText,
+                            fontWeight = FontWeight.Bold,
+                            fontSize = 18.sp,
+                            color = if (isDark) Color.White else DarkGreen
+                        )
+                    }
+                }
+
+                Text(
+                    text = stringResource(R.string.admin_student_quizzes_history),
+                    fontWeight = FontWeight.Bold,
+                    fontSize = 15.sp,
+                    color = MaterialTheme.colorScheme.onSurface
+                )
+
+                if (detail.isLoadingAttempts) {
+                    Box(modifier = Modifier.fillMaxWidth().height(100.dp), contentAlignment = Alignment.Center) {
+                        CircularProgressIndicator(strokeWidth = 2.dp)
+                    }
+                } else if (detail.attempts.isEmpty()) {
+                    Text(
+                        text = stringResource(R.string.admin_student_no_quizzes),
+                        fontSize = 14.sp,
+                        color = MaterialTheme.colorScheme.onSurfaceVariant
+                    )
+                } else {
+                    LazyColumn(
+                        verticalArrangement = Arrangement.spacedBy(8.dp),
+                        modifier = Modifier.fillMaxWidth()
+                    ) {
+                        items(detail.attempts) { attempt ->
+                            Surface(
+                                shape = RoundedCornerShape(12.dp),
+                                color = if (isDark) Color(0xFF1E2532) else Color(0xFFFAFAFA),
+                                modifier = Modifier.fillMaxWidth()
+                            ) {
+                                Row(
+                                    modifier = Modifier.padding(12.dp),
+                                    horizontalArrangement = Arrangement.SpaceBetween,
+                                    verticalAlignment = Alignment.CenterVertically
+                                ) {
+                                    Column(modifier = Modifier.weight(1f)) {
+                                        Text(
+                                            text = attempt.title,
+                                            fontWeight = FontWeight.Medium,
+                                            fontSize = 14.sp,
+                                            color = MaterialTheme.colorScheme.onSurface,
+                                            maxLines = 1,
+                                            overflow = TextOverflow.Ellipsis
+                                        )
+                                        if (!attempt.completedAt.isNullOrBlank()) {
+                                            Text(
+                                                text = attempt.completedAt.take(10),
+                                                fontSize = 12.sp,
+                                                color = MaterialTheme.colorScheme.onSurfaceVariant
+                                            )
+                                        }
+                                    }
+                                    Spacer(modifier = Modifier.width(8.dp))
+                                    Surface(
+                                        shape = RoundedCornerShape(8.dp),
+                                        color = if (attempt.scorePercent >= 70) (if (isDark) Color(0xFF2E3B3B) else Color(0xFFE8F5E9)) else (if (isDark) Color(0xFF3B2525) else Color(0xFFFFEBEE))
+                                    ) {
+                                        Text(
+                                            text = "${attempt.scorePercent}%",
+                                            fontWeight = FontWeight.Bold,
+                                            fontSize = 13.sp,
+                                            color = if (attempt.scorePercent >= 70) (if (isDark) Color(0xFF81C784) else DarkGreen) else StatusRed,
+                                            modifier = Modifier.padding(horizontal = 8.dp, vertical = 4.dp)
+                                        )
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        confirmButton = {
+            TextButton(onClick = onDismiss) {
+                Text(stringResource(R.string.close), fontWeight = FontWeight.Bold)
+            }
+        },
+        shape = RoundedCornerShape(24.dp)
+    )
 }
