@@ -46,7 +46,9 @@ fun ProfileScreen(
     onChangePassword: () -> Unit = {},
     onLanguage: () -> Unit = {},
     notesCount: Int? = null,
-    quizzesCount: Int? = null
+    quizzesCount: Int? = null,
+    isAdmin: Boolean = false,
+    onAdminCourses: () -> Unit = {}
 ) {
     var showDeleteDialog by remember { mutableStateOf(false) }
     val isThemeDark = MaterialTheme.colorScheme.primary == SpaceCadet
@@ -124,6 +126,12 @@ fun ProfileScreen(
                 StatsSection(notesCount = notesCount, quizzesCount = quizzesCount)
             }
 
+            if (isAdmin) {
+                item {
+                    AdminSection(onAdminCourses = onAdminCourses)
+                }
+            }
+
             item {
                 ConfigSection(
                     isDarkMode = isDarkMode,
@@ -156,6 +164,41 @@ fun ProfileScreen(
                         .clickable { showDeleteDialog = true }
                 )
             }
+        }
+    }
+}
+
+/** Sección visible solo para ADMIN: acceso a la administración de cursos. */
+@Composable
+fun AdminSection(onAdminCourses: () -> Unit) {
+    val isThemeDark = MaterialTheme.colorScheme.primary == SpaceCadet
+
+    Column {
+        Text(
+            text = stringResource(R.string.admin_section_header),
+            fontSize = 13.sp,
+            fontWeight = FontWeight.Bold,
+            color = if (isThemeDark) Color(0xFF9BA4B5) else TextGray,
+            modifier = Modifier.padding(start = 4.dp, bottom = 12.dp)
+        )
+        Surface(
+            modifier = Modifier.fillMaxWidth(),
+            shape = RoundedCornerShape(20.dp),
+            color = MaterialTheme.colorScheme.surfaceVariant,
+            border = if (isThemeDark) BorderStroke(1.dp, Color(0xFF394867)) else null
+        ) {
+            ConfigItem(
+                label = stringResource(R.string.admin_courses_entry),
+                onClick = onAdminCourses,
+                trailing = {
+                    Icon(
+                        Icons.Default.KeyboardArrowRight,
+                        null,
+                        tint = MaterialTheme.colorScheme.onSurfaceVariant,
+                        modifier = Modifier.size(14.dp)
+                    )
+                }
+            )
         }
     }
 }

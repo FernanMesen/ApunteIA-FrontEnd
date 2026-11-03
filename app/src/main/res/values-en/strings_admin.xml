@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Textos del modo administrador y del plan de estudios. -->
+<resources>
+    <string name="admin_section_header">Administration</string>
+    <string name="admin_courses_entry">Courses and study plans</string>
+    <string name="admin_courses_title">Manage courses</string>
+    <string name="admin_courses_subtitle">Create courses, edit their study plan and manage students</string>
+    <string name="admin_new_course">New course</string>
+    <string name="admin_no_courses">There are no courses yet.</string>
+    <string name="admin_topics_count">Topics in the plan: %1$d</string>
+    <string name="admin_no_syllabus">No study plan</string>
+    <string name="admin_edit_course_title">Edit course</string>
+    <string name="admin_course_code">Code (e.g. EIF411)</string>
+    <string name="admin_course_name">Course name</string>
+    <string name="admin_course_description">Description (optional)</string>
+    <string name="admin_syllabus_header">Study plan</string>
+    <string name="admin_syllabus_hint">Write one topic per line. Students will see it in Manage subjects.</string>
+    <string name="admin_syllabus_placeholder">Introduction to Kotlin\nJetpack Compose\nMVVM architecture</string>
+    <string name="admin_save_course">Save course</string>
+    <string name="admin_course_saved">Course saved</string>
+    <string name="admin_students_header">Enrolled students (%1$d)</string>
+    <string name="admin_no_students">No students are enrolled in this course.</string>
+    <string name="admin_students_after_save">Save the course to see and manage its students.</string>
+    <string name="admin_remove_student">Remove from course</string>
+    <string name="admin_remove_student_title">Remove %1$s?</string>
+    <string name="admin_remove_student_message">They will no longer be enrolled in %1$s. Their notes are not deleted.</string>
+    <string name="admin_error_code_required">The course code is required.</string>
+    <string name="admin_error_name_required">The course name is required.</string>
+    <string name="subject_show_plan">See study plan</string>
+    <string name="subject_hide_plan">Hide study plan</string>
+</resources>

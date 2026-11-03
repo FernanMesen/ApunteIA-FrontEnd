@@ -16,11 +16,11 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.navigation
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
-import ApunteIA.FrontEnd.R
 import ApunteIA.FrontEnd.presentation.ui.components.LocalCurrentUser
-import ApunteIA.FrontEnd.util.L10n
 import ApunteIA.FrontEnd.presentation.ui.components.RefreshOnResume
 import ApunteIA.FrontEnd.presentation.ui.screens.*
+import ApunteIA.FrontEnd.presentation.viewmodel.AdminCourseDetailViewModel
+import ApunteIA.FrontEnd.presentation.viewmodel.AdminCoursesViewModel
 import ApunteIA.FrontEnd.presentation.viewmodel.AuditViewModel
 import ApunteIA.FrontEnd.presentation.viewmodel.JoinSubjectViewModel
 import ApunteIA.FrontEnd.presentation.viewmodel.LoginViewModel
@@ -66,7 +66,7 @@ fun AppNavigation(
     LaunchedEffect(Unit) {
         sessionViewModel.sessionExpired.collect {
             sessionViewModel.refreshUser()
-            Toast.makeText(context, L10n.getString(R.string.api_error_session), Toast.LENGTH_LONG).show()
+            Toast.makeText(context, "Tu sesión expiró. Inicia sesión de nuevo.", Toast.LENGTH_LONG).show()
             navController.resetTo(Routes.LOGIN)
         }
     }
@@ -136,16 +136,7 @@ fun AppNavigation(
             composable(Routes.LANGUAGE) {
                 LanguageScreen(
                     onBack = { navController.popBackStack() },
-                    onNext = { navController.navigate(Routes.PERMISSIONS) },
-                    isFromProfile = false
-                )
-            }
-
-            composable(Routes.PROFILE_LANGUAGE) {
-                LanguageScreen(
-                    onBack = { navController.popBackStack() },
-                    onNext = { navController.popBackStack() },
-                    isFromProfile = true
+                    onNext = { navController.navigate(Routes.PERMISSIONS) }
                 )
             }
 
@@ -199,9 +190,11 @@ fun AppNavigation(
                     onPrivacy = { navController.navigate(Routes.PRIVACY) },
                     onExportData = { navController.navigate(Routes.EXPORT_DATA) },
                     onChangePassword = { navController.navigate(Routes.CHANGE_PASSWORD) },
-                    onLanguage = { navController.navigate(Routes.PROFILE_LANGUAGE) },
+                    onLanguage = { navController.navigate(Routes.LANGUAGE) },
                     notesCount = statsState.userStats?.notesCount,
-                    quizzesCount = statsState.userStats?.quizzesDoneCount
+                    quizzesCount = statsState.userStats?.quizzesDoneCount,
+                    isAdmin = currentUser?.isAdmin == true,
+                    onAdminCourses = { navController.navigate(Routes.ADMIN_COURSES) }
                 )
             }
 
@@ -231,6 +224,32 @@ fun AppNavigation(
                 )
             }
 
+            // =========================
+            // ADMINISTRACIÓN (solo ADMIN; el backend también lo valida)
+            // =========================
+
+            composable(Routes.ADMIN_COURSES) {
+                val adminCoursesViewModel: AdminCoursesViewModel = hiltViewModel()
+                RefreshOnResume { adminCoursesViewModel.load() }
+                AdminCoursesScreen(
+                    viewModel = adminCoursesViewModel,
+                    onBack = { navController.popBackStack() },
+                    onOpenCourse = { courseId -> navController.navigate(Routes.adminCourse(courseId)) },
+                    onNewCourse = { navController.navigate(Routes.adminCourse(0L)) }
+                )
+            }
+
+            composable(
+                route = Routes.ADMIN_COURSE_PATTERN,
+                arguments = listOf(navArgument(AdminCourseDetailViewModel.COURSE_ID_ARG) { type = NavType.LongType })
+            ) {
+                val adminCourseViewModel: AdminCourseDetailViewModel = hiltViewModel()
+                AdminCourseDetailScreen(
+                    viewModel = adminCourseViewModel,
+                    onBack = { navController.popBackStack() }
+                )
+            }
+
             composable(Routes.STUDY_HISTORY) {
                 val studyHistoryViewModel: StudyHistoryViewModel = hiltViewModel()
                 StudyHistoryScreen(
@@ -240,18 +259,15 @@ fun AppNavigation(
             }
 
             composable(Routes.CAMERA_ACCESS) {
-                PermissionsScreen(
-                    onBack = { navController.popBackStack() },
-                    onFinish = { navController.popBackStack() }
-                )
+                PlaceholderScreen(title = "Acceso a cámara", onBack = { navController.popBackStack() })
             }
 
             composable(Routes.PRIVACY) {
-                PrivacyScreen(onBack = { navController.popBackStack() })
+                PlaceholderScreen(title = "Privacidad", onBack = { navController.popBackStack() })
             }
 
             composable(Routes.EXPORT_DATA) {
-                ExportDataScreen(onBack = { navController.popBackStack() })
+                PlaceholderScreen(title = "Exportar mis datos", onBack = { navController.popBackStack() })
             }
 
             composable(Routes.CHANGE_PASSWORD) {

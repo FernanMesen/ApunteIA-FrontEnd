@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Textos del modo administrador y del plan de estudios. -->
+<resources>
+    <string name="admin_section_header">Administração</string>
+    <string name="admin_courses_entry">Cursos e planos de estudo</string>
+    <string name="admin_courses_title">Gerenciar cursos</string>
+    <string name="admin_courses_subtitle">Crie cursos, edite o plano de estudos e gerencie os alunos</string>
+    <string name="admin_new_course">Novo curso</string>
+    <string name="admin_no_courses">Ainda não há cursos.</string>
+    <string name="admin_topics_count">Temas no plano: %1$d</string>
+    <string name="admin_no_syllabus">Sem plano de estudos</string>
+    <string name="admin_edit_course_title">Editar curso</string>
+    <string name="admin_course_code">Código (ex. EIF411)</string>
+    <string name="admin_course_name">Nome do curso</string>
+    <string name="admin_course_description">Descrição (opcional)</string>
+    <string name="admin_syllabus_header">Plano de estudos</string>
+    <string name="admin_syllabus_hint">Escreva um tema por linha. Os alunos o verão em Gerenciar disciplinas.</string>
+    <string name="admin_syllabus_placeholder">Introdução ao Kotlin\nJetpack Compose\nArquitetura MVVM</string>
+    <string name="admin_save_course">Salvar curso</string>
+    <string name="admin_course_saved">Curso salvo</string>
+    <string name="admin_students_header">Alunos inscritos (%1$d)</string>
+    <string name="admin_no_students">Nenhum aluno inscrito neste curso.</string>
+    <string name="admin_students_after_save">Salve o curso para ver e gerenciar seus alunos.</string>
+    <string name="admin_remove_student">Remover do curso</string>
+    <string name="admin_remove_student_title">Remover %1$s?</string>
+    <string name="admin_remove_student_message">Deixará de estar inscrito em %1$s. Suas anotações não são apagadas.</string>
+    <string name="admin_error_code_required">O código do curso é obrigatório.</string>
+    <string name="admin_error_name_required">O nome do curso é obrigatório.</string>
+    <string name="subject_show_plan">Ver plano de estudos</string>
+    <string name="subject_hide_plan">Ocultar plano de estudos</string>
+</resources>

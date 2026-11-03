@@ -21,6 +21,11 @@ object Routes {
     const val CHANGE_PASSWORD = "change_password"
     const val JOIN_SUBJECT = "join_subject"
 
+    // Administración (solo ADMIN)
+    const val ADMIN_COURSES = "admin_courses"
+    const val ADMIN_COURSE = "admin_course"
+    const val ADMIN_COURSE_PATTERN = "admin_course/{courseId}"
+
     const val PROFILE_SETUP = "profile_setup"
     const val SUBJECTS = "subjects"
     const val STUDY_GOAL = "study_goal"
@@ -40,4 +45,6 @@ object Routes {
 
     fun noteDetail(noteId: Long) = "$NOTE_DETAIL/$noteId"
     fun quiz(assessmentId: Long) = "$QUIZ/$assessmentId"
+    /** courseId = 0 abre el formulario para crear un curso nuevo. */
+    fun adminCourse(courseId: Long) = "$ADMIN_COURSE/$courseId"
 }
