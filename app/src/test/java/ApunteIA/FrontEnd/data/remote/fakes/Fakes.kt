@@ -116,6 +116,15 @@ class FakeCourseDataSource(
         deletedEnrollments += enrollmentId
         courseEnrollments = courseEnrollments.filterNot { it.id == enrollmentId }
     }
+
+    val deletedCourses = mutableListOf<Long>()
+    var deleteCourseError: Throwable? = null
+
+    override suspend fun deleteCourse(id: Long) {
+        deleteCourseError?.let { throw it }
+        deletedCourses += id
+        courses = courses.filterNot { it.id == id }
+    }
 }
 
 class FakeNoteDataSource(var notes: MutableList<NoteDto> = mutableListOf()) : NoteDataSource {

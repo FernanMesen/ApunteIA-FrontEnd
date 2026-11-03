@@ -22,7 +22,9 @@ fun CustomBottomNavigation(
     onInicio: () -> Unit,
     onNotas: () -> Unit,
     onAuditoria: () -> Unit,
-    onReforzar: () -> Unit
+    onReforzar: () -> Unit,
+    onCursos: () -> Unit = {},
+    isAdmin: Boolean = LocalCurrentUser.current?.isAdmin == true
 ) {
     BottomAppBar(
         containerColor = MaterialTheme.colorScheme.surface,
@@ -41,27 +43,37 @@ fun CustomBottomNavigation(
                 isSelected = currentRoute == "Inicio",
                 onClick = onInicio
             )
-            NavItem(
-                icon = Icons.Default.Description,
-                label = stringResource(R.string.nav_notes),
-                isSelected = currentRoute == "Notas",
-                onClick = onNotas
-            )
-            
-            Spacer(modifier = Modifier.width(48.dp))
-            
-            NavItem(
-                icon = Icons.Default.Analytics,
-                label = stringResource(R.string.nav_audit),
-                isSelected = currentRoute == "Auditoría",
-                onClick = onAuditoria
-            )
-            NavItem(
-                icon = Icons.Default.HistoryEdu,
-                label = stringResource(R.string.nav_reinforce),
-                isSelected = currentRoute == "Reforzar",
-                onClick = onReforzar
-            )
+
+            if (isAdmin) {
+                NavItem(
+                    icon = Icons.Default.School,
+                    label = stringResource(R.string.admin_courses_title),
+                    isSelected = currentRoute == "Cursos" || currentRoute == "Administración",
+                    onClick = onCursos
+                )
+            } else {
+                NavItem(
+                    icon = Icons.Default.Description,
+                    label = stringResource(R.string.nav_notes),
+                    isSelected = currentRoute == "Notas",
+                    onClick = onNotas
+                )
+                
+                Spacer(modifier = Modifier.width(48.dp))
+                
+                NavItem(
+                    icon = Icons.Default.Analytics,
+                    label = stringResource(R.string.nav_audit),
+                    isSelected = currentRoute == "Auditoría",
+                    onClick = onAuditoria
+                )
+                NavItem(
+                    icon = Icons.Default.HistoryEdu,
+                    label = stringResource(R.string.nav_reinforce),
+                    isSelected = currentRoute == "Reforzar",
+                    onClick = onReforzar
+                )
+            }
         }
     }
 }

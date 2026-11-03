@@ -25,6 +25,11 @@ class CourseDataSourceImpl @Inject constructor(
     override suspend fun updateCourse(id: Long, request: CourseRequestDto): CourseDto =
         apiService.updateCourse(id, request)
 
+    override suspend fun deleteCourse(id: Long) {
+        val response = apiService.deleteCourse(id)
+        if (!response.isSuccessful && response.code() != 404) throw HttpException(response)
+    }
+
     override suspend fun getCourseEnrollments(courseId: Long): List<EnrollmentDto> =
         apiService.getCourseEnrollments(courseId)
 

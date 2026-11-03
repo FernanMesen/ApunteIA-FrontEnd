@@ -33,3 +33,10 @@ class RemoveStudentFromCourseUseCase @Inject constructor(
 ) {
     suspend operator fun invoke(enrollmentId: Long): Resource<Unit> = repository.removeStudent(enrollmentId)
 }
+
+/** Elimina un curso. Solo ADMIN. */
+class DeleteCourseUseCase @Inject constructor(
+    private val repository: CourseRepository
+) {
+    suspend operator fun invoke(courseId: Long): Resource<String> = repository.deleteCourse(courseId)
+}

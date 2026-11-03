@@ -28,4 +28,13 @@
     <string name="admin_error_name_required">El nombre del curso es obligatorio.</string>
     <string name="subject_show_plan">Ver plan de estudios</string>
     <string name="subject_hide_plan">Ocultar plan de estudios</string>
+    <string name="admin_student_grade_value">Calificación: %1$s</string>
+    <string name="admin_student_no_grade">Calificación: Sin evaluaciones</string>
+    <string name="admin_scan_syllabus_photo">Escanear plan con foto</string>
+    <string name="admin_delete_course">Eliminar curso</string>
+    <string name="admin_delete_course_title">¿Eliminar el curso %1$s?</string>
+    <string name="admin_delete_course_message">Esta acción eliminará el curso y su plan de estudios. No se puede eliminar si tiene estudiantes inscritos.</string>
+    <string name="admin_error_course_has_relations">No se puede eliminar el curso porque tiene registros relacionados (evaluaciones, temas o inscripciones). Elimine los elementos asociados primero.</string>
+    <string name="admin_course_deleted">Curso eliminado correctamente</string>
+    <string name="admin_course_archived">El curso tiene historial académico. Ha sido archivado para conservar las evaluaciones y calificaciones.</string>
 </resources>

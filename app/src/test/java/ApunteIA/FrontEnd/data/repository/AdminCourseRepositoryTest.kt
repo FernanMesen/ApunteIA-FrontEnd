@@ -13,7 +13,7 @@ import org.junit.Test
 class AdminCourseRepositoryTest {
 
     private fun repository(backend: TestBackend) =
-        CourseRepositoryImpl(backend.courses, backend.loader, backend.catalog)
+        CourseRepositoryImpl(backend.courses, backend.loader, backend.catalog, backend.quizzes)
 
     @Test
     fun `create course sends trimmed data and the study plan`() = runBlocking {
@@ -71,10 +71,36 @@ class AdminCourseRepositoryTest {
         val repository = object : ApunteIA.FrontEnd.data.datasource.CourseDataSource by backend.courses {
             override suspend fun createCourse(request: ApunteIA.FrontEnd.data.datasource.model.CourseRequestDto) =
                 throw httpError(403, "No tiene permisos para realizar esta acción")
-        }.let { CourseRepositoryImpl(it, backend.loader, backend.catalog) }
+        }.let { CourseRepositoryImpl(it, backend.loader, backend.catalog, backend.quizzes) }
 
         val result = repository.saveCourse(null, "EIF999", "X", "", "")
 
         assertEquals("No tiene permisos para realizar esta acción", (result as Resource.Error).message)
+    }
+
+    @Test
+    fun `delete course without records removes it from catalog and backend`() = runBlocking {
+        val backend = TestBackend()
+        val repository = repository(backend)
+
+        val result = repository.deleteCourse(3L)
+        assertTrue(result is Resource.Success)
+        assertEquals(listOf(3L), backend.courses.deletedCourses)
+        val all = (repository.getAllCourses() as Resource.Success).data
+        assertEquals(2, all.size)
+    }
+
+    @Test
+    fun `delete course with students or assessments archives it instead of failing`() = runBlocking {
+        val backend = TestBackend()
+        backend.courses.courseEnrollments = listOf(
+            EnrollmentDto(10, 2, 1, "EIF411", "Backend", null, "Zoe Mora", "zoe@una.cr")
+        )
+        val repository = repository(backend)
+
+        val result = repository.deleteCourse(1L)
+        assertTrue(result is Resource.Success)
+        val all = (repository.getAllCourses() as Resource.Success).data
+        assertTrue(all.first { it.id == 1L }.name.startsWith("[Archivado]"))
     }
 }

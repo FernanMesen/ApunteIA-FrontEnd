@@ -28,4 +28,13 @@
     <string name="admin_error_name_required">The course name is required.</string>
     <string name="subject_show_plan">See study plan</string>
     <string name="subject_hide_plan">Hide study plan</string>
+    <string name="admin_student_grade_value">Grade: %1$s</string>
+    <string name="admin_student_no_grade">Grade: No evaluations</string>
+    <string name="admin_scan_syllabus_photo">Scan study plan with photo</string>
+    <string name="admin_delete_course">Delete course</string>
+    <string name="admin_delete_course_title">Delete course %1$s?</string>
+    <string name="admin_delete_course_message">This action will delete the course and its study plan. It cannot be deleted if students are enrolled.</string>
+    <string name="admin_error_course_has_relations">The course cannot be deleted because it has related records (assessments, topics, or enrollments). Delete associated items first.</string>
+    <string name="admin_course_deleted">Course deleted successfully</string>
+    <string name="admin_course_archived">The course has academic history. It has been archived to preserve evaluations and grades.</string>
 </resources>

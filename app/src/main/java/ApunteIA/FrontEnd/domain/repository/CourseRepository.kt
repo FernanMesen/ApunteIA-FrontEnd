@@ -26,5 +26,7 @@ interface CourseRepository {
 
     suspend fun getCourseStudents(courseId: Long): Resource<List<CourseStudent>>
 
+    suspend fun deleteCourse(id: Long): Resource<String>
+
     suspend fun removeStudent(enrollmentId: Long): Resource<Unit>
 }

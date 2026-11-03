@@ -7,6 +7,7 @@ import androidx.lifecycle.viewModelScope
 import ApunteIA.FrontEnd.R
 import ApunteIA.FrontEnd.domain.model.CourseStudent
 import ApunteIA.FrontEnd.domain.repository.CourseRepository
+import ApunteIA.FrontEnd.domain.usecase.DeleteCourseUseCase
 import ApunteIA.FrontEnd.domain.usecase.GetCourseStudentsUseCase
 import ApunteIA.FrontEnd.domain.usecase.RemoveStudentFromCourseUseCase
 import ApunteIA.FrontEnd.domain.usecase.SaveCourseUseCase
@@ -18,6 +19,9 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import javax.inject.Inject
+
+import ApunteIA.FrontEnd.domain.repository.TextRecognizer
+import java.io.File
 
 data class AdminCourseDetailUiState(
     /** null mientras se crea un curso nuevo. */
@@ -51,7 +55,9 @@ class AdminCourseDetailViewModel @Inject constructor(
     private val courseRepository: CourseRepository,
     private val saveCourse: SaveCourseUseCase,
     private val getCourseStudents: GetCourseStudentsUseCase,
-    private val removeStudentFromCourse: RemoveStudentFromCourseUseCase
+    private val removeStudentFromCourse: RemoveStudentFromCourseUseCase,
+    private val deleteCourseUseCase: DeleteCourseUseCase,
+    private val textRecognizer: TextRecognizer
 ) : ViewModel() {
 
     private val initialId: Long? = savedStateHandle.get<Long>(COURSE_ID_ARG)?.takeIf { it > 0L }
@@ -152,6 +158,46 @@ class AdminCourseDetailViewModel @Inject constructor(
                     )
                 }
                 is Resource.Error -> _uiState.update { it.copy(removingEnrollmentId = null, error = result.message) }
+                is Resource.Loading -> Unit
+            }
+        }
+    }
+
+    fun processSyllabusPhoto(photoFile: File) {
+        viewModelScope.launch {
+            _uiState.update { it.copy(isLoading = true, error = null) }
+            try {
+                val recognizedText = textRecognizer.recognize(listOf(photoFile))
+                _uiState.update { state ->
+                    val currentSyllabus = state.syllabus.trim()
+                    val newSyllabus = if (currentSyllabus.isBlank()) {
+                        recognizedText.trim()
+                    } else {
+                        "$currentSyllabus\n${recognizedText.trim()}"
+                    }
+                    state.copy(isLoading = false, syllabus = newSyllabus.take(MAX_SYLLABUS))
+                }
+            } catch (e: Exception) {
+                _uiState.update { state ->
+                    state.copy(isLoading = false, error = e.localizedMessage ?: "Error al reconocer texto de la fotografía")
+                }
+            }
+        }
+    }
+
+    fun deleteCourse(onSuccess: (String) -> Unit) {
+        val id = _uiState.value.courseId ?: return
+        if (_uiState.value.isSaving) return
+        viewModelScope.launch {
+            _uiState.update { it.copy(isSaving = true, error = null) }
+            when (val result = deleteCourseUseCase(id)) {
+                is Resource.Success -> {
+                    _uiState.update { it.copy(isSaving = false) }
+                    onSuccess(result.data)
+                }
+                is Resource.Error -> {
+                    _uiState.update { it.copy(isSaving = false, error = result.message) }
+                }
                 is Resource.Loading -> Unit
             }
         }

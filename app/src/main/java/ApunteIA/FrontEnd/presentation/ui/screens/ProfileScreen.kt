@@ -122,8 +122,10 @@ fun ProfileScreen(
                 ProfileHeader()
             }
 
-            item {
-                StatsSection(notesCount = notesCount, quizzesCount = quizzesCount)
+            if (!isAdmin) {
+                item {
+                    StatsSection(notesCount = notesCount, quizzesCount = quizzesCount)
+                }
             }
 
             if (isAdmin) {
@@ -134,6 +136,7 @@ fun ProfileScreen(
 
             item {
                 ConfigSection(
+                    isAdmin = isAdmin,
                     isDarkMode = isDarkMode,
                     onThemeToggle = onThemeToggle,
                     aiLanguageOption = aiLanguageOption,
@@ -309,6 +312,7 @@ fun StatItem(label: String, value: String) {
 
 @Composable
 fun ConfigSection(
+    isAdmin: Boolean = false,
     isDarkMode: Boolean,
     onThemeToggle: (Boolean) -> Unit,
     aiLanguageOption: AiLanguageOption,
@@ -339,18 +343,20 @@ fun ConfigSection(
             border = if (isThemeDark) BorderStroke(1.dp, Color(0xFF394867)) else null
         ) {
             Column {
-                ConfigItem(
-                    label = stringResource(R.string.profile_manage_subjects),
-                    onClick = onManageSubjects,
-                    trailing = { Icon(Icons.Default.KeyboardArrowRight, null, tint = MaterialTheme.colorScheme.onSurfaceVariant, modifier = Modifier.size(14.dp)) }
-                )
-                HorizontalDivider(color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.08f), thickness = 0.5.dp)
-                ConfigItem(
-                    label = stringResource(R.string.profile_study_history),
-                    onClick = onStudyHistory,
-                    trailing = { Icon(Icons.Default.KeyboardArrowRight, null, tint = MaterialTheme.colorScheme.onSurfaceVariant, modifier = Modifier.size(14.dp)) }
-                )
-                HorizontalDivider(color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.08f), thickness = 0.5.dp)
+                if (!isAdmin) {
+                    ConfigItem(
+                        label = stringResource(R.string.profile_manage_subjects),
+                        onClick = onManageSubjects,
+                        trailing = { Icon(Icons.Default.KeyboardArrowRight, null, tint = MaterialTheme.colorScheme.onSurfaceVariant, modifier = Modifier.size(14.dp)) }
+                    )
+                    HorizontalDivider(color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.08f), thickness = 0.5.dp)
+                    ConfigItem(
+                        label = stringResource(R.string.profile_study_history),
+                        onClick = onStudyHistory,
+                        trailing = { Icon(Icons.Default.KeyboardArrowRight, null, tint = MaterialTheme.colorScheme.onSurfaceVariant, modifier = Modifier.size(14.dp)) }
+                    )
+                    HorizontalDivider(color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.08f), thickness = 0.5.dp)
+                }
                 ConfigItem(
                     label = stringResource(R.string.profile_appearance),
                     trailing = { AppearanceToggle(isDarkMode, onThemeToggle) }

@@ -12,6 +12,7 @@ interface CourseDataSource {
     // ---------- Solo ADMIN ----------
     suspend fun createCourse(request: CourseRequestDto): CourseDto
     suspend fun updateCourse(id: Long, request: CourseRequestDto): CourseDto
+    suspend fun deleteCourse(id: Long)
     suspend fun getCourseEnrollments(courseId: Long): List<EnrollmentDto>
     suspend fun deleteEnrollment(enrollmentId: Long)
 }

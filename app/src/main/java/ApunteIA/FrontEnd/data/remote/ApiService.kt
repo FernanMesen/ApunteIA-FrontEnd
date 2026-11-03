@@ -61,6 +61,9 @@ interface ApiService {
     @PUT("courses/{id}")
     suspend fun updateCourse(@Path("id") id: Long, @Body request: CourseRequestDto): CourseDto
 
+    @DELETE("courses/{id}")
+    suspend fun deleteCourse(@Path("id") id: Long): Response<Unit>
+
     /** Estudiantes inscritos en un curso (incluye nombre y correo). */
     @GET("enrollments")
     suspend fun getCourseEnrollments(@Query("courseId") courseId: Long): List<EnrollmentDto>

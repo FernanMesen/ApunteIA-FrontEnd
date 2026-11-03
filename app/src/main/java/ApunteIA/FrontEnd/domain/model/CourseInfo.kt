@@ -21,5 +21,6 @@ data class CourseStudent(
     val enrollmentId: Long,
     val userId: Long,
     val fullName: String,
-    val email: String
+    val email: String,
+    val averageGrade: Double? = null
 )
