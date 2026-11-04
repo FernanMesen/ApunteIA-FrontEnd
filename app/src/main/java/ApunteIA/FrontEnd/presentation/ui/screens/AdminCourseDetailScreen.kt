@@ -166,6 +166,7 @@ fun AdminCourseDetailScreen(
     studentToRemove?.let { student ->
         AlertDialog(
             onDismissRequest = { studentToRemove = null },
+            containerColor = lightOr(AlertDialogDefaults.containerColor, DarkThemeCard),
             title = {
                 Text(
                     text = stringResource(R.string.admin_remove_student_title, student.fullName.ifBlank { student.email }),
@@ -183,7 +184,7 @@ fun AdminCourseDetailScreen(
             },
             dismissButton = {
                 TextButton(onClick = { studentToRemove = null }) {
-                    Text(stringResource(R.string.cancel))
+                    Text(stringResource(R.string.cancel), color = lightOr(MaterialTheme.colorScheme.primary, DarkAccent))
                 }
             }
         )
@@ -192,6 +193,7 @@ fun AdminCourseDetailScreen(
     if (showDeleteCourseDialog) {
         AlertDialog(
             onDismissRequest = { showDeleteCourseDialog = false },
+            containerColor = lightOr(AlertDialogDefaults.containerColor, DarkThemeCard),
             title = {
                 Text(
                     text = stringResource(R.string.admin_delete_course_title, uiState.code.ifBlank { uiState.name }),
@@ -212,7 +214,7 @@ fun AdminCourseDetailScreen(
             },
             dismissButton = {
                 TextButton(onClick = { showDeleteCourseDialog = false }) {
-                    Text(stringResource(R.string.cancel))
+                    Text(stringResource(R.string.cancel), color = lightOr(MaterialTheme.colorScheme.primary, DarkAccent))
                 }
             }
         )
@@ -507,6 +509,7 @@ private fun StudentDetailDialog(
 
     AlertDialog(
         onDismissRequest = onDismiss,
+        containerColor = lightOr(AlertDialogDefaults.containerColor, DarkThemeCard),
         title = {
             Column {
                 Text(
@@ -651,7 +654,11 @@ private fun StudentDetailDialog(
         },
         confirmButton = {
             TextButton(onClick = onDismiss) {
-                Text(stringResource(R.string.close), fontWeight = FontWeight.Bold)
+                Text(
+                    stringResource(R.string.close),
+                    fontWeight = FontWeight.Bold,
+                    color = lightOr(MaterialTheme.colorScheme.primary, DarkAccent)
+                )
             }
         },
         shape = RoundedCornerShape(24.dp)

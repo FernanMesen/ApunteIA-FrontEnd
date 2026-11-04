@@ -11,6 +11,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import ApunteIA.FrontEnd.R
+import ApunteIA.FrontEnd.presentation.ui.theme.lightOr
 
 @Composable
 fun SubjectsScreen(
@@ -47,7 +48,8 @@ fun SubjectsScreen(
 
         Text(
             text = stringResource(R.string.subjects_studied_title),
-            color = MaterialTheme.colorScheme.primary,
+            // En oscuro el primary (SpaceCadet) casi no se ve sobre el fondo.
+            color = lightOr(MaterialTheme.colorScheme.primary, MaterialTheme.colorScheme.onBackground),
             fontSize = 22.sp,
             fontWeight = FontWeight.Bold
         )

@@ -18,6 +18,7 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import ApunteIA.FrontEnd.R
@@ -42,7 +43,8 @@ fun QuizScreen(
     val showResults by viewModel.showResults.collectAsState()
     val userAnswers = viewModel.userAnswers
 
-    val isDark = MaterialTheme.colorScheme.background != BackgroundBeige
+    // Patrón del proyecto (antes comparaba el fondo con BackgroundBeige).
+    val isDark = isDarkTheme()
 
     if (uiState.isLoading || uiState.isSubmitting) {
         Box(
@@ -142,7 +144,8 @@ fun QuizScreen(
                                     else -> stringResource(R.string.next)
                                 },
                                 color = MaterialTheme.colorScheme.onPrimary,
-                                fontWeight = FontWeight.Bold
+                                fontWeight = FontWeight.Bold,
+                                maxLines = 1
                             )
                         }
                     }
@@ -170,7 +173,7 @@ fun QuizScreen(
                         Icon(
                             Icons.Default.Close,
                             contentDescription = stringResource(R.string.close),
-                            tint = MaterialTheme.colorScheme.primary
+                            tint = lightOr(MaterialTheme.colorScheme.primary, MaterialTheme.colorScheme.onSurface)
                         )
                     }
 
@@ -182,7 +185,8 @@ fun QuizScreen(
                             .weight(1f)
                             .height(8.dp)
                             .clip(RoundedCornerShape(4.dp)),
-                        color = MaterialTheme.colorScheme.primary,
+                        // En oscuro el primary casi no se distingue del track.
+                        color = lightOr(MaterialTheme.colorScheme.primary, DarkAccent),
                         trackColor = MaterialTheme.colorScheme.surfaceVariant
                     )
 
@@ -283,13 +287,17 @@ fun ResultsScreen(
                                 containerColor = if (isDarkMode) Color(0xFF3B2E2E) else LightRed
                             ),
                             shape = RoundedCornerShape(24.dp),
-                            contentPadding = PaddingValues(vertical = 12.dp)
+                            contentPadding = PaddingValues(horizontal = 8.dp, vertical = 12.dp)
                         ) {
+                            // Media pantalla de ancho: si no cabe, 2 líneas centradas.
                             Text(
                                 text = stringResource(R.string.repeat_incorrects, incorrectCount),
                                 color = if (isDarkMode) Color(0xFFF44336) else StatusRed,
                                 fontWeight = FontWeight.Bold,
-                                fontSize = 14.sp
+                                fontSize = 14.sp,
+                                textAlign = androidx.compose.ui.text.style.TextAlign.Center,
+                                maxLines = 2,
+                                overflow = TextOverflow.Ellipsis
                             )
                         }
                     }
@@ -306,23 +314,26 @@ fun ResultsScreen(
                             1.dp,
                             MaterialTheme.colorScheme.onSurface.copy(alpha = 0.1f)
                         ),
-                        contentPadding = PaddingValues(vertical = 12.dp)
+                        contentPadding = PaddingValues(horizontal = 8.dp, vertical = 12.dp)
                     ) {
                         Text(
                             text = stringResource(R.string.scan_more_notes),
                             color = MaterialTheme.colorScheme.onSurface,
                             fontWeight = FontWeight.Medium,
-                            fontSize = 14.sp
+                            fontSize = 14.sp,
+                            textAlign = androidx.compose.ui.text.style.TextAlign.Center,
+                            maxLines = 2,
+                            overflow = TextOverflow.Ellipsis
                         )
                     }
                 }
 
                 Spacer(modifier = Modifier.height(16.dp))
 
-                // Back to Start Button
+                // Back to Start Button (widthIn: crece si la traducción es más larga, en vez de cortarse)
                 Button(
                     onClick = onNavigateToMain,
-                    modifier = Modifier.width(200.dp),
+                    modifier = Modifier.widthIn(min = 200.dp),
                     colors = ButtonDefaults.buttonColors(
                         containerColor = MaterialTheme.colorScheme.primary
                     ),
@@ -352,7 +363,7 @@ fun ResultsScreen(
                     text = stringResource(R.string.quiz_completed_title),
                     fontSize = 24.sp,
                     fontWeight = FontWeight.Bold,
-                    color = MaterialTheme.colorScheme.primary,
+                    color = lightOr(MaterialTheme.colorScheme.primary, MaterialTheme.colorScheme.onBackground),
                     modifier = Modifier.fillMaxWidth(),
                     textAlign = androidx.compose.ui.text.style.TextAlign.Center
                 )
@@ -378,7 +389,7 @@ fun ResultsScreen(
                             text = formattedScore,
                             fontSize = 48.sp,
                             fontWeight = FontWeight.Bold,
-                            color = MaterialTheme.colorScheme.primary
+                            color = lightOr(MaterialTheme.colorScheme.primary, DarkAccent)
                         )
                         Text(
                             text = stringResource(R.string.score_correct_format, correctCount, questions.size),
@@ -393,7 +404,7 @@ fun ResultsScreen(
                     text = stringResource(R.string.review_header),
                     fontSize = 18.sp,
                     fontWeight = FontWeight.Bold,
-                    color = MaterialTheme.colorScheme.primary
+                    color = lightOr(MaterialTheme.colorScheme.primary, MaterialTheme.colorScheme.onBackground)
                 )
                 Spacer(modifier = Modifier.height(16.dp))
             }
@@ -506,7 +517,7 @@ fun QuizOptionCard(
     }
 
     val borderColor = when {
-        !isAnswered && isSelected -> MaterialTheme.colorScheme.primary
+        !isAnswered && isSelected -> lightOr(MaterialTheme.colorScheme.primary, DarkAccent)
         isAnswered && isCorrect -> if (isDark) LimeGreen else DarkGreen
         isAnswered && isSelected && !isCorrect -> if (isDark) Color(0xFFFF8A80) else StatusRed
         else -> MaterialTheme.colorScheme.onSurface.copy(alpha = 0.1f)

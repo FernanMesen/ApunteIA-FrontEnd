@@ -26,12 +26,18 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.Dialog
 import androidx.core.content.ContextCompat
 import kotlinx.coroutines.launch
 import ApunteIA.FrontEnd.R
+import ApunteIA.FrontEnd.presentation.ui.theme.DarkButton
+import ApunteIA.FrontEnd.presentation.ui.theme.DarkDisabled
+import ApunteIA.FrontEnd.presentation.ui.theme.DarkSoftFill
+import ApunteIA.FrontEnd.presentation.ui.theme.DarkThemeCard
+import ApunteIA.FrontEnd.presentation.ui.theme.lightOr
 
 enum class PermissionAccessMode {
     NOT_CONFIGURED,
@@ -92,7 +98,7 @@ fun PermissionsScreen(
 
     Scaffold(
         snackbarHost = { SnackbarHost(snackbarHostState) },
-        containerColor = ApuntesBackground
+        containerColor = onboardingBackground()
     ) { innerPadding ->
         Column(
             modifier = Modifier
@@ -109,7 +115,7 @@ fun PermissionsScreen(
 
             Text(
                 text = stringResource(R.string.finish_setup_title),
-                color = ApuntesGreen,
+                color = onboardingTitle(),
                 fontSize = 22.sp,
                 fontWeight = FontWeight.Bold
             )
@@ -207,16 +213,20 @@ private fun PermissionCard(
     accessMode: PermissionAccessMode,
     onClick: () -> Unit
 ) {
+    // Claro: los colores de siempre. Oscuro: mismos tonos que usa el resto de la app.
+    val accent = onboardingAccent()
+    val deniedColor = lightOr(Color(0xFFD32F2F), Color(0xFFFF8A80))
+
     val borderColor = when (accessMode) {
-        PermissionAccessMode.FULL_ACCESS, PermissionAccessMode.WHILE_USING_APP -> ApuntesGreen
-        PermissionAccessMode.DENIED -> Color(0xFFD32F2F)
-        PermissionAccessMode.NOT_CONFIGURED -> ApuntesBorder
+        PermissionAccessMode.FULL_ACCESS, PermissionAccessMode.WHILE_USING_APP -> accent
+        PermissionAccessMode.DENIED -> deniedColor
+        PermissionAccessMode.NOT_CONFIGURED -> onboardingBorder()
     }
 
     val cardBg = when (accessMode) {
-        PermissionAccessMode.FULL_ACCESS, PermissionAccessMode.WHILE_USING_APP -> Color(0xFFF2F7F4)
-        PermissionAccessMode.DENIED -> Color(0xFFFFEBEE)
-        PermissionAccessMode.NOT_CONFIGURED -> Color.White
+        PermissionAccessMode.FULL_ACCESS, PermissionAccessMode.WHILE_USING_APP -> lightOr(Color(0xFFF2F7F4), Color(0xFF2E3B3B))
+        PermissionAccessMode.DENIED -> lightOr(Color(0xFFFFEBEE), Color(0xFF3B2525))
+        PermissionAccessMode.NOT_CONFIGURED -> onboardingCard()
     }
 
     Column(
@@ -239,16 +249,18 @@ private fun PermissionCard(
         ) {
             Text(
                 text = title,
-                color = ApuntesGreen,
+                color = onboardingTitle(),
                 fontSize = 15.sp,
-                fontWeight = FontWeight.SemiBold
+                fontWeight = FontWeight.SemiBold,
+                // weight: un título largo baja de línea en vez de empujar el ícono fuera.
+                modifier = Modifier.weight(1f).padding(end = 8.dp)
             )
 
             if (accessMode == PermissionAccessMode.FULL_ACCESS || accessMode == PermissionAccessMode.WHILE_USING_APP) {
                 Icon(
                     imageVector = Icons.Default.CheckCircle,
                     contentDescription = null,
-                    tint = ApuntesGreen,
+                    tint = accent,
                     modifier = Modifier.size(20.dp)
                 )
             }
@@ -258,7 +270,7 @@ private fun PermissionCard(
 
         Text(
             text = description,
-            color = ApuntesGray,
+            color = onboardingMuted(),
             fontSize = 13.sp
         )
 
@@ -270,7 +282,7 @@ private fun PermissionCard(
                 PermissionAccessMode.NOT_CONFIGURED -> null
             }
 
-            val statusColor = if (accessMode == PermissionAccessMode.DENIED) Color(0xFFD32F2F) else ApuntesGreen
+            val statusColor = if (accessMode == PermissionAccessMode.DENIED) deniedColor else accent
 
             statusTextRes?.let { resId ->
                 Text(
@@ -286,9 +298,9 @@ private fun PermissionCard(
         Spacer(modifier = Modifier.height(14.dp))
 
         val buttonContainerColor = when (accessMode) {
-            PermissionAccessMode.FULL_ACCESS, PermissionAccessMode.WHILE_USING_APP -> ApuntesGreen
-            PermissionAccessMode.DENIED -> Color(0xFF757575)
-            PermissionAccessMode.NOT_CONFIGURED -> ApuntesGreen
+            PermissionAccessMode.FULL_ACCESS, PermissionAccessMode.WHILE_USING_APP -> lightOr(ApuntesGreen, DarkButton)
+            PermissionAccessMode.DENIED -> lightOr(Color(0xFF757575), DarkDisabled)
+            PermissionAccessMode.NOT_CONFIGURED -> lightOr(ApuntesGreen, DarkButton)
         }
 
         val buttonText = when (accessMode) {
@@ -308,7 +320,9 @@ private fun PermissionCard(
             Text(
                 text = buttonText,
                 color = Color.White,
-                fontWeight = FontWeight.Bold
+                fontWeight = FontWeight.Bold,
+                maxLines = 1,
+                overflow = TextOverflow.Ellipsis
             )
         }
     }
@@ -324,7 +338,8 @@ private fun PermissionRequestDialog(
     Dialog(onDismissRequest = onDismissRequest) {
         Surface(
             shape = RoundedCornerShape(24.dp),
-            color = Color.White,
+            // Oscuro: mismo fondo que los diálogos del Perfil.
+            color = lightOr(Color.White, DarkThemeCard),
             tonalElevation = 8.dp,
             modifier = Modifier.fillMaxWidth()
         ) {
@@ -336,13 +351,13 @@ private fun PermissionRequestDialog(
                     modifier = Modifier
                         .size(56.dp)
                         .clip(CircleShape)
-                        .background(ApuntesGreen.copy(alpha = 0.1f)),
+                        .background(lightOr(ApuntesGreen.copy(alpha = 0.1f), DarkSoftFill)),
                     contentAlignment = Alignment.Center
                 ) {
                     Icon(
                         imageVector = if (target == PermissionTarget.CAMERA) Icons.Default.CameraAlt else Icons.Default.PhotoLibrary,
                         contentDescription = null,
-                        tint = ApuntesGreen,
+                        tint = onboardingAccent(),
                         modifier = Modifier.size(28.dp)
                     )
                 }
@@ -351,7 +366,7 @@ private fun PermissionRequestDialog(
 
                 Text(
                     text = title,
-                    color = ApuntesGreen,
+                    color = onboardingTitle(),
                     fontSize = 17.sp,
                     fontWeight = FontWeight.Bold,
                     textAlign = TextAlign.Center
@@ -362,7 +377,7 @@ private fun PermissionRequestDialog(
                 DialogOptionButton(
                     text = stringResource(R.string.permission_full_access),
                     onClick = { onSelectOption(PermissionAccessMode.FULL_ACCESS) },
-                    containerColor = ApuntesGreen,
+                    containerColor = lightOr(ApuntesGreen, DarkButton),
                     contentColor = Color.White
                 )
 
@@ -371,8 +386,8 @@ private fun PermissionRequestDialog(
                 DialogOptionButton(
                     text = stringResource(R.string.permission_while_using_app),
                     onClick = { onSelectOption(PermissionAccessMode.WHILE_USING_APP) },
-                    containerColor = Color(0xFFE8ECE9),
-                    contentColor = ApuntesGreen
+                    containerColor = lightOr(Color(0xFFE8ECE9), DarkSoftFill),
+                    contentColor = onboardingTitle()
                 )
 
                 Spacer(modifier = Modifier.height(10.dp))
@@ -381,7 +396,7 @@ private fun PermissionRequestDialog(
                     text = stringResource(R.string.permission_deny),
                     onClick = { onSelectOption(PermissionAccessMode.DENIED) },
                     containerColor = Color.Transparent,
-                    contentColor = Color(0xFFD32F2F)
+                    contentColor = lightOr(Color(0xFFD32F2F), Color(0xFFFF8A80))
                 )
             }
         }
@@ -409,7 +424,9 @@ private fun DialogOptionButton(
         Text(
             text = text,
             fontSize = 14.sp,
-            fontWeight = FontWeight.SemiBold
+            fontWeight = FontWeight.SemiBold,
+            maxLines = 1,
+            overflow = TextOverflow.Ellipsis
         )
     }
 }

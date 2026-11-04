@@ -29,10 +29,8 @@ import androidx.compose.ui.unit.sp
 import ApunteIA.FrontEnd.R
 import ApunteIA.FrontEnd.presentation.model.ProcessingError
 import ApunteIA.FrontEnd.presentation.model.ProcessingStep
-import ApunteIA.FrontEnd.presentation.ui.theme.BackgroundBeige
-import ApunteIA.FrontEnd.presentation.ui.theme.DarkGreen
 import ApunteIA.FrontEnd.presentation.ui.theme.StatusRed
-import ApunteIA.FrontEnd.presentation.ui.theme.TextGray
+import ApunteIA.FrontEnd.presentation.ui.theme.lightOr
 import ApunteIA.FrontEnd.presentation.viewmodel.ScanViewModel
 
 @Composable
@@ -54,7 +52,7 @@ fun ScanProcessingScreen(
     Column(
         modifier = Modifier
             .fillMaxSize()
-            .background(BackgroundBeige)
+            .background(scanBackground())
             .padding(horizontal = 20.dp)
     ) {
         ScanTopBar(onClose = onClose)
@@ -77,7 +75,7 @@ fun ScanProcessingScreen(
 @Composable
 private fun ProcessingChecklist(completedSteps: Int) {
     Column(horizontalAlignment = Alignment.CenterHorizontally) {
-        CircularProgressIndicator(color = DarkGreen, strokeWidth = 3.dp, modifier = Modifier.size(56.dp))
+        CircularProgressIndicator(color = scanAccent(), strokeWidth = 3.dp, modifier = Modifier.size(56.dp))
 
         Spacer(modifier = Modifier.height(40.dp))
 
@@ -94,7 +92,7 @@ private fun ProcessingChecklist(completedSteps: Int) {
 
         Text(
             text = stringResource(R.string.ai_processing_notice),
-            color = TextGray,
+            color = scanMuted(),
             fontSize = 12.sp,
             textAlign = TextAlign.Center
         )
@@ -108,7 +106,7 @@ private fun StepRow(label: String, done: Boolean) {
             Box(
                 modifier = Modifier
                     .size(22.dp)
-                    .background(DarkGreen, CircleShape),
+                    .background(scanButton(), CircleShape),
                 contentAlignment = Alignment.Center
             ) {
                 Icon(Icons.Default.Check, contentDescription = null, tint = Color.White, modifier = Modifier.size(14.dp))
@@ -118,13 +116,13 @@ private fun StepRow(label: String, done: Boolean) {
                 modifier = Modifier
                     .size(22.dp)
                     .background(Color.Transparent, CircleShape)
-                    .border(1.5.dp, Color(0xFFD9D9D9), CircleShape)
+                    .border(1.5.dp, scanBorder(Color(0xFFD9D9D9)), CircleShape)
             )
         }
         Spacer(modifier = Modifier.width(12.dp))
         Text(
             text = label,
-            color = if (done) DarkGreen else TextGray,
+            color = if (done) scanText() else scanMuted(),
             fontSize = 15.sp,
             fontWeight = if (done) FontWeight.Medium else FontWeight.Normal
         )
@@ -144,7 +142,7 @@ private fun ProcessingErrorContent(
         Box(
             modifier = Modifier
                 .size(64.dp)
-                .background(Color(0xFFFDECEC), CircleShape),
+                .background(lightOr(Color(0xFFFDECEC), Color(0xFF3B2525)), CircleShape),
             contentAlignment = Alignment.Center
         ) {
             Icon(Icons.Default.ErrorOutline, contentDescription = null, tint = StatusRed, modifier = Modifier.size(32.dp))
@@ -154,16 +152,17 @@ private fun ProcessingErrorContent(
 
         Text(
             text = error.title,
-            color = DarkGreen,
+            color = scanText(),
             fontSize = 18.sp,
-            fontWeight = FontWeight.Bold
+            fontWeight = FontWeight.Bold,
+            textAlign = TextAlign.Center
         )
 
         Spacer(modifier = Modifier.height(8.dp))
 
         Text(
             text = error.message,
-            color = TextGray,
+            color = scanMuted(),
             fontSize = 14.sp,
             textAlign = TextAlign.Center,
             lineHeight = 20.sp
@@ -175,7 +174,7 @@ private fun ProcessingErrorContent(
             onClick = onRetry,
             modifier = Modifier.fillMaxWidth().height(52.dp),
             shape = RoundedCornerShape(26.dp),
-            colors = ButtonDefaults.buttonColors(containerColor = DarkGreen)
+            colors = ButtonDefaults.buttonColors(containerColor = scanButton())
         ) {
             Text(stringResource(R.string.retry), color = Color.White, fontWeight = FontWeight.Bold)
         }
@@ -184,7 +183,7 @@ private fun ProcessingErrorContent(
 
         Text(
             text = stringResource(R.string.cancel),
-            color = TextGray,
+            color = scanMuted(),
             fontSize = 14.sp,
             fontWeight = FontWeight.Medium,
             modifier = Modifier.clickable { onCancel() }
