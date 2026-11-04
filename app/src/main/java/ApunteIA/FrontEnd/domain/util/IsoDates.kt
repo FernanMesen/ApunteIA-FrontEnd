@@ -3,6 +3,7 @@ package ApunteIA.FrontEnd.domain.util
 import android.content.Context
 import ApunteIA.FrontEnd.R
 import ApunteIA.FrontEnd.util.LanguageManager
+import ApunteIA.FrontEnd.util.L10n
 import java.text.DateFormat
 import java.text.SimpleDateFormat
 import java.util.Calendar
@@ -62,11 +63,11 @@ object IsoDates {
 
         if (context == null) {
             return when {
-                minutes < 1 -> "Justo ahora"
-                minutes < 60 -> "Hace $minutes min"
-                days == 0 -> "Hace $hours h"
-                days == 1 -> "Ayer"
-                days < 7 -> "Hace $days días"
+                minutes < 1 -> L10n.getString(R.string.time_just_now)
+                minutes < 60 -> L10n.getString(R.string.time_minutes_ago, minutes.toInt())
+                days == 0 -> L10n.getString(R.string.time_hours_ago, hours.toInt())
+                days == 1 -> L10n.getString(R.string.time_yesterday)
+                days < 7 -> L10n.getString(R.string.time_days_ago, days)
                 else -> shortDate(iso)
             }
         }

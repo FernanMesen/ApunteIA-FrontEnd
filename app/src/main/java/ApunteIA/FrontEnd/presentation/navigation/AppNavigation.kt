@@ -16,9 +16,12 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.navigation
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
+import ApunteIA.FrontEnd.R
 import ApunteIA.FrontEnd.presentation.ui.components.LocalCurrentUser
 import ApunteIA.FrontEnd.presentation.ui.components.RefreshOnResume
 import ApunteIA.FrontEnd.presentation.ui.screens.*
+import ApunteIA.FrontEnd.presentation.viewmodel.AdminCourseDetailViewModel
+import ApunteIA.FrontEnd.presentation.viewmodel.AdminCoursesViewModel
 import ApunteIA.FrontEnd.presentation.viewmodel.AuditViewModel
 import ApunteIA.FrontEnd.presentation.viewmodel.JoinSubjectViewModel
 import ApunteIA.FrontEnd.presentation.viewmodel.LoginViewModel
@@ -64,7 +67,7 @@ fun AppNavigation(
     LaunchedEffect(Unit) {
         sessionViewModel.sessionExpired.collect {
             sessionViewModel.refreshUser()
-            Toast.makeText(context, "Tu sesión expiró. Inicia sesión de nuevo.", Toast.LENGTH_LONG).show()
+            Toast.makeText(context, context.getString(R.string.api_error_session), Toast.LENGTH_LONG).show()
             navController.resetTo(Routes.LOGIN)
         }
     }
@@ -134,12 +137,13 @@ fun AppNavigation(
             composable(Routes.LANGUAGE) {
                 LanguageScreen(
                     onBack = { navController.popBackStack() },
-                    onNext = { navController.navigate(Routes.PERMISSIONS) },
-                    isFromProfile = false
+                    onNext = { navController.navigate(Routes.PERMISSIONS) }
                 )
             }
 
-            composable(Routes.PROFILE_LANGUAGE) {
+            // Idioma desde el Perfil: el cambio se aplica al tocar (la Activity se recrea y el
+            // NavController restaura la pila en esta misma pantalla); OK/atrás vuelven al Perfil.
+            composable(Routes.LANGUAGE_SETTINGS) {
                 LanguageScreen(
                     onBack = { navController.popBackStack() },
                     onNext = { navController.popBackStack() },
@@ -167,6 +171,7 @@ fun AppNavigation(
                     onNotas = { navController.goToTab(Routes.NOTES) },
                     onAuditoria = { navController.goToTab(Routes.AUDITORIA) },
                     onReforzar = { navController.goToTab(Routes.REFORZAR) },
+                    onCursos = { navController.navigate(Routes.ADMIN_COURSES) },
                     onCameraClick = { navController.navigate(Routes.SCAN_GRAPH) },
                     onProfileClick = { navController.navigate(Routes.PROFILE) }
                 )
@@ -197,9 +202,11 @@ fun AppNavigation(
                     onPrivacy = { navController.navigate(Routes.PRIVACY) },
                     onExportData = { navController.navigate(Routes.EXPORT_DATA) },
                     onChangePassword = { navController.navigate(Routes.CHANGE_PASSWORD) },
-                    onLanguage = { navController.navigate(Routes.PROFILE_LANGUAGE) },
+                    onLanguage = { navController.navigate(Routes.LANGUAGE_SETTINGS) },
                     notesCount = statsState.userStats?.notesCount,
-                    quizzesCount = statsState.userStats?.quizzesDoneCount
+                    quizzesCount = statsState.userStats?.quizzesDoneCount,
+                    isAdmin = currentUser?.isAdmin == true,
+                    onAdminCourses = { navController.navigate(Routes.ADMIN_COURSES) }
                 )
             }
 
@@ -208,48 +215,91 @@ fun AppNavigation(
             // =========================
 
             composable(Routes.MANAGE_SUBJECTS) {
-                val manageSubjectsViewModel: ManageSubjectsViewModel = hiltViewModel()
-                RefreshOnResume { manageSubjectsViewModel.refresh() }
-                ManageSubjectsScreen(
-                    viewModel = manageSubjectsViewModel,
-                    onBack = { navController.popBackStack() },
-                    onJoinCourse = { navController.navigate(Routes.JOIN_SUBJECT) }
-                )
+                if (currentUser?.isAdmin == true) {
+                    LaunchedEffect(Unit) { navController.resetTo(Routes.MAIN) }
+                } else {
+                    val manageSubjectsViewModel: ManageSubjectsViewModel = hiltViewModel()
+                    RefreshOnResume { manageSubjectsViewModel.refresh() }
+                    ManageSubjectsScreen(
+                        viewModel = manageSubjectsViewModel,
+                        onBack = { navController.popBackStack() },
+                        onJoinCourse = { navController.navigate(Routes.JOIN_SUBJECT) }
+                    )
+                }
             }
 
             composable(Routes.JOIN_SUBJECT) {
-                val joinSubjectViewModel: JoinSubjectViewModel = hiltViewModel()
-                JoinSubjectScreen(
-                    viewModel = joinSubjectViewModel,
-                    onBack = { navController.popBackStack() },
-                    onJoinSuccess = {
-                        Toast.makeText(context, "¡Te uniste a la materia!", Toast.LENGTH_SHORT).show()
-                        navController.popBackStack()
-                    }
-                )
+                if (currentUser?.isAdmin == true) {
+                    LaunchedEffect(Unit) { navController.resetTo(Routes.MAIN) }
+                } else {
+                    val joinSubjectViewModel: JoinSubjectViewModel = hiltViewModel()
+                    JoinSubjectScreen(
+                        viewModel = joinSubjectViewModel,
+                        onBack = { navController.popBackStack() },
+                        onJoinSuccess = {
+                            Toast.makeText(context, context.getString(R.string.joined_subject), Toast.LENGTH_SHORT).show()
+                            navController.popBackStack()
+                        }
+                    )
+                }
+            }
+
+            // =========================
+            // ADMINISTRACIÓN (solo ADMIN; el backend también lo valida)
+            // =========================
+
+            composable(Routes.ADMIN_COURSES) {
+                if (currentUser?.isAdmin != true) {
+                    LaunchedEffect(Unit) { navController.resetTo(Routes.MAIN) }
+                } else {
+                    val adminCoursesViewModel: AdminCoursesViewModel = hiltViewModel()
+                    RefreshOnResume { adminCoursesViewModel.load() }
+                    AdminCoursesScreen(
+                        viewModel = adminCoursesViewModel,
+                        onBack = { navController.popBackStack() },
+                        onOpenCourse = { courseId -> navController.navigate(Routes.adminCourse(courseId)) },
+                        onNewCourse = { navController.navigate(Routes.adminCourse(0L)) }
+                    )
+                }
+            }
+
+            composable(
+                route = Routes.ADMIN_COURSE_PATTERN,
+                arguments = listOf(navArgument(AdminCourseDetailViewModel.COURSE_ID_ARG) { type = NavType.LongType })
+            ) {
+                if (currentUser?.isAdmin != true) {
+                    LaunchedEffect(Unit) { navController.resetTo(Routes.MAIN) }
+                } else {
+                    val adminCourseViewModel: AdminCourseDetailViewModel = hiltViewModel()
+                    AdminCourseDetailScreen(
+                        viewModel = adminCourseViewModel,
+                        onBack = { navController.popBackStack() }
+                    )
+                }
             }
 
             composable(Routes.STUDY_HISTORY) {
-                val studyHistoryViewModel: StudyHistoryViewModel = hiltViewModel()
-                StudyHistoryScreen(
-                    viewModel = studyHistoryViewModel,
-                    onBack = { navController.popBackStack() }
-                )
+                if (currentUser?.isAdmin == true) {
+                    LaunchedEffect(Unit) { navController.resetTo(Routes.MAIN) }
+                } else {
+                    val studyHistoryViewModel: StudyHistoryViewModel = hiltViewModel()
+                    StudyHistoryScreen(
+                        viewModel = studyHistoryViewModel,
+                        onBack = { navController.popBackStack() }
+                    )
+                }
             }
 
             composable(Routes.CAMERA_ACCESS) {
-                PermissionsScreen(
-                    onBack = { navController.popBackStack() },
-                    onFinish = { navController.popBackStack() }
-                )
+                PlaceholderScreen(title = "Acceso a cámara", onBack = { navController.popBackStack() })
             }
 
             composable(Routes.PRIVACY) {
-                PrivacyScreen(onBack = { navController.popBackStack() })
+                PlaceholderScreen(title = "Privacidad", onBack = { navController.popBackStack() })
             }
 
             composable(Routes.EXPORT_DATA) {
-                ExportDataScreen(onBack = { navController.popBackStack() })
+                PlaceholderScreen(title = "Exportar mis datos", onBack = { navController.popBackStack() })
             }
 
             composable(Routes.CHANGE_PASSWORD) {
@@ -271,31 +321,39 @@ fun AppNavigation(
             // =========================
 
             composable(Routes.NOTES) {
-                val notesViewModel: NotesViewModel = hiltViewModel()
-                RefreshOnResume { notesViewModel.refresh() }
-                NotesScreen(
-                    viewModel = notesViewModel,
-                    onInicio = { navController.goToTab(Routes.MAIN) },
-                    onNotas = {},
-                    onAuditoria = { navController.goToTab(Routes.AUDITORIA) },
-                    onReforzar = { navController.goToTab(Routes.REFORZAR) },
-                    onCameraClick = { navController.navigate(Routes.SCAN_GRAPH) },
-                    onNoteClick = { noteId -> navController.navigate(Routes.noteDetail(noteId.toLong())) },
-                    onProfileClick = { navController.navigate(Routes.PROFILE) }
-                )
+                if (currentUser?.isAdmin == true) {
+                    LaunchedEffect(Unit) { navController.resetTo(Routes.MAIN) }
+                } else {
+                    val notesViewModel: NotesViewModel = hiltViewModel()
+                    RefreshOnResume { notesViewModel.refresh() }
+                    NotesScreen(
+                        viewModel = notesViewModel,
+                        onInicio = { navController.goToTab(Routes.MAIN) },
+                        onNotas = {},
+                        onAuditoria = { navController.goToTab(Routes.AUDITORIA) },
+                        onReforzar = { navController.goToTab(Routes.REFORZAR) },
+                        onCameraClick = { navController.navigate(Routes.SCAN_GRAPH) },
+                        onNoteClick = { noteId -> navController.navigate(Routes.noteDetail(noteId.toLong())) },
+                        onProfileClick = { navController.navigate(Routes.PROFILE) }
+                    )
+                }
             }
 
             composable(
                 route = Routes.NOTE_DETAIL_PATTERN,
                 arguments = listOf(navArgument(NoteDetailViewModel.NOTE_ID_ARG) { type = NavType.LongType })
             ) {
-                val noteDetailViewModel: NoteDetailViewModel = hiltViewModel()
-                NoteDetailScreen(
-                    viewModel = noteDetailViewModel,
-                    onBack = { navController.popBackStack() },
-                    onOpenQuiz = { assessmentId -> navController.navigate(Routes.quiz(assessmentId)) },
-                    onDeleted = { navController.popBackStack() }
-                )
+                if (currentUser?.isAdmin == true) {
+                    LaunchedEffect(Unit) { navController.resetTo(Routes.MAIN) }
+                } else {
+                    val noteDetailViewModel: NoteDetailViewModel = hiltViewModel()
+                    NoteDetailScreen(
+                        viewModel = noteDetailViewModel,
+                        onBack = { navController.popBackStack() },
+                        onOpenQuiz = { assessmentId -> navController.navigate(Routes.quiz(assessmentId)) },
+                        onDeleted = { navController.popBackStack() }
+                    )
+                }
             }
 
             // =========================
@@ -303,34 +361,55 @@ fun AppNavigation(
             // =========================
 
             composable(Routes.AUDITORIA) {
-                val auditViewModel: AuditViewModel = hiltViewModel()
-                RefreshOnResume { auditViewModel.refresh() }
-                AuditScreen(
-                    viewModel = auditViewModel,
-                    onInicio = { navController.goToTab(Routes.MAIN) },
-                    onNotas = { navController.goToTab(Routes.NOTES) },
-                    onAuditoria = {},
-                    onReforzar = { navController.goToTab(Routes.REFORZAR) },
-                    onProfileClick = { navController.navigate(Routes.PROFILE) }
-                )
+                if (currentUser?.isAdmin == true) {
+                    LaunchedEffect(Unit) { navController.resetTo(Routes.MAIN) }
+                } else {
+                    val auditViewModel: AuditViewModel = hiltViewModel()
+                    RefreshOnResume { auditViewModel.refresh() }
+                    AuditScreen(
+                        viewModel = auditViewModel,
+                        onInicio = { navController.goToTab(Routes.MAIN) },
+                        onNotas = { navController.goToTab(Routes.NOTES) },
+                        onAuditoria = {},
+                        onReforzar = { navController.goToTab(Routes.REFORZAR) },
+                        onCameraClick = { navController.navigate(Routes.SCAN_GRAPH) },
+                        onPracticeClick = { topic ->
+                            // Topic.id es el id de la nota; negativo = materia sin apuntes → escanear.
+                            if (topic.id > 0) navController.navigate(Routes.reforzar(topic.id.toLong()))
+                            else navController.navigate(Routes.SCAN_GRAPH)
+                        },
+                        onProfileClick = { navController.navigate(Routes.PROFILE) }
+                    )
+                }
             }
 
             // =========================
             // REFORZAR
             // =========================
 
-            composable(Routes.REFORZAR) {
-                val reinforcementViewModel: ReinforcementViewModel = hiltViewModel()
-                ReinforcementScreen(
-                    viewModel = reinforcementViewModel,
-                    onInicio = { navController.goToTab(Routes.MAIN) },
-                    onNotas = { navController.goToTab(Routes.NOTES) },
-                    onAuditoria = { navController.goToTab(Routes.AUDITORIA) },
-                    onReforzar = {},
-                    onCameraClick = { navController.navigate(Routes.SCAN_GRAPH) },
-                    onStartQuiz = { assessmentId -> navController.navigate(Routes.quiz(assessmentId)) },
-                    onProfileClick = { navController.navigate(Routes.PROFILE) }
-                )
+            // "reforzar" (pestaña) y "reforzar?noteId=X" (desde Auditoría) caen en este destino.
+            composable(
+                route = Routes.REFORZAR_PATTERN,
+                arguments = listOf(navArgument(ReinforcementViewModel.NOTE_ID_ARG) {
+                    type = NavType.LongType
+                    defaultValue = -1L
+                })
+            ) {
+                if (currentUser?.isAdmin == true) {
+                    LaunchedEffect(Unit) { navController.resetTo(Routes.MAIN) }
+                } else {
+                    val reinforcementViewModel: ReinforcementViewModel = hiltViewModel()
+                    ReinforcementScreen(
+                        viewModel = reinforcementViewModel,
+                        onInicio = { navController.goToTab(Routes.MAIN) },
+                        onNotas = { navController.goToTab(Routes.NOTES) },
+                        onAuditoria = { navController.goToTab(Routes.AUDITORIA) },
+                        onReforzar = {},
+                        onCameraClick = { navController.navigate(Routes.SCAN_GRAPH) },
+                        onStartQuiz = { assessmentId -> navController.navigate(Routes.quiz(assessmentId)) },
+                        onProfileClick = { navController.navigate(Routes.PROFILE) }
+                    )
+                }
             }
 
             // =========================
@@ -341,17 +420,21 @@ fun AppNavigation(
                 route = Routes.QUIZ_PATTERN,
                 arguments = listOf(navArgument(QuizViewModel.ASSESSMENT_ID_ARG) { type = NavType.LongType })
             ) {
-                val quizViewModel: QuizViewModel = hiltViewModel()
-                QuizScreen(
-                    viewModel = quizViewModel,
-                    onClose = { navController.popBackStack() },
-                    onNavigateToMain = { navController.goToTab(Routes.MAIN) },
-                    onScanMore = {
-                        navController.navigate(Routes.SCAN_GRAPH) {
-                            popUpTo(Routes.QUIZ_PATTERN) { inclusive = true }
+                if (currentUser?.isAdmin == true) {
+                    LaunchedEffect(Unit) { navController.resetTo(Routes.MAIN) }
+                } else {
+                    val quizViewModel: QuizViewModel = hiltViewModel()
+                    QuizScreen(
+                        viewModel = quizViewModel,
+                        onClose = { navController.popBackStack() },
+                        onNavigateToMain = { navController.goToTab(Routes.MAIN) },
+                        onScanMore = {
+                            navController.navigate(Routes.SCAN_GRAPH) {
+                                popUpTo(Routes.QUIZ_PATTERN) { inclusive = true }
+                            }
                         }
-                    }
-                )
+                    )
+                }
             }
 
             // =========================
@@ -360,16 +443,20 @@ fun AppNavigation(
             navigation(startDestination = Routes.SCAN_NEW, route = Routes.SCAN_GRAPH) {
 
                 composable(Routes.SCAN_NEW) { backStackEntry ->
-                    val parentEntry = remember(backStackEntry) {
-                        navController.getBackStackEntry(Routes.SCAN_GRAPH)
-                    }
-                    val scanViewModel: ScanViewModel = hiltViewModel(parentEntry)
+                    if (currentUser?.isAdmin == true) {
+                        LaunchedEffect(Unit) { navController.resetTo(Routes.MAIN) }
+                    } else {
+                        val parentEntry = remember(backStackEntry) {
+                            navController.getBackStackEntry(Routes.SCAN_GRAPH)
+                        }
+                        val scanViewModel: ScanViewModel = hiltViewModel(parentEntry)
 
-                    ScanNewScreen(
-                        viewModel = scanViewModel,
-                        onClose = { navController.popBackStack(Routes.SCAN_GRAPH, true) },
-                        onContinue = { navController.navigate(Routes.SCAN_CAMERA) }
-                    )
+                        ScanNewScreen(
+                            viewModel = scanViewModel,
+                            onClose = { navController.popBackStack(Routes.SCAN_GRAPH, true) },
+                            onContinue = { navController.navigate(Routes.SCAN_CAMERA) }
+                        )
+                    }
                 }
 
                 composable(Routes.SCAN_CAMERA) { backStackEntry ->

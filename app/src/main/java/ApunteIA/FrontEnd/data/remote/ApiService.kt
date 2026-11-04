@@ -3,6 +3,7 @@ package ApunteIA.FrontEnd.data.remote
 import ApunteIA.FrontEnd.data.datasource.model.AssessmentDto
 import ApunteIA.FrontEnd.data.datasource.model.AttemptDto
 import ApunteIA.FrontEnd.data.datasource.model.CourseDto
+import ApunteIA.FrontEnd.data.datasource.model.CourseRequestDto
 import ApunteIA.FrontEnd.data.datasource.model.CreateNoteRequestDto
 import ApunteIA.FrontEnd.data.datasource.model.EnrollUserRequestDto
 import ApunteIA.FrontEnd.data.datasource.model.EnrollmentDto
@@ -51,6 +52,25 @@ interface ApiService {
 
     @GET("users/{id}/enrollments")
     suspend fun getUserEnrollments(@Path("id") userId: Long): List<EnrollmentDto>
+
+    // ---------- Administración de cursos (solo ADMIN) ----------
+
+    @POST("courses")
+    suspend fun createCourse(@Body request: CourseRequestDto): CourseDto
+
+    @PUT("courses/{id}")
+    suspend fun updateCourse(@Path("id") id: Long, @Body request: CourseRequestDto): CourseDto
+
+    @DELETE("courses/{id}")
+    suspend fun deleteCourse(@Path("id") id: Long): Response<Unit>
+
+    /** Estudiantes inscritos en un curso (incluye nombre y correo). */
+    @GET("enrollments")
+    suspend fun getCourseEnrollments(@Query("courseId") courseId: Long): List<EnrollmentDto>
+
+    /** Quita a un estudiante del curso (borra su inscripción). */
+    @DELETE("enrollments/{id}")
+    suspend fun deleteEnrollment(@Path("id") enrollmentId: Long): Response<Unit>
 
     @POST("courses/{id}/enrollments")
     suspend fun enroll(

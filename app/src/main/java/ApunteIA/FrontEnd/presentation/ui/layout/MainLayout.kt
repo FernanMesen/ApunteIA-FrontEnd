@@ -10,8 +10,11 @@ import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
+import ApunteIA.FrontEnd.R
 import ApunteIA.FrontEnd.presentation.ui.components.CustomBottomNavigation
+import ApunteIA.FrontEnd.presentation.ui.components.LocalCurrentUser
 import ApunteIA.FrontEnd.presentation.ui.theme.DarkGreen
 import ApunteIA.FrontEnd.presentation.ui.theme.SpaceCadet
 
@@ -27,8 +30,9 @@ fun MainLayout(
     onNotas: () -> Unit,
     onAuditoria: () -> Unit,
     onReforzar: () -> Unit,
+    onCursos: () -> Unit = {},
     onCameraClick: () -> Unit = {},
-    showFab: Boolean = true,
+    showFab: Boolean = LocalCurrentUser.current?.isAdmin != true,
     topBar: @Composable () -> Unit = {},
     snackbarHost: @Composable () -> Unit = {},
     content: @Composable (PaddingValues) -> Unit
@@ -44,7 +48,8 @@ fun MainLayout(
                 onInicio = onInicio,
                 onNotas = onNotas,
                 onAuditoria = onAuditoria,
-                onReforzar = onReforzar
+                onReforzar = onReforzar,
+                onCursos = onCursos
             )
         },
         floatingActionButton = {
@@ -58,7 +63,7 @@ fun MainLayout(
                         .size(64.dp)
                         .offset(y = 40.dp)
                 ) {
-                    Icon(Icons.Default.CameraAlt, contentDescription = "Camera", modifier = Modifier.size(32.dp))
+                    Icon(Icons.Default.CameraAlt, contentDescription = stringResource(R.string.new_scan_title), modifier = Modifier.size(32.dp))
                 }
             }
         },

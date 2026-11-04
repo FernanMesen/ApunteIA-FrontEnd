@@ -33,10 +33,10 @@ import androidx.compose.ui.unit.sp
 import coil.compose.AsyncImage
 import ApunteIA.FrontEnd.R
 import ApunteIA.FrontEnd.presentation.model.CapturedPage
-import ApunteIA.FrontEnd.presentation.ui.theme.BackgroundBeige
-import ApunteIA.FrontEnd.presentation.ui.theme.DarkGreen
+import androidx.compose.ui.text.style.TextOverflow
+import ApunteIA.FrontEnd.presentation.ui.theme.DarkDisabled
 import ApunteIA.FrontEnd.presentation.ui.theme.StatusRed
-import ApunteIA.FrontEnd.presentation.ui.theme.TextGray
+import ApunteIA.FrontEnd.presentation.ui.theme.lightOr
 import ApunteIA.FrontEnd.presentation.viewmodel.ScanViewModel
 
 @Composable
@@ -51,7 +51,7 @@ fun ScanPagesScreen(
     Column(
         modifier = Modifier
             .fillMaxSize()
-            .background(BackgroundBeige)
+            .background(scanBackground())
             .padding(horizontal = 20.dp)
     ) {
         ScanTopBar(
@@ -88,10 +88,15 @@ fun ScanPagesScreen(
                 .fillMaxWidth()
                 .height(52.dp),
             shape = RoundedCornerShape(26.dp),
-            border = BorderStroke(1.dp, Color(0xFFE0E0E0)),
-            colors = ButtonDefaults.outlinedButtonColors(contentColor = DarkGreen)
+            border = BorderStroke(1.dp, scanBorder()),
+            colors = ButtonDefaults.outlinedButtonColors(contentColor = scanText())
         ) {
-            Text(stringResource(R.string.add_more_pages), fontWeight = FontWeight.Medium)
+            Text(
+                stringResource(R.string.add_more_pages),
+                fontWeight = FontWeight.Medium,
+                maxLines = 1,
+                overflow = TextOverflow.Ellipsis
+            )
         }
 
         Spacer(modifier = Modifier.height(12.dp))
@@ -105,11 +110,18 @@ fun ScanPagesScreen(
                 .padding(bottom = 20.dp),
             shape = RoundedCornerShape(28.dp),
             colors = ButtonDefaults.buttonColors(
-                containerColor = DarkGreen,
-                disabledContainerColor = DarkGreen.copy(alpha = 0.4f)
+                containerColor = scanButton(),
+                disabledContainerColor = scanButton().copy(alpha = 0.4f)
             )
         ) {
-            Text(stringResource(R.string.confirm_and_process), color = Color.White, fontWeight = FontWeight.Bold, fontSize = 16.sp)
+            Text(
+                stringResource(R.string.confirm_and_process),
+                color = Color.White,
+                fontWeight = FontWeight.Bold,
+                fontSize = 16.sp,
+                maxLines = 1,
+                overflow = TextOverflow.Ellipsis
+            )
         }
     }
 }
@@ -128,8 +140,8 @@ private fun CapturedPageRow(
 
     Surface(
         shape = RoundedCornerShape(16.dp),
-        color = Color.White,
-        border = BorderStroke(1.dp, Color(0xFFF0F0F0))
+        color = scanCard(),
+        border = BorderStroke(1.dp, scanBorder(Color(0xFFF0F0F0)))
     ) {
         Row(
             modifier = Modifier.padding(12.dp),
@@ -138,8 +150,8 @@ private fun CapturedPageRow(
             Box(
                 modifier = Modifier
                     .size(64.dp)
-                    .background(Color.White, RoundedCornerShape(10.dp))
-                    .border(1.dp, Color(0xFFE0E0E0), RoundedCornerShape(10.dp))
+                    .background(scanCard(), RoundedCornerShape(10.dp))
+                    .border(1.dp, scanBorder(), RoundedCornerShape(10.dp))
             ) {
                 AsyncImage(
                     model = page.imageFile,
@@ -151,13 +163,13 @@ private fun CapturedPageRow(
                 )
                 Surface(
                     shape = CircleShape,
-                    color = Color(0xFFEDEDED),
+                    color = scanSoftFill(),
                     modifier = Modifier.padding(4.dp)
                 ) {
                     Text(
                         text = "$pageNumber",
                         modifier = Modifier.padding(horizontal = 6.dp, vertical = 2.dp),
-                        color = DarkGreen,
+                        color = scanText(),
                         fontSize = 10.sp,
                         fontWeight = FontWeight.Bold
                     )
@@ -169,16 +181,18 @@ private fun CapturedPageRow(
             Column(modifier = Modifier.weight(1f)) {
                 Text(
                     text = pageTitleText,
-                    color = DarkGreen,
+                    color = scanText(),
                     fontWeight = FontWeight.SemiBold,
-                    fontSize = 15.sp
+                    fontSize = 15.sp,
+                    maxLines = 1,
+                    overflow = TextOverflow.Ellipsis
                 )
                 Spacer(modifier = Modifier.height(8.dp))
                 Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
-                    PageToolIcon(Icons.Default.Crop, "Recortar")
-                    PageToolIcon(Icons.Default.Refresh, "Rotar")
-                    PageToolIcon(Icons.Default.WbSunny, "Brillo/contraste")
-                    PageToolIcon(Icons.Default.CameraAlt, "Volver a capturar")
+                    PageToolIcon(Icons.Default.Crop, stringResource(R.string.tool_crop))
+                    PageToolIcon(Icons.Default.Refresh, stringResource(R.string.tool_rotate))
+                    PageToolIcon(Icons.Default.WbSunny, stringResource(R.string.tool_brightness))
+                    PageToolIcon(Icons.Default.CameraAlt, stringResource(R.string.tool_recapture))
                 }
             }
 
@@ -192,7 +206,7 @@ private fun CapturedPageRow(
                     onClick = onRemove,
                     modifier = Modifier
                         .size(28.dp)
-                        .background(Color(0xFFFDECEC), CircleShape)
+                        .background(lightOr(Color(0xFFFDECEC), Color(0xFF3B2525)), CircleShape)
                 ) {
                     Icon(Icons.Default.Close, contentDescription = stringResource(R.string.delete), tint = StatusRed, modifier = Modifier.size(16.dp))
                 }
@@ -206,10 +220,10 @@ private fun PageToolIcon(icon: androidx.compose.ui.graphics.vector.ImageVector, 
     Box(
         modifier = Modifier
             .size(30.dp)
-            .background(Color(0xFFF5F5F0), CircleShape),
+            .background(scanSoftFill(Color(0xFFF5F5F0)), CircleShape),
         contentAlignment = Alignment.Center
     ) {
-        Icon(icon, contentDescription = description, tint = DarkGreen, modifier = Modifier.size(15.dp))
+        Icon(icon, contentDescription = description, tint = scanAccent(), modifier = Modifier.size(15.dp))
     }
 }
 
@@ -223,7 +237,7 @@ private fun ReorderIcon(icon: androidx.compose.ui.graphics.vector.ImageVector, e
         Icon(
             icon,
             contentDescription = null,
-            tint = if (enabled) TextGray else Color(0xFFE0E0E0),
+            tint = if (enabled) scanMuted() else lightOr(Color(0xFFE0E0E0), DarkDisabled),
             modifier = Modifier.size(18.dp)
         )
     }

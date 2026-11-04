@@ -53,7 +53,8 @@ class ManageSubjectsViewModel @Inject constructor(
                             professor = course.code,
                             term = course.description,
                             progress = if (courseTopics.isEmpty()) 0 else courseTopics.sumOf { it.progress } / courseTopics.size,
-                            colorHex = courseColor(course.id)
+                            colorHex = courseColor(course.id),
+                            syllabus = course.syllabusTopics
                         )
                     }
                     _uiState.value = CoursesUiState(isLoading = false, courses = courses, error = null)

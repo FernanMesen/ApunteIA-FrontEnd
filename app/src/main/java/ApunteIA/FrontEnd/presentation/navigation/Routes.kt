@@ -10,6 +10,8 @@ object Routes {
     const val NOTE_DETAIL_PATTERN = "note_detail/{noteId}"
     const val AUDITORIA = "auditoria"
     const val REFORZAR = "reforzar"
+    /** Reforzar con una nota preseleccionada (opcional: sin el argumento abre Reforzar normal). */
+    const val REFORZAR_PATTERN = "reforzar?noteId={noteId}"
     const val QUIZ = "quiz"
     const val QUIZ_PATTERN = "quiz/{assessmentId}"
     const val PROFILE = "profile"
@@ -21,11 +23,17 @@ object Routes {
     const val CHANGE_PASSWORD = "change_password"
     const val JOIN_SUBJECT = "join_subject"
 
+    // Administración (solo ADMIN)
+    const val ADMIN_COURSES = "admin_courses"
+    const val ADMIN_COURSE = "admin_course"
+    const val ADMIN_COURSE_PATTERN = "admin_course/{courseId}"
+
     const val PROFILE_SETUP = "profile_setup"
     const val SUBJECTS = "subjects"
     const val STUDY_GOAL = "study_goal"
     const val LANGUAGE = "language"
-    const val PROFILE_LANGUAGE = "profile_language"
+    /** Idioma desde el Perfil: aplica el cambio y vuelve, sin pasar por el onboarding. */
+    const val LANGUAGE_SETTINGS = "language_settings"
     const val PERMISSIONS = "permissions"
 
     // =========================
@@ -40,4 +48,7 @@ object Routes {
 
     fun noteDetail(noteId: Long) = "$NOTE_DETAIL/$noteId"
     fun quiz(assessmentId: Long) = "$QUIZ/$assessmentId"
+    fun reforzar(noteId: Long) = "$REFORZAR?noteId=$noteId"
+    /** courseId = 0 abre el formulario para crear un curso nuevo. */
+    fun adminCourse(courseId: Long) = "$ADMIN_COURSE/$courseId"
 }

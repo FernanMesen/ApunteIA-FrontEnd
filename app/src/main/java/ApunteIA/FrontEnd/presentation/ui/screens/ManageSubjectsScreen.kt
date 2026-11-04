@@ -213,6 +213,8 @@ fun ManageSubjectsTopBar(onBack: () -> Unit, onJoinCourse: () -> Unit) {
 @Composable
 fun CourseCard(course: Course) {
     val formattedProgress = FormatUtils.formatPercentage(course.progress, maxFractionDigits = 0)
+    val isDark = MaterialTheme.colorScheme.primary == SpaceCadet
+    var showPlan by remember { mutableStateOf(false) }
 
     Card(
         modifier = Modifier.fillMaxWidth(),
@@ -220,49 +222,80 @@ fun CourseCard(course: Course) {
         colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surfaceVariant),
         elevation = CardDefaults.cardElevation(defaultElevation = 0.dp)
     ) {
-        Row(
-            modifier = Modifier
-                .padding(16.dp)
-                .fillMaxWidth(),
-            verticalAlignment = Alignment.CenterVertically
-        ) {
-            Box(
+        Column {
+            Row(
                 modifier = Modifier
-                    .size(56.dp)
-                    .clip(RoundedCornerShape(16.dp))
-                    .background(Color(android.graphics.Color.parseColor(course.colorHex))),
-                contentAlignment = Alignment.Center
+                    .padding(16.dp)
+                    .fillMaxWidth(),
+                verticalAlignment = Alignment.CenterVertically
             ) {
-                Text(
-                    text = course.name.firstOrNull()?.toString() ?: "?",
-                    color = Color.White,
-                    fontSize = 24.sp,
-                    fontWeight = FontWeight.Bold
-                )
-            }
+                Box(
+                    modifier = Modifier
+                        .size(56.dp)
+                        .clip(RoundedCornerShape(16.dp))
+                        .background(Color(android.graphics.Color.parseColor(course.colorHex))),
+                    contentAlignment = Alignment.Center
+                ) {
+                    Text(
+                        text = course.name.firstOrNull()?.toString() ?: "?",
+                        color = Color.White,
+                        fontSize = 24.sp,
+                        fontWeight = FontWeight.Bold
+                    )
+                }
 
-            Spacer(modifier = Modifier.width(16.dp))
+                Spacer(modifier = Modifier.width(16.dp))
 
-            Column(modifier = Modifier.weight(1f)) {
+                Column(modifier = Modifier.weight(1f)) {
+                    Text(
+                        text = course.name,
+                        fontSize = 18.sp,
+                        fontWeight = FontWeight.Bold,
+                        color = MaterialTheme.colorScheme.onSurface
+                    )
+                    Text(
+                        text = listOf(course.professor, course.term).filter { it.isNotBlank() }.joinToString(" • "),
+                        fontSize = 14.sp,
+                        color = MaterialTheme.colorScheme.onSurfaceVariant
+                    )
+                }
+
                 Text(
-                    text = course.name,
-                    fontSize = 18.sp,
-                    fontWeight = FontWeight.Bold,
-                    color = MaterialTheme.colorScheme.onSurface
-                )
-                Text(
-                    text = listOf(course.professor, course.term).filter { it.isNotBlank() }.joinToString(" • "),
-                    fontSize = 14.sp,
+                    text = formattedProgress,
+                    fontSize = 16.sp,
+                    fontWeight = FontWeight.Medium,
                     color = MaterialTheme.colorScheme.onSurfaceVariant
                 )
             }
 
-            Text(
-                text = formattedProgress,
-                fontSize = 16.sp,
-                fontWeight = FontWeight.Medium,
-                color = MaterialTheme.colorScheme.onSurfaceVariant
-            )
+            // Plan de estudios que cargó el administrador (se despliega al tocar).
+            if (course.syllabus.isNotEmpty()) {
+                HorizontalDivider(color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.08f))
+                Text(
+                    text = stringResource(if (showPlan) R.string.subject_hide_plan else R.string.subject_show_plan),
+                    color = if (isDark) Color(0xFF8FB2C9) else DarkGreen,
+                    fontSize = 14.sp,
+                    fontWeight = FontWeight.Bold,
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .clickable { showPlan = !showPlan }
+                        .padding(horizontal = 16.dp, vertical = 12.dp)
+                )
+                if (showPlan) {
+                    Column(
+                        modifier = Modifier.padding(start = 16.dp, end = 16.dp, bottom = 16.dp),
+                        verticalArrangement = Arrangement.spacedBy(6.dp)
+                    ) {
+                        course.syllabus.forEachIndexed { index, topic ->
+                            Text(
+                                text = "${index + 1}. $topic",
+                                fontSize = 14.sp,
+                                color = MaterialTheme.colorScheme.onSurface
+                            )
+                        }
+                    }
+                }
+            }
         }
     }
 }

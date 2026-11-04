@@ -8,6 +8,7 @@ import ApunteIA.FrontEnd.data.datasource.model.AssessmentDto
 import ApunteIA.FrontEnd.data.datasource.model.AttemptAnswerDto
 import ApunteIA.FrontEnd.data.datasource.model.AttemptDto
 import ApunteIA.FrontEnd.data.datasource.model.CourseDto
+import ApunteIA.FrontEnd.data.datasource.model.CourseRequestDto
 import ApunteIA.FrontEnd.data.datasource.model.CreateNoteRequestDto
 import ApunteIA.FrontEnd.data.datasource.model.EnrollmentDto
 import ApunteIA.FrontEnd.data.datasource.model.LoginResponseDto
@@ -69,9 +70,9 @@ class FakeAuthDataSource : AuthDataSource {
 
 class FakeCourseDataSource(
     var courses: List<CourseDto> = listOf(
-        CourseDto(1, "EIF411", "Backend para plataformas móviles", "Persistencia"),
-        CourseDto(2, "EIF412", "Bases de datos", "Modelado relacional"),
-        CourseDto(3, "EIF413", "Programación distribuida", null)
+        CourseDto(1, "EIF411", "Backend para plataformas móviles", "Persistencia y servicios backend"),
+        CourseDto(2, "EIF412", "Bases de datos", "Modelado relacional y consultas"),
+        CourseDto(3, "EIF413", "Programación distribuida", "Conceptos y sistemas distribuidos")
     ),
     var enrollments: List<EnrollmentDto> = listOf(
         EnrollmentDto(10, 2, 1, "EIF411", "Backend para plataformas móviles", null),
@@ -87,6 +88,42 @@ class FakeCourseDataSource(
         enrollError?.let { throw it }
         enrolled += courseId to userId
         return EnrollmentDto(99, userId, courseId, null, null, null)
+    }
+
+    // ---------- Administración ----------
+    val savedCourses = mutableListOf<Pair<Long?, CourseRequestDto>>()
+    var courseEnrollments: List<EnrollmentDto> = emptyList()
+    val deletedEnrollments = mutableListOf<Long>()
+
+    override suspend fun createCourse(request: CourseRequestDto): CourseDto {
+        savedCourses += null to request
+        val created = CourseDto(100, request.code, request.name, request.description, request.syllabus)
+        courses = courses + created
+        return created
+    }
+
+    override suspend fun updateCourse(id: Long, request: CourseRequestDto): CourseDto {
+        savedCourses += id to request
+        val updated = CourseDto(id, request.code, request.name, request.description, request.syllabus)
+        courses = courses.map { if (it.id == id) updated else it }
+        return updated
+    }
+
+    override suspend fun getCourseEnrollments(courseId: Long): List<EnrollmentDto> =
+        courseEnrollments.filter { it.courseId == courseId }
+
+    override suspend fun deleteEnrollment(enrollmentId: Long) {
+        deletedEnrollments += enrollmentId
+        courseEnrollments = courseEnrollments.filterNot { it.id == enrollmentId }
+    }
+
+    val deletedCourses = mutableListOf<Long>()
+    var deleteCourseError: Throwable? = null
+
+    override suspend fun deleteCourse(id: Long) {
+        deleteCourseError?.let { throw it }
+        deletedCourses += id
+        courses = courses.filterNot { it.id == id }
     }
 }
 
@@ -161,7 +198,14 @@ class FakeQuizDataSource : QuizDataSource {
         submitted = answers
         return submitResult(answers)
     }
-    override suspend fun getUserAttempts(userId: Long): List<AttemptDto> = attempts
+    /** Intentos por usuario (vista del admin); si un usuario no está, se usa [attempts]. */
+    val attemptsByUser = mutableMapOf<Long, List<AttemptDto>>()
+    val userAttemptRequests = mutableListOf<Long>()
+
+    override suspend fun getUserAttempts(userId: Long): List<AttemptDto> {
+        userAttemptRequests += userId
+        return attemptsByUser[userId] ?: attempts
+    }
 }
 
 fun assessment(id: Long, title: String, questions: Int = 2, courseId: Long = 1) = AssessmentDto(

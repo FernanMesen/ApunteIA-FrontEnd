@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Textos del modo administrador y del plan de estudios. -->
+<resources>
+    <string name="admin_section_header">Administración</string>
+    <string name="admin_courses_entry">Cursos y planes de estudio</string>
+    <string name="admin_courses_title">Administrar cursos</string>
+    <string name="admin_courses_subtitle">Crea cursos, edita su plan de estudios y gestiona a los estudiantes</string>
+    <string name="admin_new_course">Nuevo curso</string>
+    <string name="admin_no_courses">Todavía no hay cursos.</string>
+    <string name="admin_topics_count">Temas en el plan: %1$d</string>
+    <string name="admin_no_syllabus">Sin plan de estudios</string>
+    <string name="admin_edit_course_title">Editar curso</string>
+    <string name="admin_course_code">Código (ej. EIF411)</string>
+    <string name="admin_course_name">Nombre del curso</string>
+    <string name="admin_course_description">Descripción (opcional)</string>
+    <string name="admin_syllabus_header">Plan de estudios</string>
+    <string name="admin_syllabus_hint">Escribe un tema por línea. Los estudiantes lo verán en Administrar materias.</string>
+    <string name="admin_syllabus_placeholder">Introducción a Kotlin\nJetpack Compose\nArquitectura MVVM</string>
+    <string name="admin_save_course">Guardar curso</string>
+    <string name="admin_course_saved">Curso guardado</string>
+    <string name="admin_students_header">Estudiantes inscritos (%1$d)</string>
+    <string name="admin_no_students">No hay estudiantes inscritos en este curso.</string>
+    <string name="admin_students_after_save">Guarda el curso para ver y gestionar a sus estudiantes.</string>
+    <string name="admin_remove_student">Quitar del curso</string>
+    <string name="admin_remove_student_title">¿Quitar a %1$s?</string>
+    <string name="admin_remove_student_message">Dejará de estar inscrito en %1$s. Sus apuntes no se borran.</string>
+    <string name="admin_error_code_required">El código del curso es obligatorio.</string>
+    <string name="admin_error_name_required">El nombre del curso es obligatorio.</string>
+    <string name="subject_show_plan">Ver plan de estudios</string>
+    <string name="subject_hide_plan">Ocultar plan de estudios</string>
+    <string name="admin_student_grade_value">Calificación: %1$s</string>
+    <string name="admin_student_no_grade">Sin calificación</string>
+    <string name="admin_scan_syllabus_photo">Escanear plan con foto</string>
+    <string name="admin_delete_course">Eliminar curso</string>
+    <string name="admin_delete_course_title">¿Eliminar el curso %1$s?</string>
+    <string name="admin_delete_course_message">Esta acción eliminará el curso y su plan de estudios. No se puede eliminar si tiene estudiantes inscritos.</string>
+    <string name="admin_error_course_has_relations">No se puede eliminar el curso porque tiene registros relacionados (evaluaciones, temas o inscripciones). Elimine los elementos asociados primero.</string>
+    <string name="admin_course_deleted">Curso eliminado correctamente</string>
+    <string name="admin_course_archived">El curso tiene historial académico. Ha sido archivado para conservar las evaluaciones y calificaciones.</string>
+    <string name="admin_student_detail_title">Detalle del estudiante</string>
+    <string name="admin_student_final_grade">Nota final del curso: %1$s</string>
+    <string name="admin_student_quizzes_history">Historial de quizzes</string>
+    <string name="admin_student_no_quizzes">No hay registros de quizzes para este curso.</string>
+    <string name="admin_quiz_score">Calificación: %1$s</string>
+    <string name="admin_syllabus_ocr_error">No se pudo reconocer el texto de la fotografía.</string>
+    <string name="admin_assessment_fallback">Evaluación #%1$d</string>
+    <string name="admin_grade_rule">Nota final: promedio del mejor intento de cada quiz del curso.</string>
+</resources>

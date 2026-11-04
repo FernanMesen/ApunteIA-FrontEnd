@@ -11,6 +11,7 @@ import androidx.compose.ui.unit.sp
 import androidx.compose.foundation.background
 import ApunteIA.FrontEnd.R
 
+@OptIn(ExperimentalLayoutApi::class)
 @Composable
 fun ProfileSetupScreen(
     onNext: () -> Unit
@@ -31,7 +32,7 @@ fun ProfileSetupScreen(
     Column(
         modifier = Modifier
             .fillMaxSize()
-            .background(ApuntesBackground)
+            .background(onboardingBackground())
             .padding(horizontal = 24.dp)
     ) {
 
@@ -44,7 +45,7 @@ fun ProfileSetupScreen(
 
         Text(
             text = stringResource(R.string.setup_profile_title),
-            color = ApuntesGreen,
+            color = onboardingTitle(),
             fontSize = 22.sp,
             fontWeight = FontWeight.Bold
         )
@@ -53,7 +54,7 @@ fun ProfileSetupScreen(
 
         Text(
             text = stringResource(R.string.your_name_header),
-            color = ApuntesGreen,
+            color = onboardingTitle(),
             fontSize = 12.sp
         )
 
@@ -71,14 +72,16 @@ fun ProfileSetupScreen(
 
         Text(
             text = stringResource(R.string.education_level_header),
-            color = ApuntesGreen,
+            color = onboardingTitle(),
             fontSize = 12.sp
         )
 
         Spacer(modifier = Modifier.height(10.dp))
 
-        Row(
-            horizontalArrangement = Arrangement.spacedBy(8.dp)
+        // FlowRow: si las 3 opciones no caben (PT/IT en pantallas angostas), pasan a otra línea.
+        FlowRow(
+            horizontalArrangement = Arrangement.spacedBy(8.dp),
+            verticalArrangement = Arrangement.spacedBy(8.dp)
         ) {
 
             EducationOption(
@@ -120,7 +123,7 @@ fun ProfileSetupScreen(
 
         Text(
             text = stringResource(R.string.semester_header),
-            color = ApuntesGreen,
+            color = onboardingTitle(),
             fontSize = 12.sp
         )
 

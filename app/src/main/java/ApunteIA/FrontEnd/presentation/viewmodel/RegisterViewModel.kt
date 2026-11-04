@@ -1,7 +1,9 @@
 package ApunteIA.FrontEnd.presentation.viewmodel
 
+import ApunteIA.FrontEnd.R
 import ApunteIA.FrontEnd.domain.usecase.RegisterUseCase
 import ApunteIA.FrontEnd.domain.util.Resource
+import ApunteIA.FrontEnd.util.L10n
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -29,10 +31,10 @@ class RegisterViewModel @Inject constructor(
 
     fun register(fullName: String, email: String, password: String) {
         val validationError = when {
-            fullName.isBlank() -> "Ingresa tu nombre completo."
-            !EMAIL_REGEX.matches(email.trim()) -> "Ingresa un correo válido."
-            password.length < 6 -> "La contraseña debe tener al menos 6 caracteres."
-            password.length > 72 -> "La contraseña no puede tener más de 72 caracteres."
+            fullName.isBlank() -> L10n.getString(R.string.register_error_name)
+            !EMAIL_REGEX.matches(email.trim()) -> L10n.getString(R.string.register_error_email)
+            password.length < 6 -> L10n.getString(R.string.register_error_password_len)
+            password.length > 72 -> L10n.getString(R.string.register_error_password_max)
             else -> null
         }
         if (validationError != null) {

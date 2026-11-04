@@ -47,9 +47,9 @@ import androidx.compose.ui.viewinterop.AndroidView
 import androidx.core.content.ContextCompat
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.activity.compose.rememberLauncherForActivityResult
+import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.text.style.TextOverflow
 import ApunteIA.FrontEnd.R
-import ApunteIA.FrontEnd.presentation.ui.theme.BackgroundBeige
-import ApunteIA.FrontEnd.presentation.ui.theme.DarkGreen
 import ApunteIA.FrontEnd.presentation.viewmodel.ScanViewModel
 import java.io.File
 import java.text.SimpleDateFormat
@@ -84,7 +84,7 @@ fun ScanCameraScreen(
     Column(
         modifier = Modifier
             .fillMaxSize()
-            .background(BackgroundBeige)
+            .background(scanBackground())
             .padding(horizontal = 20.dp)
     ) {
         ScanTopBar(
@@ -97,13 +97,15 @@ fun ScanCameraScreen(
         )
 
         Box(modifier = Modifier.fillMaxWidth(), contentAlignment = Alignment.Center) {
-            Surface(shape = RoundedCornerShape(20.dp), color = Color(0xFFEDEDED)) {
+            Surface(shape = RoundedCornerShape(20.dp), color = scanSoftFill()) {
                 Text(
                     text = state.subject,
                     modifier = Modifier.padding(horizontal = 14.dp, vertical = 6.dp),
-                    color = DarkGreen,
+                    color = scanText(),
                     fontSize = 13.sp,
-                    fontWeight = FontWeight.Medium
+                    fontWeight = FontWeight.Medium,
+                    maxLines = 1,
+                    overflow = TextOverflow.Ellipsis
                 )
             }
         }
@@ -153,9 +155,9 @@ fun ScanCameraScreen(
                     onClick = { /* Importar desde galería */ },
                     modifier = Modifier
                         .size(48.dp)
-                        .background(Color(0xFFEDEDED), RoundedCornerShape(14.dp))
+                        .background(scanSoftFill(), RoundedCornerShape(14.dp))
                 ) {
-                    Icon(Icons.Default.Image, contentDescription = null, tint = DarkGreen)
+                    Icon(Icons.Default.Image, contentDescription = null, tint = scanText())
                 }
 
                 Spacer(modifier = Modifier.weight(1f))
@@ -184,7 +186,7 @@ fun ScanCameraScreen(
                 if (state.hasCapturedPages) {
                     Surface(
                         shape = RoundedCornerShape(24.dp),
-                        color = DarkGreen,
+                        color = scanButton(),
                         modifier = Modifier.clickable { onDone() }
                     ) {
                         Text(
@@ -192,7 +194,8 @@ fun ScanCameraScreen(
                             modifier = Modifier.padding(horizontal = 18.dp, vertical = 14.dp),
                             color = Color.White,
                             fontWeight = FontWeight.Bold,
-                            fontSize = 14.sp
+                            fontSize = 14.sp,
+                            maxLines = 1
                         )
                     }
                 } else {
@@ -205,19 +208,20 @@ fun ScanCameraScreen(
                 horizontalAlignment = Alignment.CenterHorizontally,
                 verticalArrangement = Arrangement.Center
             ) {
-                Icon(Icons.Default.CameraAlt, contentDescription = null, tint = DarkGreen, modifier = Modifier.size(48.dp))
+                Icon(Icons.Default.CameraAlt, contentDescription = null, tint = scanAccent(), modifier = Modifier.size(48.dp))
                 Spacer(modifier = Modifier.height(12.dp))
                 Text(
                     text = stringResource(R.string.camera_permission_needed),
-                    color = DarkGreen,
+                    color = scanText(),
                     fontSize = 15.sp,
-                    fontWeight = FontWeight.Medium
+                    fontWeight = FontWeight.Medium,
+                    textAlign = TextAlign.Center
                 )
                 Spacer(modifier = Modifier.height(20.dp))
                 Button(
                     onClick = { permissionLauncher.launch(Manifest.permission.CAMERA) },
                     shape = RoundedCornerShape(24.dp),
-                    colors = ButtonDefaults.buttonColors(containerColor = DarkGreen)
+                    colors = ButtonDefaults.buttonColors(containerColor = scanButton())
                 ) {
                     Text(stringResource(R.string.allow_camera_access), color = Color.White, fontWeight = FontWeight.Bold)
                 }

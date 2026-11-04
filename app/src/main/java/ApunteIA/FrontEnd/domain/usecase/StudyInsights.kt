@@ -1,5 +1,6 @@
 package ApunteIA.FrontEnd.domain.usecase
 
+import ApunteIA.FrontEnd.R
 import ApunteIA.FrontEnd.domain.model.AssessmentAttempt
 import ApunteIA.FrontEnd.domain.model.CourseInfo
 import ApunteIA.FrontEnd.domain.model.Note
@@ -10,6 +11,7 @@ import ApunteIA.FrontEnd.domain.model.Topic
 import ApunteIA.FrontEnd.domain.model.TopicStatus
 import ApunteIA.FrontEnd.domain.model.UserStats
 import ApunteIA.FrontEnd.domain.util.IsoDates
+import ApunteIA.FrontEnd.util.L10n
 
 /**
  * Reglas de negocio puras para la auditoría y el tablero. El backend no tiene
@@ -74,7 +76,7 @@ object StudyInsights {
             .map { course ->
                 Topic(
                     id = -course.id.toInt(),
-                    title = "Sin apuntes todavía",
+                    title = L10n.get(R.string.fallback_no_course),
                     className = course.name,
                     status = TopicStatus.MISSING,
                     progress = 0
@@ -130,7 +132,7 @@ object StudyInsights {
             Event(
                 millis,
                 RecentActivity(
-                    title = "Apunte guardado · ${note.title}",
+                    title = L10n.get(R.string.activity_saved_note, note.title),
                     subtitle = note.className,
                     time = IsoDates.relative(note.createdAtIso, now)
                 )
@@ -141,8 +143,8 @@ object StudyInsights {
             Event(
                 millis,
                 RecentActivity(
-                    title = "Quiz completado · ${attempt.assessmentTitle}",
-                    subtitle = "Nota: ${attempt.scorePercent}%",
+                    title = L10n.get(R.string.activity_completed_quiz, attempt.assessmentTitle),
+                    subtitle = L10n.get(R.string.activity_score_format, attempt.scorePercent),
                     time = IsoDates.relative(attempt.completedAt, now)
                 )
             )

@@ -99,47 +99,29 @@ fun ScanNewScreen(
 
             SectionLabel(stringResource(R.string.date_header))
             Spacer(modifier = Modifier.height(10.dp))
-            Box(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .clickable {
-                        val calendar = Calendar.getInstance()
-                        DatePickerDialog(
-                            context,
-                            { _, year, month, dayOfMonth ->
-                                viewModel.onDateChange(
-                                    "%02d/%02d/%04d".format(month + 1, dayOfMonth, year)
-                                )
-                            },
-                            calendar.get(Calendar.YEAR),
-                            calendar.get(Calendar.MONTH),
-                            calendar.get(Calendar.DAY_OF_MONTH)
-                        ).show()
-                    }
-            ) {
-                OutlinedTextField(
-                    value = state.date,
-                    onValueChange = {},
-                    placeholder = { Text("mm/dd/yyyy", color = TextGray) },
-                    readOnly = true,
-                    enabled = false,
-                    singleLine = true,
-                    trailingIcon = {
-                        Icon(Icons.Default.CalendarToday, contentDescription = null, tint = TextGray)
-                    },
-                    shape = RoundedCornerShape(16.dp),
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .height(58.dp),
-                    colors = OutlinedTextFieldDefaults.colors(
-                        disabledContainerColor = Color.White,
-                        disabledBorderColor = Color(0xFFE0E0E0),
-                        disabledTextColor = DarkGreen,
-                        disabledPlaceholderColor = TextGray,
-                        disabledTrailingIconColor = TextGray
-                    )
-                )
-            }
+            ScanTextField(
+                value = state.date,
+                onValueChange = {},
+                placeholder = "mm/dd/yyyy",
+                readOnly = true,
+                trailingIcon = {
+                    Icon(Icons.Default.CalendarToday, contentDescription = null, tint = TextGray)
+                },
+                modifier = Modifier.clickable {
+                    val calendar = Calendar.getInstance()
+                    DatePickerDialog(
+                        context,
+                        { _, year, month, dayOfMonth ->
+                            viewModel.onDateChange(
+                                "%02d/%02d/%04d".format(month + 1, dayOfMonth, year)
+                            )
+                        },
+                        calendar.get(Calendar.YEAR),
+                        calendar.get(Calendar.MONTH),
+                        calendar.get(Calendar.DAY_OF_MONTH)
+                    ).show()
+                }
+            )
 
             Spacer(modifier = Modifier.height(24.dp))
 

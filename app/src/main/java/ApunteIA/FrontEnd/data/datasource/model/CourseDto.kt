@@ -10,7 +10,10 @@ data class CourseDto(
     @SerializedName("name")
     val name: String?,
     @SerializedName("description")
-    val description: String?
+    val description: String?,
+    /** Plan de estudios: un tema por línea (null si el curso no tiene). */
+    @SerializedName("syllabus")
+    val syllabus: String? = null
 )
 
 data class EnrollmentDto(
@@ -25,7 +28,11 @@ data class EnrollmentDto(
     @SerializedName("courseName")
     val courseName: String?,
     @SerializedName("enrolledAt")
-    val enrolledAt: String?
+    val enrolledAt: String?,
+    @SerializedName("userFullName")
+    val userFullName: String? = null,
+    @SerializedName("userEmail")
+    val userEmail: String? = null
 )
 
 data class EnrollUserRequestDto(

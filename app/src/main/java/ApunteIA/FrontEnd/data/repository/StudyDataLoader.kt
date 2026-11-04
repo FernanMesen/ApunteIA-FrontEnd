@@ -1,5 +1,6 @@
 package ApunteIA.FrontEnd.data.repository
 
+import ApunteIA.FrontEnd.R
 import ApunteIA.FrontEnd.data.datasource.CourseDataSource
 import ApunteIA.FrontEnd.data.datasource.NoteDataSource
 import ApunteIA.FrontEnd.data.datasource.QuizDataSource
@@ -11,7 +12,7 @@ import ApunteIA.FrontEnd.domain.model.CourseInfo
 import ApunteIA.FrontEnd.domain.model.Note
 import ApunteIA.FrontEnd.domain.model.StudyOverview
 import ApunteIA.FrontEnd.domain.usecase.StudyInsights
-import ApunteIA.FrontEnd.util.LanguageManager
+import ApunteIA.FrontEnd.util.L10n
 import kotlinx.coroutines.async
 import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.sync.Mutex
@@ -25,15 +26,14 @@ class CourseCatalog @Inject constructor(
     private val dataSource: CourseDataSource
 ) {
     private val mutex = Mutex()
-    private val cache = mutableMapOf<String, List<CourseInfo>>()
+    private var cache: List<CourseInfo>? = null
 
     suspend fun all(forceRefresh: Boolean = false): List<CourseInfo> = mutex.withLock {
-        val currentLang = LanguageManager.getCurrentLanguageCode()
-        val cached = cache[currentLang]
+        val cached = cache
         if (!forceRefresh && cached != null) {
             cached
         } else {
-            dataSource.getCourses(currentLang).toDomain().also { cache[currentLang] = it }
+            dataSource.getCourses().toDomain().also { cache = it }
         }
     }
 
@@ -73,9 +73,10 @@ class StudyDataLoader @Inject constructor(
             val known = byId[enrollment.courseId]
             CourseInfo(
                 id = enrollment.courseId,
-                code = known?.code.orEmpty().ifBlank { enrollment.courseCode.orEmpty() },
-                name = known?.name?.takeIf { it.isNotBlank() } ?: enrollment.courseName ?: "Curso ${enrollment.courseId}",
-                description = known?.description.orEmpty()
+                code = enrollment.courseCode ?: known?.code.orEmpty(),
+                name = enrollment.courseName ?: known?.name ?: L10n.getString(R.string.fallback_course_id, enrollment.courseId),
+                description = known?.description.orEmpty(),
+                syllabus = known?.syllabus.orEmpty()
             )
         }.distinctBy { it.id }
     }

@@ -12,7 +12,7 @@ import org.junit.Test
 class CourseRepositoryImplTest {
 
     private fun repository(backend: TestBackend) =
-        CourseRepositoryImpl(backend.courses, backend.loader, backend.catalog)
+        CourseRepositoryImpl(backend.courses, backend.loader, backend.catalog, backend.quizzes)
 
     @Test
     fun `my courses come from the enrollments`() = runBlocking {

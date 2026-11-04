@@ -42,9 +42,13 @@ class AuditViewModel @Inject constructor(
         .map { state -> listOf(FilterTopicsUseCase.CATEGORY_ALL) + state.topics.map { it.className }.distinct() }
         .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5_000), listOf(FilterTopicsUseCase.CATEGORY_ALL))
 
-    val summary: StateFlow<AuditSummary> = _uiState
-        .map { calculateAuditSummaryUseCase(it.topics) }
-        .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5_000), AuditSummary(0, 0, 0, 0))
+    val summary: StateFlow<AuditSummary> = combine(
+        _uiState,
+        _selectedCategory
+    ) { state, category ->
+        val topicsForCategory = filterTopicsUseCase(state.topics, category)
+        calculateAuditSummaryUseCase(topicsForCategory)
+    }.stateIn(viewModelScope, SharingStarted.WhileSubscribed(5_000), AuditSummary(0, 0, 0, 0))
 
     val filteredTopics: StateFlow<List<Topic>> = combine(
         _uiState,

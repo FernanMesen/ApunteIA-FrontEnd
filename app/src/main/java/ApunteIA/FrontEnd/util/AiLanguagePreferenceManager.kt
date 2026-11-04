@@ -22,19 +22,16 @@ open class AiLanguagePreferenceManager @Inject constructor(
         set(value) {
             memoryOption = value
             prefs?.edit()?.putString(KEY_AI_LANGUAGE, value.name)?.commit()
-            try { android.util.Log.d("AiLanguage", "AI_LANG_MANAGER saved=${value.name}") } catch (_: Throwable) {}
         }
 
     open fun getEffectiveLanguageCode(): String {
-        val code = when (aiLanguageOption) {
+        return when (aiLanguageOption) {
             AiLanguageOption.SAME_AS_APP -> LanguageManager.getCurrentLanguageCode()
             AiLanguageOption.ES -> "es"
             AiLanguageOption.EN -> "en"
             AiLanguageOption.PT -> "pt"
             AiLanguageOption.IT -> "it"
         }
-        try { android.util.Log.d("AiLanguage", "AI_LANG_SCAN effective=$code") } catch (_: Throwable) {}
-        return code
     }
 
     companion object {

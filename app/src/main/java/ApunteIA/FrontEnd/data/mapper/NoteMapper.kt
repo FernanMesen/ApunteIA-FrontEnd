@@ -1,11 +1,13 @@
 package ApunteIA.FrontEnd.data.mapper
 
+import ApunteIA.FrontEnd.R
 import ApunteIA.FrontEnd.data.datasource.model.NoteDto
 import ApunteIA.FrontEnd.domain.model.CourseInfo
 import ApunteIA.FrontEnd.domain.model.Note
 import ApunteIA.FrontEnd.domain.model.NoteStatus
 import ApunteIA.FrontEnd.domain.model.ProcessingStatus
 import ApunteIA.FrontEnd.domain.util.IsoDates
+import ApunteIA.FrontEnd.util.L10n
 
 private const val PREVIEW_LENGTH = 160
 
@@ -23,8 +25,8 @@ fun NoteDto.toDomain(
     val text = summary?.takeIf { it.isNotBlank() } ?: content.orEmpty()
     return Note(
         id = id.toInt(),
-        title = title.orEmpty().ifBlank { "Nota sin título" },
-        className = course?.name ?: courseCode.orEmpty().ifBlank { "Sin curso" },
+        title = title.orEmpty().ifBlank { L10n.getString(R.string.fallback_untitled_note) },
+        className = course?.name ?: courseCode.orEmpty().ifBlank { L10n.getString(R.string.fallback_no_course) },
         classNumber = classNumber,
         date = IsoDates.shortDate(createdAt),
         preview = text.replace(Regex("\\s+"), " ").trim().take(PREVIEW_LENGTH),

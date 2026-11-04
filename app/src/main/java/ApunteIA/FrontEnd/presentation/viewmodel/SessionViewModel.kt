@@ -17,7 +17,9 @@ import javax.inject.Inject
 /** Usuario que se muestra en el encabezado y el perfil. */
 data class CurrentUser(
     val name: String,
-    val email: String
+    val email: String,
+    /** true si el backend devolvió el rol ADMIN en el login. */
+    val isAdmin: Boolean = false
 ) {
     val initial: String get() = name.trim().firstOrNull()?.uppercase() ?: "?"
 }
@@ -55,5 +57,9 @@ class SessionViewModel @Inject constructor(
         _currentUser.value = null
     }
 
-    private fun AuthSession.toUser() = CurrentUser(name = userName, email = email)
+    private fun AuthSession.toUser() = CurrentUser(
+        name = userName,
+        email = email,
+        isAdmin = role.equals("ADMIN", ignoreCase = true)
+    )
 }

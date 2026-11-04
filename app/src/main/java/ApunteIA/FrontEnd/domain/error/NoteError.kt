@@ -1,5 +1,8 @@
 package ApunteIA.FrontEnd.domain.error
 
+import ApunteIA.FrontEnd.R
+import ApunteIA.FrontEnd.util.L10n
+
 /**
  * Errores de dominio que puede producir el feature de Notas. Al ser un tipo del
  * dominio, ni `data` ni `presentation` dependen de excepciones concretas de
@@ -13,14 +16,14 @@ sealed class NoteError : Exception() {
     data object Unknown : NoteError()
 
     fun toUserMessage(): String = when (this) {
-        is NoConnection -> "No hay conexión a internet. Por favor, verifica tu red."
-        is ClientError -> detail ?: "Hubo un problema con la solicitud (Error $code)."
+        is NoConnection -> L10n.getString(R.string.note_error_connection)
+        is ClientError -> detail ?: L10n.getString(R.string.note_error_client, code)
         is ServerError -> when (code) {
-            502 -> detail ?: "La IA no pudo procesar la nota. Intenta de nuevo."
-            503 -> detail ?: "La IA no está disponible en este momento."
-            else -> detail ?: "El servidor de notas está teniendo problemas (Error $code)."
+            502 -> detail ?: L10n.getString(R.string.note_error_502)
+            503 -> detail ?: L10n.getString(R.string.note_error_503)
+            else -> detail ?: L10n.getString(R.string.note_error_server, code)
         }
-        is InvalidData -> "Los datos recibidos no son válidos."
-        is Unknown -> "Ocurrió un error inesperado al gestionar tus notas."
+        is InvalidData -> L10n.getString(R.string.note_error_invalid_data)
+        is Unknown -> L10n.getString(R.string.note_error_unknown)
     }
 }

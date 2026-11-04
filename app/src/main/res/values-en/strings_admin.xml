@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Textos del modo administrador y del plan de estudios. -->
+<resources>
+    <string name="admin_section_header">Administration</string>
+    <string name="admin_courses_entry">Courses and study plans</string>
+    <string name="admin_courses_title">Manage courses</string>
+    <string name="admin_courses_subtitle">Create courses, edit their study plan and manage students</string>
+    <string name="admin_new_course">New course</string>
+    <string name="admin_no_courses">There are no courses yet.</string>
+    <string name="admin_topics_count">Topics in the plan: %1$d</string>
+    <string name="admin_no_syllabus">No study plan</string>
+    <string name="admin_edit_course_title">Edit course</string>
+    <string name="admin_course_code">Code (e.g. EIF411)</string>
+    <string name="admin_course_name">Course name</string>
+    <string name="admin_course_description">Description (optional)</string>
+    <string name="admin_syllabus_header">Study plan</string>
+    <string name="admin_syllabus_hint">Write one topic per line. Students will see it in Manage subjects.</string>
+    <string name="admin_syllabus_placeholder">Introduction to Kotlin\nJetpack Compose\nMVVM architecture</string>
+    <string name="admin_save_course">Save course</string>
+    <string name="admin_course_saved">Course saved</string>
+    <string name="admin_students_header">Enrolled students (%1$d)</string>
+    <string name="admin_no_students">No students are enrolled in this course.</string>
+    <string name="admin_students_after_save">Save the course to see and manage its students.</string>
+    <string name="admin_remove_student">Remove from course</string>
+    <string name="admin_remove_student_title">Remove %1$s?</string>
+    <string name="admin_remove_student_message">They will no longer be enrolled in %1$s. Their notes are not deleted.</string>
+    <string name="admin_error_code_required">The course code is required.</string>
+    <string name="admin_error_name_required">The course name is required.</string>
+    <string name="subject_show_plan">See study plan</string>
+    <string name="subject_hide_plan">Hide study plan</string>
+    <string name="admin_student_grade_value">Grade: %1$s</string>
+    <string name="admin_student_no_grade">No grade</string>
+    <string name="admin_scan_syllabus_photo">Scan study plan with photo</string>
+    <string name="admin_delete_course">Delete course</string>
+    <string name="admin_delete_course_title">Delete course %1$s?</string>
+    <string name="admin_delete_course_message">This action will delete the course and its study plan. It cannot be deleted if students are enrolled.</string>
+    <string name="admin_error_course_has_relations">The course cannot be deleted because it has related records (assessments, topics, or enrollments). Delete associated items first.</string>
+    <string name="admin_course_deleted">Course deleted successfully</string>
+    <string name="admin_course_archived">The course has academic history. It has been archived to preserve evaluations and grades.</string>
+    <string name="admin_student_detail_title">Student detail</string>
+    <string name="admin_student_final_grade">Final course grade: %1$s</string>
+    <string name="admin_student_quizzes_history">Quiz history</string>
+    <string name="admin_student_no_quizzes">No quiz records for this course.</string>
+    <string name="admin_quiz_score">Score: %1$s</string>
+    <string name="admin_syllabus_ocr_error">Couldn\'t recognize the text in the photo.</string>
+    <string name="admin_assessment_fallback">Assessment #%1$d</string>
+    <string name="admin_grade_rule">Final grade: average of the best attempt on each quiz in the course.</string>
+</resources>

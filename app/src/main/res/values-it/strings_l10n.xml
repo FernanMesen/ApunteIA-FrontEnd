@@ -1,0 +1,88 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Scan Steps -->
+    <string name="step_reading">Lettura del testo dalle tue pagine</string>
+    <string name="step_uploading">Salvataggio della nota nel cloud</string>
+    <string name="step_organizing">Riassumendo con l\'IA</string>
+    <string name="step_generating">Generazione della nota strutturata</string>
+
+    <string name="error_no_course_title">Scegli una materia</string>
+    <string name="error_no_course_msg">Seleziona la materia dell\'appunto prima di elaborarlo.</string>
+    <string name="error_no_text_title">Testo non trovato</string>
+    <string name="error_no_text_msg">Impossibile leggere il testo nelle foto. Prova con una migliore luce, inquadrando il foglio frontalmente e senza ombre.</string>
+    <string name="error_unreadable_title">File non valido</string>
+    <string name="error_unreadable_msg">Una delle foto non è stata aperta. Scattala di nuovo e riprova.</string>
+    <string name="error_upload_title">Impossibile salvare</string>
+    <string name="error_ai_title">L\'IA non ha risposto</string>
+    <string name="error_ai_msg">Il tuo appunto è stato salvato: puoi riprovare il riepilogo ora o più tardi da Note.</string>
+
+    <!-- Login & Register ViewModel -->
+    <string name="login_error_empty">Inserisci email e password.</string>
+    <string name="login_error_not_admin">Questo account non ha i permessi di amministratore.</string>
+    <string name="login_error_is_admin">Questo è un account amministratore. Seleziona «Amministratore» per accedere.</string>
+    <string name="register_error_name">Inserisci il tuo nome completo.</string>
+    <string name="register_error_email">Inserisci un\'email valida.</string>
+    <string name="register_error_password_len">La password deve contenere almeno 6 caratteri.</string>
+    <string name="register_error_password_max">La password non può superare i 72 caratteri.</string>
+
+    <!-- Domain & API Errors -->
+    <string name="auth_error_credentials">Email o password errati.</string>
+    <string name="auth_error_connection">Nessuna connessione al server. Se è la prima volta dopo un po\', attendi ~1 min: il server si sta riattivando.</string>
+    <string name="auth_error_server">Il server di autenticazione è fallito (Errore %1$d).</string>
+    <string name="auth_error_unknown">Si è verificato un errore inatteso durante l\'accesso.</string>
+
+    <string name="note_error_connection">Nessuna connessione internet. Controlla la tua rete.</string>
+    <string name="note_error_client">C\'è stato un problema con la richiesta (Errore %1$d).</string>
+    <string name="note_error_502">L\'IA non è riuscita ad elaborare l\'appunto. Riprova.</string>
+    <string name="note_error_503">L\'IA non è al momento disponibile.</string>
+    <string name="note_error_server">Il server delle note sta riscontrando problemi (Errore %1$d).</string>
+    <string name="note_error_invalid_data">I dati ricevuti non sono validi.</string>
+    <string name="note_error_unknown">Si è verificato un errore imprevisto durante la gestione delle note.</string>
+
+    <string name="main_error_connection">Nessuna connessione per aggiornare la dashboard.</string>
+    <string name="main_error_server">Il server principale è fallito (Errore %1$d).</string>
+    <string name="main_error_unknown">Errore inatteso nella dashboard.</string>
+
+    <string name="quiz_error_connection">Nessuna connessione per caricare il quiz.</string>
+    <string name="quiz_error_server">Il server dei quiz è fallito (Errore %1$d).</string>
+    <string name="quiz_error_unknown">Si è verificato un errore durante il caricamento delle domande.</string>
+
+    <string name="topic_error_connection">Nessuna connessione per caricare i tuoi argomenti.</string>
+    <string name="topic_error_data">Impossibile caricare le materie in questo momento.</string>
+    <string name="topic_error_unknown">Si è verificato un errore imprevisto con gli argomenti di studio.</string>
+
+    <string name="api_error_session">La tua sessione è scaduta. Accedi di nuovo.</string>
+    <string name="api_error_permissions">Non hai i permessi per eseguire questa azione.</string>
+    <string name="api_error_default">%1$s (Errore %2$d)</string>
+    <string name="api_error_login_required">Accedi per continuare.</string>
+    <string name="note_login_required">Accedi per visualizzare le tue note.</string>
+
+    <!-- Additional L10n additions -->
+    <string name="new_section">Nuova sezione</string>
+    <string name="quiz_correct_answer_prefix">Risposta corretta: %1$s</string>
+    <string name="study_time_minutes">%1$d min</string>
+    <string name="activity_saved_note">Appunto salvato · %1$s</string>
+    <string name="activity_completed_quiz">Quiz completato · %1$s</string>
+    <string name="activity_score_format">Voto: %1$d%%</string>
+    <string name="error_loading_courses">Impossibile caricare i corsi</string>
+    <string name="error_enroll_course">Impossibile iscriversi al corso</string>
+    <string name="error_course_not_found">Non esiste alcun corso con il codice \"%1$s\".</string>
+    <string name="fallback_course_id">Corso %1$d</string>
+
+    <!-- Fallbacks -->
+    <string name="fallback_untitled_note">Nota senza titolo</string>
+    <string name="fallback_no_course">Nessun corso</string>
+    <string name="user_fallback_name">Utente</string>
+
+    <!-- F12: textos que estaban fijos en el código -->
+    <string name="scan_no_subjects">Non sei iscritto a nessuna materia. Aggiungine una in Profilo → Gestisci materie.</string>
+    <string name="scan_default_title">Appunti di %1$s</string>
+    <string name="scan_process_before_save">Elabora la scansione prima di salvare.</string>
+    <string name="scan_choose_subject">Scegli la materia degli appunti.</string>
+    <string name="scan_tags_label">Tag</string>
+    <string name="joined_subject">Ti sei iscritto alla materia!</string>
+    <string name="api_error_unknown">Si è verificato un errore imprevisto</string>
+
+    <string name="login_error_role_mismatch_student">Questo è un account amministratore. Seleziona \"Admin\" per accedere.</string>
+    <string name="login_error_role_mismatch_admin">Questo è un account studente. Seleziona \"Studente\" per accedere.</string>
+</resources>

@@ -1,16 +1,26 @@
 package ApunteIA.FrontEnd.presentation.model
 
+import ApunteIA.FrontEnd.R
+import ApunteIA.FrontEnd.util.L10n
 import java.io.File
 
 /**
  * Tipo de material que el usuario está escaneando. Determina cómo la IA
  * interpreta las fotos capturadas (letra manuscrita, texto impreso, etc).
  */
-enum class MaterialType(val label: String) {
-    HANDWRITTEN("Notas manuscritas"),
-    BOOK_PAGES("Páginas de libro"),
-    SLIDES("Diapositivas"),
-    WHITEBOARD("Notas de pizarra")
+enum class MaterialType {
+    HANDWRITTEN,
+    BOOK_PAGES,
+    SLIDES,
+    WHITEBOARD;
+
+    val label: String
+        get() = when (this) {
+            HANDWRITTEN -> L10n.getString(R.string.mat_handwritten)
+            BOOK_PAGES -> L10n.getString(R.string.mat_book_pages)
+            SLIDES -> L10n.getString(R.string.mat_slides)
+            WHITEBOARD -> L10n.getString(R.string.mat_whiteboard)
+        }
 }
 
 /**
@@ -47,11 +57,19 @@ data class NoteSection(
  * Cada paso real del análisis que se muestra en la pantalla de procesamiento,
  * en el orden en que ocurren.
  */
-enum class ProcessingStep(val label: String) {
-    READING("Leyendo el texto de tus páginas"),
-    UPLOADING("Guardando la nota en la nube"),
-    ORGANIZING("Resumiendo con IA"),
-    GENERATING("Generando la nota estructurada")
+enum class ProcessingStep {
+    READING,
+    UPLOADING,
+    ORGANIZING,
+    GENERATING;
+
+    val label: String
+        get() = when (this) {
+            READING -> L10n.getString(R.string.step_reading)
+            UPLOADING -> L10n.getString(R.string.step_uploading)
+            ORGANIZING -> L10n.getString(R.string.step_organizing)
+            GENERATING -> L10n.getString(R.string.step_generating)
+        }
 }
 
 /**
@@ -60,23 +78,23 @@ enum class ProcessingStep(val label: String) {
 data class ProcessingError(val title: String, val message: String) {
     companion object {
         val NO_COURSE = ProcessingError(
-            title = "Elige una materia",
-            message = "Selecciona la materia del apunte antes de procesarlo."
+            title = L10n.getString(R.string.error_no_course_title),
+            message = L10n.getString(R.string.error_no_course_msg)
         )
         val NO_TEXT = ProcessingError(
-            title = "No encontramos texto",
-            message = "No se pudo leer texto en las fotos. Intenta con mejor luz, enfocando la hoja de frente y sin sombras."
+            title = L10n.getString(R.string.error_no_text_title),
+            message = L10n.getString(R.string.error_no_text_msg)
         )
         val UNREADABLE = ProcessingError(
-            title = "Archivo inválido",
-            message = "Una de las fotos no se pudo abrir. Vuelve a tomarla e intenta de nuevo."
+            title = L10n.getString(R.string.error_unreadable_title),
+            message = L10n.getString(R.string.error_unreadable_msg)
         )
 
-        fun upload(message: String) = ProcessingError(title = "No se pudo guardar", message = message)
+        fun upload(message: String) = ProcessingError(title = L10n.getString(R.string.error_upload_title), message = message)
 
         fun ai(message: String) = ProcessingError(
-            title = "La IA no respondió",
-            message = "$message Tu apunte quedó guardado: puedes reintentar el resumen ahora o más tarde desde Notas."
+            title = L10n.getString(R.string.error_ai_title),
+            message = "$message " + L10n.getString(R.string.error_ai_msg)
         )
     }
 }

@@ -1,7 +1,10 @@
 package ApunteIA.FrontEnd.presentation.viewmodel
 
+import ApunteIA.FrontEnd.R
+import ApunteIA.FrontEnd.domain.model.LoginRole
 import ApunteIA.FrontEnd.domain.usecase.LoginUseCase
 import ApunteIA.FrontEnd.domain.util.Resource
+import ApunteIA.FrontEnd.util.L10n
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -29,10 +32,10 @@ class LoginViewModel @Inject constructor(
     private val _uiState = MutableStateFlow(LoginUiState())
     val uiState: StateFlow<LoginUiState> = _uiState.asStateFlow()
 
-    fun login(email: String, password: String) {
+    fun login(email: String, password: String, expectedRole: LoginRole) {
         if (email.isBlank() || password.isBlank()) {
             _uiState.value = _uiState.value.copy(
-                errorMessage = "Ingresa tu correo y contraseña."
+                errorMessage = L10n.getString(R.string.login_error_empty)
             )
             return
         }
@@ -40,7 +43,7 @@ class LoginViewModel @Inject constructor(
         viewModelScope.launch {
             _uiState.value = _uiState.value.copy(isLoading = true, errorMessage = null)
 
-            when (val result = loginUseCase(email.trim(), password)) {
+            when (val result = loginUseCase(email.trim(), password, expectedRole)) {
                 is Resource.Success -> {
                     _uiState.value = _uiState.value.copy(
                         isLoading = false,

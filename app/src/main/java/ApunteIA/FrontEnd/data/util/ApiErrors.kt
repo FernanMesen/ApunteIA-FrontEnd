@@ -1,5 +1,7 @@
 package ApunteIA.FrontEnd.data.util
 
+import ApunteIA.FrontEnd.R
+import ApunteIA.FrontEnd.util.L10n
 import org.json.JSONObject
 import retrofit2.HttpException
 import java.io.IOException
@@ -25,14 +27,14 @@ fun Throwable.backendMessage(): String? {
 }
 
 /** Mensaje genérico para errores de red/servidor, usando el del backend cuando existe. */
-fun Throwable.toFriendlyMessage(defaultMessage: String = "Ocurrió un error inesperado"): String = when (this) {
-    is IOException -> "No hay conexión con el servidor. Revisa tu internet (si es la primera vez en un rato, el servidor puede tardar ~1 min en despertar)."
+fun Throwable.toFriendlyMessage(defaultMessage: String = L10n.getString(R.string.api_error_unknown)): String = when (this) {
+    is IOException -> L10n.getString(R.string.auth_error_connection)
     is HttpException -> when (code()) {
-        401 -> "Tu sesión expiró. Inicia sesión de nuevo."
-        403 -> backendMessage() ?: "No tienes permisos para realizar esta acción."
-        else -> backendMessage() ?: "$defaultMessage (Error ${code()})"
+        401 -> L10n.getString(R.string.api_error_session)
+        403 -> backendMessage() ?: L10n.getString(R.string.api_error_permissions)
+        else -> backendMessage() ?: L10n.getString(R.string.api_error_default, defaultMessage, code())
     }
-    is NotLoggedInException -> "Inicia sesión para continuar."
+    is NotLoggedInException -> L10n.getString(R.string.api_error_login_required)
     else -> message ?: defaultMessage
 }
 

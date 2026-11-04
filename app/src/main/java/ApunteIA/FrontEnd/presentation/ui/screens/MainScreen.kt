@@ -29,6 +29,7 @@ import ApunteIA.FrontEnd.domain.model.RecentActivity
 import ApunteIA.FrontEnd.domain.util.FormatUtils
 import ApunteIA.FrontEnd.presentation.ui.theme.*
 import ApunteIA.FrontEnd.presentation.ui.layout.MainLayout
+import ApunteIA.FrontEnd.presentation.ui.components.LocalCurrentUser
 import ApunteIA.FrontEnd.presentation.ui.components.TopHeader
 import ApunteIA.FrontEnd.presentation.viewmodel.MainViewModel
 
@@ -40,10 +41,12 @@ fun MainScreen(
     onNotas: () -> Unit,
     onAuditoria: () -> Unit,
     onReforzar: () -> Unit,
+    onCursos: () -> Unit = {},
     onCameraClick: () -> Unit = {},
     onProfileClick: () -> Unit = {}
 ) {
     val uiState by viewModel.uiState.collectAsState()
+    val isAdmin = LocalCurrentUser.current?.isAdmin == true
     val snackbarHostState = remember { SnackbarHostState() }
     val retryText = stringResource(R.string.retry)
 
@@ -66,6 +69,7 @@ fun MainScreen(
         onNotas = onNotas,
         onAuditoria = onAuditoria,
         onReforzar = onReforzar,
+        onCursos = onCursos,
         onCameraClick = onCameraClick,
         snackbarHost = { SnackbarHost(snackbarHostState) },
         topBar = {
@@ -90,7 +94,7 @@ fun MainScreen(
                 item {
                     Spacer(modifier = Modifier.height(8.dp))
                     uiState.userStats?.let {
-                        GreetingSection(it.userName, it.streakDays)
+                        GreetingSection(it.userName, it.streakDays, isAdmin = isAdmin)
                     }
                 }
 
@@ -141,26 +145,35 @@ fun MainScreen(
                     }
                 }
 
-                item {
-                    uiState.userStats?.let { stats ->
-                        StatsCard(
-                            progress = stats.progressPercent,
-                            notesCount = stats.notesCount,
-                            pendingTopics = stats.pendingTopicsCount,
-                            quizzesDone = stats.quizzesDoneCount
+                if (isAdmin) {
+                    item {
+                        AdminMainSection(onAdminCourses = onCursos)
+                    }
+                } else {
+                    item {
+                        uiState.userStats?.let { stats ->
+                            StatsCard(
+                                progress = stats.progressPercent,
+                                notesCount = stats.notesCount,
+                                pendingTopics = stats.pendingTopicsCount,
+                                quizzesDone = stats.quizzesDoneCount
+                            )
+                        }
+                    }
+
+                    // Solo estudiantes: el admin no tiene escáner, Notas, Auditoría ni Reforzar.
+                    item {
+                        CycleSection(
+                            onCaptureClick = onCameraClick,
+                            onNotesClick = onNotas,
+                            onAuditClick = onAuditoria,
+                            onReinforceClick = onReforzar
                         )
                     }
-                }
 
-                item {
-                    CycleSection(
-                        onOrganizarClick = onNotas,
-                        onReforzarClick = onReforzar
-                    )
-                }
-
-                item {
-                    RecentActivitySection(uiState.recentActivity)
+                    item {
+                        RecentActivitySection(uiState.recentActivity)
+                    }
                 }
 
                 item {
@@ -172,7 +185,7 @@ fun MainScreen(
 }
 
 @Composable
-fun GreetingSection(userName: String, streakDays: Int) {
+fun GreetingSection(userName: String, streakDays: Int, isAdmin: Boolean = false) {
     val isDark = MaterialTheme.colorScheme.primary == SpaceCadet
 
     Column(modifier = Modifier.fillMaxWidth()) {
@@ -210,12 +223,56 @@ fun GreetingSection(userName: String, streakDays: Int) {
                     )
                     Spacer(modifier = Modifier.width(8.dp))
                     Text(
-                        text = stringResource(R.string.streak_days, streakDays),
+                        text = if (isAdmin) stringResource(R.string.role_admin) else stringResource(R.string.streak_days, streakDays),
                         fontSize = 14.sp,
                         fontWeight = FontWeight.Medium,
                         color = if (isDark) Color.White else TextGray
                     )
                 }
+            }
+        }
+    }
+}
+
+@Composable
+fun AdminMainSection(onAdminCourses: () -> Unit) {
+    val isDark = MaterialTheme.colorScheme.primary == SpaceCadet
+
+    Card(
+        modifier = Modifier.fillMaxWidth(),
+        shape = RoundedCornerShape(24.dp),
+        colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surfaceVariant),
+        elevation = CardDefaults.cardElevation(defaultElevation = 2.dp)
+    ) {
+        Column(
+            modifier = Modifier.padding(24.dp),
+            verticalArrangement = Arrangement.spacedBy(12.dp)
+        ) {
+            Text(
+                text = stringResource(R.string.admin_courses_title),
+                fontSize = 20.sp,
+                fontWeight = FontWeight.Bold,
+                color = MaterialTheme.colorScheme.onSurface
+            )
+            Text(
+                text = stringResource(R.string.admin_courses_subtitle),
+                fontSize = 14.sp,
+                color = MaterialTheme.colorScheme.onSurfaceVariant
+            )
+            Spacer(modifier = Modifier.height(4.dp))
+            Button(
+                onClick = onAdminCourses,
+                shape = RoundedCornerShape(14.dp),
+                colors = ButtonDefaults.buttonColors(
+                    containerColor = if (isDark) Color(0xFF394867) else DarkGreen,
+                    contentColor = Color.White
+                ),
+                modifier = Modifier.fillMaxWidth()
+            ) {
+                Text(
+                    text = stringResource(R.string.admin_courses_entry),
+                    fontWeight = FontWeight.Bold
+                )
             }
         }
     }
@@ -298,7 +355,12 @@ fun StatLine(label: String, value: String, valueColor: Color) {
 }
 
 @Composable
-fun CycleSection(onOrganizarClick: () -> Unit, onReforzarClick: () -> Unit) {
+fun CycleSection(
+    onCaptureClick: () -> Unit,
+    onNotesClick: () -> Unit,
+    onAuditClick: () -> Unit,
+    onReinforceClick: () -> Unit
+) {
     Column {
         Text(
             text = stringResource(R.string.your_cycle_header),
@@ -311,13 +373,13 @@ fun CycleSection(onOrganizarClick: () -> Unit, onReforzarClick: () -> Unit) {
             modifier = Modifier.fillMaxWidth(),
             verticalAlignment = Alignment.CenterVertically
         ) {
-            CycleItem("1", stringResource(R.string.cycle_step_1), false)
+            CycleItem("1", stringResource(R.string.cycle_step_1), false, onClick = onCaptureClick)
             CycleConnector(Modifier.weight(1f))
-            CycleItem("2", stringResource(R.string.cycle_step_2), false, onClick = onOrganizarClick)
+            CycleItem("2", stringResource(R.string.cycle_step_2), false, onClick = onNotesClick)
             CycleConnector(Modifier.weight(1f))
-            CycleItem("3", stringResource(R.string.cycle_step_3), false)
+            CycleItem("3", stringResource(R.string.cycle_step_3), false, onClick = onAuditClick)
             CycleConnector(Modifier.weight(1f))
-            CycleItem("4", stringResource(R.string.cycle_step_4), true, onClick = onReforzarClick)
+            CycleItem("4", stringResource(R.string.cycle_step_4), true, onClick = onReinforceClick)
         }
     }
 }

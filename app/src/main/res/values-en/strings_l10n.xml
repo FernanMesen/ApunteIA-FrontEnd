@@ -1,0 +1,88 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Scan Steps -->
+    <string name="step_reading">Reading text from your pages</string>
+    <string name="step_uploading">Saving note to cloud</string>
+    <string name="step_organizing">Summarizing with AI</string>
+    <string name="step_generating">Generating structured note</string>
+
+    <string name="error_no_course_title">Choose a subject</string>
+    <string name="error_no_course_msg">Select the note\'s subject before processing.</string>
+    <string name="error_no_text_title">No text found</string>
+    <string name="error_no_text_msg">Could not read text in the photos. Try with better lighting, facing the page directly and without shadows.</string>
+    <string name="error_unreadable_title">Invalid file</string>
+    <string name="error_unreadable_msg">One of the photos could not be opened. Retake it and try again.</string>
+    <string name="error_upload_title">Could not save</string>
+    <string name="error_ai_title">AI did not respond</string>
+    <string name="error_ai_msg">Your note was saved: you can retry the summary now or later from Notes.</string>
+
+    <!-- Login & Register ViewModel -->
+    <string name="login_error_empty">Enter your email and password.</string>
+    <string name="login_error_not_admin">This account doesn\'t have administrator permissions.</string>
+    <string name="login_error_is_admin">This is an administrator account. Select “Administrator” to sign in.</string>
+    <string name="register_error_name">Enter your full name.</string>
+    <string name="register_error_email">Enter a valid email.</string>
+    <string name="register_error_password_len">Password must be at least 6 characters.</string>
+    <string name="register_error_password_max">Password cannot exceed 72 characters.</string>
+
+    <!-- Domain & API Errors -->
+    <string name="auth_error_credentials">Incorrect email or password.</string>
+    <string name="auth_error_connection">No server connection. If this is the first time in a while, wait ~1 min: the server is waking up.</string>
+    <string name="auth_error_server">Authentication server failed (Error %1$d).</string>
+    <string name="auth_error_unknown">An unexpected error occurred while logging in.</string>
+
+    <string name="note_error_connection">No internet connection. Please check your network.</string>
+    <string name="note_error_client">There was a problem with the request (Error %1$d).</string>
+    <string name="note_error_502">AI could not process the note. Try again.</string>
+    <string name="note_error_503">AI is currently unavailable.</string>
+    <string name="note_error_server">Notes server is experiencing problems (Error %1$d).</string>
+    <string name="note_error_invalid_data">Received data is invalid.</string>
+    <string name="note_error_unknown">An unexpected error occurred while managing your notes.</string>
+
+    <string name="main_error_connection">No connection to update dashboard.</string>
+    <string name="main_error_server">Main server failed (Error %1$d).</string>
+    <string name="main_error_unknown">Unexpected dashboard error.</string>
+
+    <string name="quiz_error_connection">No connection to load quiz.</string>
+    <string name="quiz_error_server">Quiz server failed (Error %1$d).</string>
+    <string name="quiz_error_unknown">An error occurred while loading questions.</string>
+
+    <string name="topic_error_connection">No connection to load your topics.</string>
+    <string name="topic_error_data">Could not load subjects at this time.</string>
+    <string name="topic_error_unknown">An unexpected error occurred with study topics.</string>
+
+    <string name="api_error_session">Your session expired. Please log in again.</string>
+    <string name="api_error_permissions">You do not have permissions to perform this action.</string>
+    <string name="api_error_default">%1$s (Error %2$d)</string>
+    <string name="api_error_login_required">Please log in to continue.</string>
+    <string name="note_login_required">Log in to view your notes.</string>
+
+    <!-- Additional L10n additions -->
+    <string name="new_section">New section</string>
+    <string name="quiz_correct_answer_prefix">Correct answer: %1$s</string>
+    <string name="study_time_minutes">%1$d min</string>
+    <string name="activity_saved_note">Note saved · %1$s</string>
+    <string name="activity_completed_quiz">Quiz completed · %1$s</string>
+    <string name="activity_score_format">Score: %1$d%%</string>
+    <string name="error_loading_courses">Could not load courses</string>
+    <string name="error_enroll_course">Could not enroll in course</string>
+    <string name="error_course_not_found">No course exists with code \"%1$s\".</string>
+    <string name="fallback_course_id">Course %1$d</string>
+
+    <!-- Fallbacks -->
+    <string name="fallback_untitled_note">Untitled note</string>
+    <string name="fallback_no_course">No course</string>
+    <string name="user_fallback_name">User</string>
+
+    <!-- F12: textos que estaban fijos en el código -->
+    <string name="scan_no_subjects">You\'re not enrolled in any subject. Add one in Profile → Manage subjects.</string>
+    <string name="scan_default_title">%1$s notes</string>
+    <string name="scan_process_before_save">Process the scan before saving.</string>
+    <string name="scan_choose_subject">Choose the subject for these notes.</string>
+    <string name="scan_tags_label">Tags</string>
+    <string name="joined_subject">You joined the subject!</string>
+    <string name="api_error_unknown">An unexpected error occurred</string>
+
+    <string name="login_error_role_mismatch_student">This is an admin account. Select \"Admin\" to sign in.</string>
+    <string name="login_error_role_mismatch_admin">This is a student account. Select \"Student\" to sign in.</string>
+</resources>

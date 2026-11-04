@@ -64,7 +64,7 @@
     <string name="quizzes_done_stat">Questionários feitos</string>
     <string name="your_cycle_header">SEU CICLO</string>
     <string name="cycle_step_1">Capturar</string>
-    <string name="cycle_step_2">Organizar</string>
+    <string name="cycle_step_2">Notas</string>
     <string name="cycle_step_3">Auditar</string>
     <string name="cycle_step_4">Reforçar</string>
     <string name="recent_activity_header">ATIVIDADE RECENTE</string>
@@ -75,6 +75,7 @@
     <string name="status_missing">Ausente</string>
     <string name="program_covered">do programa coberto</string>
     <string name="practice_this">Praticar isto →</string>
+    <string name="scan_notes_cta">Digitalizar anotações →</string>
     <string name="audit_title">Auditoria</string>
     <string name="audit_subtitle">Comparado com o programa da sua disciplina</string>
     <string name="no_topics_for_category">Nenhum tópico para esta categoria</string>
@@ -294,6 +295,7 @@
     <string name="quizzes_done">Questionários feitos</string>
     <string name="profile_ai_language">Idioma das respostas de IA</string>
     <string name="ai_lang_same_as_app">Igual ao aplicativo</string>
+    <string name="ai_lang_same_as_app_short">App</string>
     <string name="ai_lang_spanish">Espanhol</string>
     <string name="ai_lang_english">Inglês</string>
     <string name="ai_lang_portuguese">Português</string>
