@@ -16,6 +16,7 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.navigation
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
+import ApunteIA.FrontEnd.R
 import ApunteIA.FrontEnd.presentation.ui.components.LocalCurrentUser
 import ApunteIA.FrontEnd.presentation.ui.components.RefreshOnResume
 import ApunteIA.FrontEnd.presentation.ui.screens.*
@@ -66,7 +67,7 @@ fun AppNavigation(
     LaunchedEffect(Unit) {
         sessionViewModel.sessionExpired.collect {
             sessionViewModel.refreshUser()
-            Toast.makeText(context, "Tu sesión expiró. Inicia sesión de nuevo.", Toast.LENGTH_LONG).show()
+            Toast.makeText(context, context.getString(R.string.api_error_session), Toast.LENGTH_LONG).show()
             navController.resetTo(Routes.LOGIN)
         }
     }
@@ -140,6 +141,16 @@ fun AppNavigation(
                 )
             }
 
+            // Idioma desde el Perfil: el cambio se aplica al tocar (la Activity se recrea y el
+            // NavController restaura la pila en esta misma pantalla); OK/atrás vuelven al Perfil.
+            composable(Routes.LANGUAGE_SETTINGS) {
+                LanguageScreen(
+                    onBack = { navController.popBackStack() },
+                    onNext = { navController.popBackStack() },
+                    isFromProfile = true
+                )
+            }
+
             composable(Routes.PERMISSIONS) {
                 PermissionsScreen(
                     onBack = { navController.popBackStack() },
@@ -191,7 +202,7 @@ fun AppNavigation(
                     onPrivacy = { navController.navigate(Routes.PRIVACY) },
                     onExportData = { navController.navigate(Routes.EXPORT_DATA) },
                     onChangePassword = { navController.navigate(Routes.CHANGE_PASSWORD) },
-                    onLanguage = { navController.navigate(Routes.LANGUAGE) },
+                    onLanguage = { navController.navigate(Routes.LANGUAGE_SETTINGS) },
                     notesCount = statsState.userStats?.notesCount,
                     quizzesCount = statsState.userStats?.quizzesDoneCount,
                     isAdmin = currentUser?.isAdmin == true,
@@ -226,7 +237,7 @@ fun AppNavigation(
                         viewModel = joinSubjectViewModel,
                         onBack = { navController.popBackStack() },
                         onJoinSuccess = {
-                            Toast.makeText(context, "¡Te uniste a la materia!", Toast.LENGTH_SHORT).show()
+                            Toast.makeText(context, context.getString(R.string.joined_subject), Toast.LENGTH_SHORT).show()
                             navController.popBackStack()
                         }
                     )
@@ -361,6 +372,12 @@ fun AppNavigation(
                         onNotas = { navController.goToTab(Routes.NOTES) },
                         onAuditoria = {},
                         onReforzar = { navController.goToTab(Routes.REFORZAR) },
+                        onCameraClick = { navController.navigate(Routes.SCAN_GRAPH) },
+                        onPracticeClick = { topic ->
+                            // Topic.id es el id de la nota; negativo = materia sin apuntes → escanear.
+                            if (topic.id > 0) navController.navigate(Routes.reforzar(topic.id.toLong()))
+                            else navController.navigate(Routes.SCAN_GRAPH)
+                        },
                         onProfileClick = { navController.navigate(Routes.PROFILE) }
                     )
                 }
@@ -370,7 +387,14 @@ fun AppNavigation(
             // REFORZAR
             // =========================
 
-            composable(Routes.REFORZAR) {
+            // "reforzar" (pestaña) y "reforzar?noteId=X" (desde Auditoría) caen en este destino.
+            composable(
+                route = Routes.REFORZAR_PATTERN,
+                arguments = listOf(navArgument(ReinforcementViewModel.NOTE_ID_ARG) {
+                    type = NavType.LongType
+                    defaultValue = -1L
+                })
+            ) {
                 if (currentUser?.isAdmin == true) {
                     LaunchedEffect(Unit) { navController.resetTo(Routes.MAIN) }
                 } else {

@@ -12,15 +12,49 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 
+import ApunteIA.FrontEnd.presentation.ui.theme.DarkAccent
+import ApunteIA.FrontEnd.presentation.ui.theme.DarkBorder
+import ApunteIA.FrontEnd.presentation.ui.theme.DarkButton
 import ApunteIA.FrontEnd.presentation.ui.theme.SpaceCadet
+import ApunteIA.FrontEnd.presentation.ui.theme.lightOr
 
 val ApuntesBackground = Color(0xFFFBFAEF)
 val ApuntesGreen = Color(0xFF0B3B27)
 val ApuntesBorder = Color(0xFFE1E3DE)
 val ApuntesGray = Color(0xFF68736D)
+
+/*
+ * Colores del onboarding: en claro son los de siempre (ApuntesBackground, ApuntesGreen...);
+ * en oscuro, los del tema. Así ninguna pantalla del onboarding queda clara en modo oscuro.
+ */
+
+/** Fondo de pantalla del onboarding. */
+@Composable
+fun onboardingBackground(): Color = lightOr(ApuntesBackground, MaterialTheme.colorScheme.background)
+
+/** Títulos y textos principales (ApuntesGreen en claro). */
+@Composable
+fun onboardingTitle(): Color = lightOr(ApuntesGreen, MaterialTheme.colorScheme.onBackground)
+
+/** Íconos, marcas de selección y bordes activos (ApuntesGreen en claro). */
+@Composable
+fun onboardingAccent(): Color = lightOr(ApuntesGreen, DarkAccent)
+
+/** Fondo de tarjetas y opciones no seleccionadas (blanco en claro). */
+@Composable
+fun onboardingCard(): Color = lightOr(Color.White, MaterialTheme.colorScheme.surfaceVariant)
+
+/** Bordes de tarjetas sin seleccionar. */
+@Composable
+fun onboardingBorder(): Color = lightOr(ApuntesBorder, DarkBorder)
+
+/** Texto secundario (descripciones). */
+@Composable
+fun onboardingMuted(): Color = lightOr(ApuntesGray, MaterialTheme.colorScheme.onSurfaceVariant)
 
 @Composable
 fun OnboardingHeader(
@@ -29,7 +63,8 @@ fun OnboardingHeader(
     onBack: () -> Unit = {}
 ) {
     val isDark = MaterialTheme.colorScheme.primary == SpaceCadet
-    val headerGreen = if (isDark) MaterialTheme.colorScheme.primary else ApuntesGreen
+    // En oscuro, el primary (SpaceCadet) casi no se ve sobre el fondo: se usa el acento claro.
+    val headerGreen = if (isDark) DarkAccent else ApuntesGreen
     
     Row(
         modifier = Modifier
@@ -135,7 +170,9 @@ fun ApuntesPrimaryButton(
             text = text,
             color = Color.White,
             fontWeight = FontWeight.Bold,
-            fontSize = 15.sp
+            fontSize = 15.sp,
+            maxLines = 1,
+            overflow = TextOverflow.Ellipsis
         )
     }
 }
@@ -146,18 +183,19 @@ fun EducationOption(
     selected: Boolean,
     onClick: () -> Unit
 ) {
-    val isDark = MaterialTheme.colorScheme.primary == SpaceCadet
-    val color = MaterialTheme.colorScheme.primary
-    
+    // Claro: igual que antes (primary). Oscuro: borde/texto con acento claro y relleno DarkButton.
+    val color = lightOr(MaterialTheme.colorScheme.primary, DarkAccent)
+    val selectedFill = lightOr(MaterialTheme.colorScheme.primary, DarkButton)
+
     Box(
         modifier = Modifier
             .border(
                 width = 1.dp,
-                color = color,
+                color = if (selected) selectedFill else color,
                 shape = RoundedCornerShape(25.dp)
             )
             .background(
-                color = if (selected) color else Color.Transparent,
+                color = if (selected) selectedFill else Color.Transparent,
                 shape = RoundedCornerShape(25.dp)
             )
             .clickable {
@@ -172,7 +210,9 @@ fun EducationOption(
         Text(
             text = text,
             color = if (selected) Color.White else color,
-            fontSize = 13.sp
+            fontSize = 13.sp,
+            maxLines = 1,
+            softWrap = false
         )
     }
 }

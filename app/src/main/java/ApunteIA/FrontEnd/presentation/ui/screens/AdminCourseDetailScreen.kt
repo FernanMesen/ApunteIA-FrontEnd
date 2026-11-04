@@ -45,6 +45,7 @@ import java.io.File
 import java.text.SimpleDateFormat
 import java.util.Locale
 import ApunteIA.FrontEnd.domain.util.FormatUtils
+import ApunteIA.FrontEnd.domain.util.IsoDates
 import kotlin.math.roundToInt
 import ApunteIA.FrontEnd.R
 import ApunteIA.FrontEnd.domain.model.CourseStudent
@@ -165,6 +166,7 @@ fun AdminCourseDetailScreen(
     studentToRemove?.let { student ->
         AlertDialog(
             onDismissRequest = { studentToRemove = null },
+            containerColor = lightOr(AlertDialogDefaults.containerColor, DarkThemeCard),
             title = {
                 Text(
                     text = stringResource(R.string.admin_remove_student_title, student.fullName.ifBlank { student.email }),
@@ -182,7 +184,7 @@ fun AdminCourseDetailScreen(
             },
             dismissButton = {
                 TextButton(onClick = { studentToRemove = null }) {
-                    Text(stringResource(R.string.cancel))
+                    Text(stringResource(R.string.cancel), color = lightOr(MaterialTheme.colorScheme.primary, DarkAccent))
                 }
             }
         )
@@ -191,6 +193,7 @@ fun AdminCourseDetailScreen(
     if (showDeleteCourseDialog) {
         AlertDialog(
             onDismissRequest = { showDeleteCourseDialog = false },
+            containerColor = lightOr(AlertDialogDefaults.containerColor, DarkThemeCard),
             title = {
                 Text(
                     text = stringResource(R.string.admin_delete_course_title, uiState.code.ifBlank { uiState.name }),
@@ -211,7 +214,7 @@ fun AdminCourseDetailScreen(
             },
             dismissButton = {
                 TextButton(onClick = { showDeleteCourseDialog = false }) {
-                    Text(stringResource(R.string.cancel))
+                    Text(stringResource(R.string.cancel), color = lightOr(MaterialTheme.colorScheme.primary, DarkAccent))
                 }
             }
         )
@@ -506,6 +509,7 @@ private fun StudentDetailDialog(
 
     AlertDialog(
         onDismissRequest = onDismiss,
+        containerColor = lightOr(AlertDialogDefaults.containerColor, DarkThemeCard),
         title = {
             Column {
                 Text(
@@ -529,7 +533,7 @@ private fun StudentDetailDialog(
             ) {
                 val finalGradeText = detail.finalGrade?.let {
                     FormatUtils.formatPercentage(it.roundToInt(), maxFractionDigits = 0)
-                } ?: "—"
+                } ?: stringResource(R.string.admin_student_no_grade)
 
                 Surface(
                     shape = RoundedCornerShape(14.dp),
@@ -555,6 +559,21 @@ private fun StudentDetailDialog(
                     }
                 }
 
+                // Regla de cálculo (CourseGrades), para que el admin sepa de dónde sale la nota.
+                Text(
+                    text = stringResource(R.string.admin_grade_rule),
+                    fontSize = 12.sp,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant
+                )
+
+                detail.attemptsError?.let { message ->
+                    Text(
+                        text = message,
+                        fontSize = 13.sp,
+                        color = MaterialTheme.colorScheme.error
+                    )
+                }
+
                 Text(
                     text = stringResource(R.string.admin_student_quizzes_history),
                     fontWeight = FontWeight.Bold,
@@ -566,7 +585,7 @@ private fun StudentDetailDialog(
                     Box(modifier = Modifier.fillMaxWidth().height(100.dp), contentAlignment = Alignment.Center) {
                         CircularProgressIndicator(strokeWidth = 2.dp)
                     }
-                } else if (detail.attempts.isEmpty()) {
+                } else if (detail.attempts.isEmpty() && detail.attemptsError == null) {
                     Text(
                         text = stringResource(R.string.admin_student_no_quizzes),
                         fontSize = 14.sp,
@@ -589,17 +608,25 @@ private fun StudentDetailDialog(
                                     verticalAlignment = Alignment.CenterVertically
                                 ) {
                                     Column(modifier = Modifier.weight(1f)) {
+                                        val title = attempt.assessmentTitle.ifBlank {
+                                            stringResource(
+                                                R.string.admin_assessment_fallback,
+                                                attempt.assessmentId.toLongOrNull() ?: 0L
+                                            )
+                                        }
+                                        val dateText = IsoDates.shortDate(attempt.completedAt)
                                         Text(
-                                            text = attempt.title,
+                                            text = title,
                                             fontWeight = FontWeight.Medium,
                                             fontSize = 14.sp,
                                             color = MaterialTheme.colorScheme.onSurface,
                                             maxLines = 1,
                                             overflow = TextOverflow.Ellipsis
                                         )
-                                        if (!attempt.completedAt.isNullOrBlank()) {
+                                        // Fecha en el formato del idioma de la app (antes: "2026-10-05" fijo).
+                                        if (dateText.isNotBlank()) {
                                             Text(
-                                                text = attempt.completedAt.take(10),
+                                                text = dateText,
                                                 fontSize = 12.sp,
                                                 color = MaterialTheme.colorScheme.onSurfaceVariant
                                             )
@@ -627,7 +654,11 @@ private fun StudentDetailDialog(
         },
         confirmButton = {
             TextButton(onClick = onDismiss) {
-                Text(stringResource(R.string.close), fontWeight = FontWeight.Bold)
+                Text(
+                    stringResource(R.string.close),
+                    fontWeight = FontWeight.Bold,
+                    color = lightOr(MaterialTheme.colorScheme.primary, DarkAccent)
+                )
             }
         },
         shape = RoundedCornerShape(24.dp)

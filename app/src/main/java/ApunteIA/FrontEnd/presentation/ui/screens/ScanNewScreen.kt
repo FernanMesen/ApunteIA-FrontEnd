@@ -25,10 +25,9 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import ApunteIA.FrontEnd.R
 import ApunteIA.FrontEnd.presentation.model.MaterialType
-import ApunteIA.FrontEnd.presentation.ui.theme.BackgroundBeige
-import ApunteIA.FrontEnd.presentation.ui.theme.DarkGreen
-import ApunteIA.FrontEnd.presentation.ui.theme.TextGray
+import androidx.compose.ui.text.style.TextOverflow
 import ApunteIA.FrontEnd.presentation.ui.theme.StatusRed
+import ApunteIA.FrontEnd.presentation.ui.theme.isDarkTheme
 import androidx.compose.foundation.horizontalScroll
 import ApunteIA.FrontEnd.presentation.viewmodel.ScanViewModel
 import java.util.Calendar
@@ -41,11 +40,12 @@ fun ScanNewScreen(
 ) {
     val state by viewModel.uiState.collectAsState()
     val context = LocalContext.current
+    val isDark = isDarkTheme()
 
     Column(
         modifier = Modifier
             .fillMaxSize()
-            .background(BackgroundBeige)
+            .background(scanBackground())
             .padding(horizontal = 20.dp)
     ) {
         ScanTopBar(title = stringResource(R.string.new_scan_title), onClose = onClose)
@@ -71,14 +71,14 @@ fun ScanNewScreen(
             }
             if (state.isLoadingSubjects) {
                 Spacer(modifier = Modifier.height(8.dp))
-                LinearProgressIndicator(color = DarkGreen, modifier = Modifier.fillMaxWidth())
+                LinearProgressIndicator(color = scanAccent(), modifier = Modifier.fillMaxWidth())
             }
             state.subjectsError?.let { message ->
                 Spacer(modifier = Modifier.height(8.dp))
                 Text(text = message, color = StatusRed, fontSize = 13.sp)
                 Text(
                     text = stringResource(R.string.retry),
-                    color = DarkGreen,
+                    color = scanAccent(),
                     fontSize = 13.sp,
                     fontWeight = FontWeight.Medium,
                     modifier = Modifier.clickable { viewModel.loadSubjects() }.padding(top = 4.dp)
@@ -105,12 +105,14 @@ fun ScanNewScreen(
                 placeholder = "mm/dd/yyyy",
                 readOnly = true,
                 trailingIcon = {
-                    Icon(Icons.Default.CalendarToday, contentDescription = null, tint = TextGray)
+                    Icon(Icons.Default.CalendarToday, contentDescription = null, tint = scanMuted())
                 },
                 modifier = Modifier.clickable {
                     val calendar = Calendar.getInstance()
                     DatePickerDialog(
                         context,
+                        // Oscuro: calendario oscuro (0 = tema por defecto, el mismo de siempre en claro).
+                        if (isDark) android.R.style.Theme_Material_Dialog_Alert else 0,
                         { _, year, month, dayOfMonth ->
                             viewModel.onDateChange(
                                 "%02d/%02d/%04d".format(month + 1, dayOfMonth, year)
@@ -168,23 +170,25 @@ fun ScanNewScreen(
             Row(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .background(Color.White, RoundedCornerShape(16.dp))
+                    .background(scanCard(), RoundedCornerShape(16.dp))
                     .padding(horizontal = 16.dp, vertical = 14.dp),
                 horizontalArrangement = Arrangement.SpaceBetween,
                 verticalAlignment = Alignment.CenterVertically
             ) {
+                // weight: en PT ("Digitalização de várias páginas") el texto baja de línea sin empujar el switch.
                 Text(
                     text = stringResource(R.string.multipage_scan_option),
-                    color = DarkGreen,
+                    color = scanText(),
                     fontSize = 15.sp,
-                    fontWeight = FontWeight.Medium
+                    fontWeight = FontWeight.Medium,
+                    modifier = Modifier.weight(1f).padding(end = 12.dp)
                 )
                 Switch(
                     checked = state.multiPageScan,
                     onCheckedChange = viewModel::toggleMultiPageScan,
                     colors = SwitchDefaults.colors(
                         checkedThumbColor = Color.White,
-                        checkedTrackColor = DarkGreen
+                        checkedTrackColor = scanButton()
                     )
                 )
             }
@@ -201,11 +205,18 @@ fun ScanNewScreen(
                 .padding(bottom = 20.dp),
             shape = RoundedCornerShape(28.dp),
             colors = ButtonDefaults.buttonColors(
-                containerColor = DarkGreen,
-                disabledContainerColor = DarkGreen.copy(alpha = 0.4f)
+                containerColor = scanButton(),
+                disabledContainerColor = scanButton().copy(alpha = 0.4f)
             )
         ) {
-            Text(stringResource(R.string.continue_action), color = Color.White, fontWeight = FontWeight.Bold, fontSize = 16.sp)
+            Text(
+                stringResource(R.string.continue_action),
+                color = Color.White,
+                fontWeight = FontWeight.Bold,
+                fontSize = 16.sp,
+                maxLines = 1,
+                overflow = TextOverflow.Ellipsis
+            )
         }
     }
 }
@@ -216,7 +227,7 @@ fun SectionLabel(text: String) {
         text = text,
         fontSize = 12.sp,
         fontWeight = FontWeight.SemiBold,
-        color = TextGray,
+        color = scanMuted(),
         letterSpacing = 0.5.sp
     )
 }
@@ -234,7 +245,7 @@ fun ScanTextField(
     OutlinedTextField(
         value = value,
         onValueChange = onValueChange,
-        placeholder = { Text(placeholder, color = TextGray) },
+        placeholder = { Text(placeholder, color = scanMuted(), maxLines = 1, overflow = TextOverflow.Ellipsis) },
         readOnly = readOnly,
         singleLine = true,
         trailingIcon = trailingIcon,
@@ -244,11 +255,14 @@ fun ScanTextField(
             .fillMaxWidth()
             .height(58.dp),
         colors = OutlinedTextFieldDefaults.colors(
-            focusedContainerColor = Color.White,
-            unfocusedContainerColor = Color.White,
-            focusedBorderColor = DarkGreen,
-            unfocusedBorderColor = Color(0xFFE0E0E0),
-            cursorColor = DarkGreen
+            focusedContainerColor = scanCard(),
+            unfocusedContainerColor = scanCard(),
+            focusedBorderColor = scanAccent(),
+            unfocusedBorderColor = scanBorder(),
+            cursorColor = scanAccent(),
+            // En claro es el mismo onSurface de siempre (DarkGreen); en oscuro, blanco.
+            focusedTextColor = MaterialTheme.colorScheme.onSurface,
+            unfocusedTextColor = MaterialTheme.colorScheme.onSurface
         )
     )
 }

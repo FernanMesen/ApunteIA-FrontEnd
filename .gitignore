@@ -27,3 +27,6 @@ keystore.properties
 # APKs generados
 *.apk
 *.aab
+.claude/settings.local.json
+
+google-services.json

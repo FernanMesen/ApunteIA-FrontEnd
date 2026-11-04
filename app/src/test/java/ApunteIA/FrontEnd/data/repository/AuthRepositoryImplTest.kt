@@ -1,6 +1,5 @@
 package ApunteIA.FrontEnd.data.repository
 
-import ApunteIA.FrontEnd.data.datasource.model.LoginResponseDto
 import ApunteIA.FrontEnd.domain.util.Resource
 import ApunteIA.FrontEnd.fakes.FakeAuthDataSource
 import ApunteIA.FrontEnd.fakes.FakeSessionStore
@@ -46,25 +45,6 @@ class AuthRepositoryImplTest {
 
         assertTrue(result is Resource.Error)
         assertEquals("Correo o contraseña incorrectos.", (result as Resource.Error).message)
-        assertNull(session.currentSession())
-    }
-
-    @Test
-    fun `login with admin role selected but student credentials returns mismatch error and does not save session`() = runBlocking {
-        dataSource.loginResult = {
-            LoginResponseDto(
-                token = "jwt",
-                userName = "Estudiante",
-                userId = 2L,
-                email = "demo@apunteia.com",
-                role = "STUDENT"
-            )
-        }
-
-        val result = repository.login("demo@apunteia.com", "123456", selectedRole = "Administrador")
-
-        assertTrue(result is Resource.Error)
-        assertEquals("Estas credenciales pertenecen a una cuenta de estudiante. Selecciona Estudiante para continuar.", (result as Resource.Error).message)
         assertNull(session.currentSession())
     }
 

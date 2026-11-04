@@ -23,10 +23,10 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import ApunteIA.FrontEnd.R
 import ApunteIA.FrontEnd.presentation.model.NoteSection
-import ApunteIA.FrontEnd.presentation.ui.theme.BackgroundBeige
-import ApunteIA.FrontEnd.presentation.ui.theme.DarkGreen
+import androidx.compose.ui.text.style.TextOverflow
+import ApunteIA.FrontEnd.presentation.ui.theme.DarkDisabled
 import ApunteIA.FrontEnd.presentation.ui.theme.StatusRed
-import ApunteIA.FrontEnd.presentation.ui.theme.TextGray
+import ApunteIA.FrontEnd.presentation.ui.theme.lightOr
 import androidx.compose.foundation.horizontalScroll
 import ApunteIA.FrontEnd.presentation.viewmodel.ScanViewModel
 import androidx.compose.runtime.LaunchedEffect
@@ -47,42 +47,26 @@ fun ScanReviewScreen(
     Column(
         modifier = Modifier
             .fillMaxSize()
-            .background(BackgroundBeige)
+            .background(scanBackground())
             .padding(horizontal = 20.dp)
     ) {
         ScanTopBar(title = stringResource(R.string.review_note_title), onClose = onClose)
 
         Spacer(modifier = Modifier.height(4.dp))
 
-        // Tabs Generado / Original
+        // Tabs Generado / Original: las dos pestañas se marcan igual (antes "Original" no se rellenaba).
         Row(verticalAlignment = Alignment.CenterVertically) {
-            Surface(
-                shape = RoundedCornerShape(20.dp),
-                color = if (!state.showingOriginal) DarkGreen else Color.Transparent,
-                modifier = Modifier.clickable { viewModel.setShowingOriginal(false) }
-            ) {
-                Text(
-                    text = stringResource(R.string.generated_tab),
-                    modifier = Modifier.padding(horizontal = 18.dp, vertical = 9.dp),
-                    color = if (!state.showingOriginal) Color.White else TextGray,
-                    fontWeight = FontWeight.SemiBold,
-                    fontSize = 14.sp
-                )
-            }
+            ReviewTab(
+                text = stringResource(R.string.generated_tab),
+                selected = !state.showingOriginal,
+                onClick = { viewModel.setShowingOriginal(false) }
+            )
             Spacer(modifier = Modifier.width(4.dp))
-            Surface(
-                shape = RoundedCornerShape(20.dp),
-                color = Color.Transparent,
-                modifier = Modifier.clickable { viewModel.setShowingOriginal(true) }
-            ) {
-                Text(
-                    text = stringResource(R.string.original_tab),
-                    modifier = Modifier.padding(horizontal = 18.dp, vertical = 9.dp),
-                    color = if (state.showingOriginal) DarkGreen else TextGray,
-                    fontWeight = FontWeight.Medium,
-                    fontSize = 14.sp
-                )
-            }
+            ReviewTab(
+                text = stringResource(R.string.original_tab),
+                selected = state.showingOriginal,
+                onClick = { viewModel.setShowingOriginal(true) }
+            )
         }
 
         Spacer(modifier = Modifier.height(12.dp))
@@ -90,22 +74,22 @@ fun ScanReviewScreen(
         if (state.isProcessing) {
             Box(modifier = Modifier.weight(1f).fillMaxWidth(), contentAlignment = Alignment.Center) {
                 Column(horizontalAlignment = Alignment.CenterHorizontally) {
-                    CircularProgressIndicator(color = DarkGreen)
+                    CircularProgressIndicator(color = scanAccent())
                     Spacer(modifier = Modifier.height(12.dp))
-                    Text(stringResource(R.string.generating_your_note), color = TextGray, fontSize = 14.sp)
+                    Text(stringResource(R.string.generating_your_note), color = scanMuted(), fontSize = 14.sp)
                 }
             }
         } else if (state.showingOriginal) {
             Column(modifier = Modifier.weight(1f).verticalScroll(rememberScrollState())) {
                 Surface(
                     shape = RoundedCornerShape(16.dp),
-                    color = Color.White,
-                    border = BorderStroke(1.dp, Color(0xFFEEEEEE))
+                    color = scanCard(),
+                    border = BorderStroke(1.dp, scanBorder(Color(0xFFEEEEEE)))
                 ) {
                     Text(
                         text = state.originalText,
                         modifier = Modifier.padding(16.dp),
-                        color = DarkGreen,
+                        color = scanText(),
                         fontSize = 15.sp,
                         lineHeight = 22.sp
                     )
@@ -129,10 +113,16 @@ fun ScanReviewScreen(
                     horizontalArrangement = Arrangement.SpaceBetween,
                     verticalAlignment = Alignment.CenterVertically
                 ) {
-                    Text(stringResource(R.string.recognized_text_header), fontWeight = FontWeight.Bold, color = DarkGreen, fontSize = 16.sp)
+                    Text(
+                        stringResource(R.string.recognized_text_header),
+                        fontWeight = FontWeight.Bold,
+                        color = scanText(),
+                        fontSize = 16.sp,
+                        modifier = Modifier.weight(1f).padding(end = 8.dp)
+                    )
                     Text(
                         text = stringResource(R.string.add_section_action),
-                        color = DarkGreen,
+                        color = scanAccent(),
                         fontSize = 13.sp,
                         fontWeight = FontWeight.Medium,
                         modifier = Modifier.clickable { viewModel.addSection() }
@@ -183,33 +173,37 @@ fun ScanReviewScreen(
                     OutlinedButton(
                         onClick = { viewModel.addTag() },
                         shape = RoundedCornerShape(16.dp),
-                        border = BorderStroke(1.dp, DarkGreen),
-                        colors = ButtonDefaults.outlinedButtonColors(contentColor = DarkGreen),
+                        border = BorderStroke(1.dp, scanAccent()),
+                        colors = ButtonDefaults.outlinedButtonColors(contentColor = scanAccent()),
                         modifier = Modifier.height(58.dp)
                     ) {
-                        Text(stringResource(R.string.add_button))
+                        Text(stringResource(R.string.add_button), maxLines = 1)
                     }
                 }
 
                 if (state.tags.isNotEmpty()) {
                     Spacer(modifier = Modifier.height(10.dp))
-                    Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+                    // horizontalScroll: con muchas etiquetas ya no se salen de la pantalla.
+                    Row(
+                        horizontalArrangement = Arrangement.spacedBy(8.dp),
+                        modifier = Modifier.horizontalScroll(rememberScrollState())
+                    ) {
                         state.tags.forEach { tag ->
                             Surface(
                                 shape = RoundedCornerShape(16.dp),
-                                color = Color.White,
-                                border = BorderStroke(1.dp, Color(0xFFE0E0E0))
+                                color = scanCard(),
+                                border = BorderStroke(1.dp, scanBorder())
                             ) {
                                 Row(
                                     verticalAlignment = Alignment.CenterVertically,
                                     modifier = Modifier.padding(horizontal = 10.dp, vertical = 6.dp)
                                 ) {
-                                    Text(tag, color = DarkGreen, fontSize = 13.sp)
+                                    Text(tag, color = scanText(), fontSize = 13.sp, maxLines = 1)
                                     Spacer(modifier = Modifier.width(6.dp))
                                     Icon(
                                         Icons.Default.Close,
                                         contentDescription = stringResource(R.string.delete),
-                                        tint = TextGray,
+                                        tint = scanMuted(),
                                         modifier = Modifier
                                             .size(14.dp)
                                             .clickable { viewModel.removeTag(tag) }
@@ -244,22 +238,35 @@ fun ScanReviewScreen(
                 enabled = !state.isSaving,
                 modifier = Modifier.weight(1f).height(54.dp),
                 shape = RoundedCornerShape(27.dp),
-                border = BorderStroke(1.dp, Color(0xFFE0E0E0)),
-                colors = ButtonDefaults.outlinedButtonColors(contentColor = DarkGreen)
+                border = BorderStroke(1.dp, scanBorder()),
+                colors = ButtonDefaults.outlinedButtonColors(contentColor = scanText())
             ) {
-                Text(stringResource(R.string.process_again), fontWeight = FontWeight.Medium, fontSize = 13.sp)
+                Text(
+                    stringResource(R.string.process_again),
+                    fontWeight = FontWeight.Medium,
+                    fontSize = 13.sp,
+                    maxLines = 1,
+                    overflow = TextOverflow.Ellipsis
+                )
             }
             Button(
                 onClick = { viewModel.saveNote() },
                 enabled = !state.isProcessing && !state.isSaving,
                 modifier = Modifier.weight(1f).height(54.dp),
                 shape = RoundedCornerShape(27.dp),
-                colors = ButtonDefaults.buttonColors(containerColor = DarkGreen)
+                colors = ButtonDefaults.buttonColors(containerColor = scanButton())
             ) {
                 if (state.isSaving) {
                     CircularProgressIndicator(modifier = Modifier.size(24.dp), color = Color.White, strokeWidth = 2.dp)
                 } else {
-                    Text(stringResource(R.string.save_note), color = Color.White, fontWeight = FontWeight.Bold, fontSize = 14.sp)
+                    Text(
+                        stringResource(R.string.save_note),
+                        color = Color.White,
+                        fontWeight = FontWeight.Bold,
+                        fontSize = 14.sp,
+                        maxLines = 1,
+                        overflow = TextOverflow.Ellipsis
+                    )
                 }
             }
         }
@@ -277,8 +284,8 @@ private fun SectionCard(
 ) {
     Surface(
         shape = RoundedCornerShape(16.dp),
-        color = Color.White,
-        border = BorderStroke(1.dp, Color(0xFFF0F0F0))
+        color = scanCard(),
+        border = BorderStroke(1.dp, scanBorder(Color(0xFFF0F0F0)))
     ) {
         Column(modifier = Modifier.padding(16.dp)) {
             Row(
@@ -291,12 +298,12 @@ private fun SectionCard(
                     onValueChange = onTitleChange,
                     fontWeight = FontWeight.Bold,
                     fontSize = 16.sp,
-                    color = DarkGreen,
+                    color = scanText(),
                     modifier = Modifier.weight(1f)
                 )
                 IconButton(
                     onClick = onRemoveSection,
-                    modifier = Modifier.size(26.dp).background(Color(0xFFFDECEC), CircleShape)
+                    modifier = Modifier.size(26.dp).background(lightOr(Color(0xFFFDECEC), Color(0xFF3B2525)), CircleShape)
                 ) {
                     Icon(Icons.Default.Close, contentDescription = stringResource(R.string.delete_section), tint = StatusRed, modifier = Modifier.size(14.dp))
                 }
@@ -309,18 +316,18 @@ private fun SectionCard(
                     modifier = Modifier.fillMaxWidth().padding(vertical = 4.dp),
                     verticalAlignment = Alignment.CenterVertically
                 ) {
-                    Text("•  ", color = DarkGreen, fontSize = 15.sp)
+                    Text("•  ", color = scanText(), fontSize = 15.sp)
                     InlineEditableText(
                         value = bullet.text,
                         onValueChange = { onBulletChange(bullet.id, it) },
                         fontSize = 14.sp,
-                        color = TextGray,
+                        color = scanMuted(),
                         modifier = Modifier.weight(1f)
                     )
                     Icon(
                         Icons.Default.Close,
                         contentDescription = stringResource(R.string.delete_bullet),
-                        tint = Color(0xFFCCCCCC),
+                        tint = lightOr(Color(0xFFCCCCCC), DarkDisabled),
                         modifier = Modifier
                             .size(16.dp)
                             .clickable { onRemoveBullet(bullet.id) }
@@ -332,7 +339,7 @@ private fun SectionCard(
 
             Text(
                 text = stringResource(R.string.add_bullet_action),
-                color = DarkGreen,
+                color = scanAccent(),
                 fontSize = 13.sp,
                 fontWeight = FontWeight.Medium,
                 modifier = Modifier.clickable { onAddBullet() }
@@ -372,6 +379,25 @@ private fun BasicTextFieldLine(
             fontSize = fontSize,
             fontWeight = fontWeight
         ),
-        cursorBrush = androidx.compose.ui.graphics.SolidColor(DarkGreen)
+        cursorBrush = androidx.compose.ui.graphics.SolidColor(scanAccent())
     )
+}
+
+/** Pestaña Generado / Original: rellena cuando está seleccionada, igual para las dos. */
+@Composable
+private fun ReviewTab(text: String, selected: Boolean, onClick: () -> Unit) {
+    Surface(
+        shape = RoundedCornerShape(20.dp),
+        color = if (selected) scanButton() else Color.Transparent,
+        modifier = Modifier.clickable { onClick() }
+    ) {
+        Text(
+            text = text,
+            modifier = Modifier.padding(horizontal = 18.dp, vertical = 9.dp),
+            color = if (selected) Color.White else scanMuted(),
+            fontWeight = FontWeight.SemiBold,
+            fontSize = 14.sp,
+            maxLines = 1
+        )
+    }
 }

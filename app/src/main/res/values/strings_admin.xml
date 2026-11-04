@@ -29,7 +29,7 @@
     <string name="subject_show_plan">Ver plan de estudios</string>
     <string name="subject_hide_plan">Ocultar plan de estudios</string>
     <string name="admin_student_grade_value">Calificación: %1$s</string>
-    <string name="admin_student_no_grade">Calificación: Sin evaluaciones</string>
+    <string name="admin_student_no_grade">Sin calificación</string>
     <string name="admin_scan_syllabus_photo">Escanear plan con foto</string>
     <string name="admin_delete_course">Eliminar curso</string>
     <string name="admin_delete_course_title">¿Eliminar el curso %1$s?</string>
@@ -42,4 +42,7 @@
     <string name="admin_student_quizzes_history">Historial de quizzes</string>
     <string name="admin_student_no_quizzes">No hay registros de quizzes para este curso.</string>
     <string name="admin_quiz_score">Calificación: %1$s</string>
+    <string name="admin_syllabus_ocr_error">No se pudo reconocer el texto de la fotografía.</string>
+    <string name="admin_assessment_fallback">Evaluación #%1$d</string>
+    <string name="admin_grade_rule">Nota final: promedio del mejor intento de cada quiz del curso.</string>
 </resources>

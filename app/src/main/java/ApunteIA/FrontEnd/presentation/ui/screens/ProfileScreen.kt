@@ -22,6 +22,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import ApunteIA.FrontEnd.R
@@ -225,7 +226,7 @@ fun ProfileTopBar(onBack: () -> Unit) {
         ) {
             Icon(
                 imageVector = Icons.Default.KeyboardArrowLeft,
-                contentDescription = "Back",
+                contentDescription = stringResource(R.string.back),
                 tint = MaterialTheme.colorScheme.onBackground
             )
         }
@@ -266,7 +267,7 @@ fun ProfileHeader() {
         Spacer(modifier = Modifier.height(16.dp))
 
         Text(
-            text = user?.name ?: "Usuario",
+            text = user?.name ?: stringResource(R.string.user_fallback_name),
             fontSize = 22.sp,
             fontWeight = FontWeight.Bold,
             color = MaterialTheme.colorScheme.onBackground
@@ -427,7 +428,14 @@ fun AiLanguageDropdown(
         AiLanguageOption.PT to stringResource(R.string.ai_lang_portuguese),
         AiLanguageOption.IT to stringResource(R.string.ai_lang_italian)
     )
-    val currentLabel = options.firstOrNull { it.first == currentOption }?.second ?: stringResource(R.string.ai_lang_same_as_app)
+    // En el chip va el código corto (ES/EN/PT/IT o "App"); los nombres completos, en el menú.
+    val chipLabel = when (currentOption) {
+        AiLanguageOption.SAME_AS_APP -> stringResource(R.string.ai_lang_same_as_app_short)
+        AiLanguageOption.ES -> "ES"
+        AiLanguageOption.EN -> "EN"
+        AiLanguageOption.PT -> "PT"
+        AiLanguageOption.IT -> "IT"
+    }
 
     Box {
         Surface(
@@ -440,10 +448,13 @@ fun AiLanguageDropdown(
                 verticalAlignment = Alignment.CenterVertically
             ) {
                 Text(
-                    text = currentLabel,
+                    text = chipLabel,
                     fontSize = 13.sp,
                     fontWeight = FontWeight.Bold,
-                    color = MaterialTheme.colorScheme.primary
+                    color = MaterialTheme.colorScheme.primary,
+                    maxLines = 1,
+                    softWrap = false,
+                    overflow = TextOverflow.Ellipsis
                 )
                 Spacer(modifier = Modifier.width(4.dp))
                 Icon(
@@ -456,11 +467,22 @@ fun AiLanguageDropdown(
         }
         DropdownMenu(
             expanded = expanded,
-            onDismissRequest = { expanded = false }
+            onDismissRequest = { expanded = false },
+            containerColor = if (isThemeDark) MaterialTheme.colorScheme.surfaceVariant else Color.White
         ) {
             options.forEach { (option, label) ->
+                val selected = option == currentOption
                 DropdownMenuItem(
-                    text = { Text(label) },
+                    text = {
+                        Text(
+                            text = label,
+                            color = if (selected) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.onSurface,
+                            fontWeight = if (selected) FontWeight.Bold else FontWeight.Normal
+                        )
+                    },
+                    trailingIcon = if (selected) {
+                        { Icon(Icons.Default.Check, null, tint = MaterialTheme.colorScheme.primary, modifier = Modifier.size(16.dp)) }
+                    } else null,
                     onClick = {
                         onOptionSelected(option)
                         expanded = false
@@ -481,11 +503,15 @@ fun ConfigItem(label: String, onClick: () -> Unit = {}, trailing: @Composable ()
         horizontalArrangement = Arrangement.SpaceBetween,
         verticalAlignment = Alignment.CenterVertically
     ) {
+        // weight(1f): el label ocupa lo que sobra y el trailing nunca se aplasta ni se parte.
         Text(
             text = label,
             fontSize = 15.sp,
             fontWeight = FontWeight.Medium,
-            color = MaterialTheme.colorScheme.onSurface
+            color = MaterialTheme.colorScheme.onSurface,
+            modifier = Modifier
+                .weight(1f)
+                .padding(end = 12.dp)
         )
         trailing()
     }

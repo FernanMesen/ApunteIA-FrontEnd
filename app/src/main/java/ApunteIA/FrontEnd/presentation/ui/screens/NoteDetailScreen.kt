@@ -25,6 +25,9 @@ import ApunteIA.FrontEnd.domain.model.Note
 import ApunteIA.FrontEnd.domain.model.ProcessingStatus
 import ApunteIA.FrontEnd.domain.util.IsoDates
 import ApunteIA.FrontEnd.presentation.ui.components.StatusTag
+import ApunteIA.FrontEnd.presentation.ui.theme.DarkAccent
+import ApunteIA.FrontEnd.presentation.ui.theme.DarkThemeCard
+import ApunteIA.FrontEnd.presentation.ui.theme.lightOr
 import ApunteIA.FrontEnd.presentation.viewmodel.NoteDetailUiState
 import ApunteIA.FrontEnd.presentation.viewmodel.NoteDetailViewModel
 
@@ -56,6 +59,8 @@ fun NoteDetailScreen(
     if (showDeleteDialog) {
         AlertDialog(
             onDismissRequest = { showDeleteDialog = false },
+            // Oscuro: mismo fondo que los diálogos del Perfil; el botón Cancelar con texto legible.
+            containerColor = lightOr(AlertDialogDefaults.containerColor, DarkThemeCard),
             title = { Text(stringResource(R.string.delete_note_title)) },
             text = { Text(stringResource(R.string.delete_note_message)) },
             confirmButton = {
@@ -65,7 +70,9 @@ fun NoteDetailScreen(
                 }) { Text(stringResource(R.string.delete), color = MaterialTheme.colorScheme.error) }
             },
             dismissButton = {
-                TextButton(onClick = { showDeleteDialog = false }) { Text(stringResource(R.string.cancel)) }
+                TextButton(onClick = { showDeleteDialog = false }) {
+                    Text(stringResource(R.string.cancel), color = lightOr(MaterialTheme.colorScheme.primary, DarkAccent))
+                }
             }
         )
     }

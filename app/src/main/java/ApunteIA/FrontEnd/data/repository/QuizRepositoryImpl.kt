@@ -71,4 +71,12 @@ class QuizRepositoryImpl @Inject constructor(
     override suspend fun getMyAttempts(): Resource<List<AssessmentAttempt>> = safeApiCall(errorMapper) {
         loader.myAttempts()
     }
+
+    override suspend fun getCourseAssessmentIds(courseId: Long): Resource<Set<Long>> = safeApiCall(errorMapper) {
+        dataSource.getCourseAssessments(courseId).map { it.id }.toSet()
+    }
+
+    override suspend fun getUserAttempts(userId: Long): Resource<List<AssessmentAttempt>> = safeApiCall(errorMapper) {
+        dataSource.getUserAttempts(userId).map { it.toDomain() }
+    }
 }

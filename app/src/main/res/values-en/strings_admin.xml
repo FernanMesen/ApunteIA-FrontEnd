@@ -29,7 +29,7 @@
     <string name="subject_show_plan">See study plan</string>
     <string name="subject_hide_plan">Hide study plan</string>
     <string name="admin_student_grade_value">Grade: %1$s</string>
-    <string name="admin_student_no_grade">Grade: No evaluations</string>
+    <string name="admin_student_no_grade">No grade</string>
     <string name="admin_scan_syllabus_photo">Scan study plan with photo</string>
     <string name="admin_delete_course">Delete course</string>
     <string name="admin_delete_course_title">Delete course %1$s?</string>
@@ -42,4 +42,7 @@
     <string name="admin_student_quizzes_history">Quiz history</string>
     <string name="admin_student_no_quizzes">No quiz records for this course.</string>
     <string name="admin_quiz_score">Score: %1$s</string>
+    <string name="admin_syllabus_ocr_error">Couldn\'t recognize the text in the photo.</string>
+    <string name="admin_assessment_fallback">Assessment #%1$d</string>
+    <string name="admin_grade_rule">Final grade: average of the best attempt on each quiz in the course.</string>
 </resources>

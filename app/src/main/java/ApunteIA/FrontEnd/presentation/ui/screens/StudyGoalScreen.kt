@@ -12,6 +12,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import ApunteIA.FrontEnd.R
@@ -40,7 +41,7 @@ fun StudyGoalScreen(
     Column(
         modifier = Modifier
             .fillMaxSize()
-            .background(ApuntesBackground)
+            .background(onboardingBackground())
             .padding(horizontal = 24.dp)
     ) {
 
@@ -53,7 +54,7 @@ fun StudyGoalScreen(
 
         Text(
             text = stringResource(R.string.study_goal_title),
-            color = ApuntesGreen,
+            color = onboardingTitle(),
             fontSize = 22.sp,
             fontWeight = FontWeight.Bold
         )
@@ -69,15 +70,15 @@ fun StudyGoalScreen(
                     .fillMaxWidth()
                     .height(52.dp)
                     .background(
-                        color = Color.White,
+                        color = onboardingCard(),
                         shape = RoundedCornerShape(15.dp)
                     )
                     .border(
                         width = 1.dp,
                         color = if (selected) {
-                            ApuntesGreen
+                            onboardingAccent()
                         } else {
-                            ApuntesBorder
+                            onboardingBorder()
                         },
                         shape = RoundedCornerShape(15.dp)
                     )
@@ -91,14 +92,16 @@ fun StudyGoalScreen(
                 Text(
                     text = goal,
                     modifier = Modifier.weight(1f),
-                    color = ApuntesGreen,
-                    fontSize = 14.sp
+                    color = onboardingTitle(),
+                    fontSize = 14.sp,
+                    maxLines = 1,
+                    overflow = TextOverflow.Ellipsis
                 )
 
                 if (selected) {
                     Text(
                         text = "✓",
-                        color = ApuntesGreen,
+                        color = onboardingAccent(),
                         fontSize = 20.sp,
                         fontWeight = FontWeight.Bold
                     )

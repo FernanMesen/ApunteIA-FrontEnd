@@ -141,7 +141,7 @@ class ScanViewModel @Inject constructor(
                             subjects = names,
                             subject = state.subject.takeIf { it in names } ?: names.firstOrNull().orEmpty(),
                             subjectsError = if (names.isEmpty()) {
-                                "No estás inscrito en ninguna materia. Agrega una en Perfil → Administrar materias."
+                                L10n.getString(R.string.scan_no_subjects)
                             } else {
                                 null
                             }
@@ -258,7 +258,7 @@ class ScanViewModel @Inject constructor(
             step()
 
             // 2. Guardar la nota en el backend
-            val title = state.className.trim().ifBlank { "Apunte de ${course.name}" }
+            val title = state.className.trim().ifBlank { L10n.getString(R.string.scan_default_title, course.name) }
             val noteId = when (val created = createNote(title, text, course.id)) {
                 is Resource.Success -> created.data.id.toLong()
                 is Resource.Error -> {
@@ -439,18 +439,20 @@ class ScanViewModel @Inject constructor(
         val state = _uiState.value
         val noteId = draftNoteId
         if (noteId == null) {
-            _uiState.update { it.copy(saveError = "Procesa el escaneo antes de guardar.") }
+            _uiState.update { it.copy(saveError = L10n.getString(R.string.scan_process_before_save)) }
             return
         }
         val course = courses.firstOrNull { it.name == state.subject }
         if (course == null) {
-            _uiState.update { it.copy(saveError = "Elige la materia del apunte.") }
+            _uiState.update { it.copy(saveError = L10n.getString(R.string.scan_choose_subject)) }
             return
         }
         val content = buildString {
             append(state.originalText.trim())
             if (state.tags.isNotEmpty()) {
-                append("\n\nEtiquetas: ")
+                append("\n\n")
+                append(L10n.getString(R.string.scan_tags_label))
+                append(": ")
                 append(state.tags.joinToString(", "))
             }
         }

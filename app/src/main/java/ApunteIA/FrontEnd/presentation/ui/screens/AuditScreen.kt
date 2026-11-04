@@ -16,6 +16,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import ApunteIA.FrontEnd.R
+import ApunteIA.FrontEnd.domain.model.Topic
 import ApunteIA.FrontEnd.presentation.ui.components.AuditSummaryCard
 import ApunteIA.FrontEnd.presentation.ui.components.FilterChip
 import ApunteIA.FrontEnd.presentation.ui.components.TopicCard
@@ -32,7 +33,7 @@ fun AuditScreen(
     onAuditoria: () -> Unit = {},
     onReforzar: () -> Unit = {},
     onCameraClick: () -> Unit = {},
-    onPracticeClick: (String) -> Unit = {},
+    onPracticeClick: (Topic) -> Unit = {},
     onProfileClick: () -> Unit = {},
     viewModel: AuditViewModel = hiltViewModel()
 ) {
@@ -155,7 +156,7 @@ fun AuditScreen(
                     }
                 } else {
                     items(filteredTopics) { topic ->
-                        TopicCard(topic = topic, onPracticeClick = { onPracticeClick(topic.title) })
+                        TopicCard(topic = topic, onPracticeClick = { onPracticeClick(topic) })
                     }
                 }
                 item { Spacer(modifier = Modifier.height(80.dp)) }

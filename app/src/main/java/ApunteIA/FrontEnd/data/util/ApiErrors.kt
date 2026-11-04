@@ -27,7 +27,7 @@ fun Throwable.backendMessage(): String? {
 }
 
 /** Mensaje genérico para errores de red/servidor, usando el del backend cuando existe. */
-fun Throwable.toFriendlyMessage(defaultMessage: String = "Ocurrió un error inesperado"): String = when (this) {
+fun Throwable.toFriendlyMessage(defaultMessage: String = L10n.getString(R.string.api_error_unknown)): String = when (this) {
     is IOException -> L10n.getString(R.string.auth_error_connection)
     is HttpException -> when (code()) {
         401 -> L10n.getString(R.string.api_error_session)

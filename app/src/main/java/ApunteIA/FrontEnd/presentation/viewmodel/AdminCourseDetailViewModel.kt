@@ -5,38 +5,36 @@ import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import ApunteIA.FrontEnd.R
+import ApunteIA.FrontEnd.domain.model.AssessmentAttempt
 import ApunteIA.FrontEnd.domain.model.CourseStudent
 import ApunteIA.FrontEnd.domain.repository.CourseRepository
 import ApunteIA.FrontEnd.domain.usecase.DeleteCourseUseCase
 import ApunteIA.FrontEnd.domain.usecase.GetCourseStudentsUseCase
+import ApunteIA.FrontEnd.domain.usecase.GetStudentCourseGradesUseCase
+import ApunteIA.FrontEnd.domain.usecase.RecognizeTextUseCase
 import ApunteIA.FrontEnd.domain.usecase.RemoveStudentFromCourseUseCase
 import ApunteIA.FrontEnd.domain.usecase.SaveCourseUseCase
 import ApunteIA.FrontEnd.domain.util.Resource
+import ApunteIA.FrontEnd.util.L10n
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
-import javax.inject.Inject
-
-import ApunteIA.FrontEnd.data.datasource.QuizDataSource
-import ApunteIA.FrontEnd.domain.repository.TextRecognizer
 import java.io.File
-import kotlin.math.roundToInt
+import javax.inject.Inject
+import kotlin.coroutines.cancellation.CancellationException
 
-data class StudentQuizAttempt(
-    val title: String,
-    val scorePercent: Int,
-    val status: String,
-    val completedAt: String?
-)
-
+/** Detalle de un estudiante en el curso: nota final e intentos que la forman. */
 data class StudentCourseDetail(
     val student: CourseStudent,
     val finalGrade: Double?,
-    val attempts: List<StudentQuizAttempt>,
-    val isLoadingAttempts: Boolean = false
+    /** Intentos completados de quizzes de este curso (la pantalla formatea título y fecha). */
+    val attempts: List<AssessmentAttempt>,
+    val isLoadingAttempts: Boolean = false,
+    /** No se pudieron cargar los intentos (se muestra la nota de la lista y un aviso). */
+    val attemptsError: String? = null
 )
 
 data class AdminCourseDetailUiState(
@@ -74,8 +72,8 @@ class AdminCourseDetailViewModel @Inject constructor(
     private val getCourseStudents: GetCourseStudentsUseCase,
     private val removeStudentFromCourse: RemoveStudentFromCourseUseCase,
     private val deleteCourseUseCase: DeleteCourseUseCase,
-    private val quizDataSource: QuizDataSource,
-    private val textRecognizer: TextRecognizer
+    private val getStudentCourseGrades: GetStudentCourseGradesUseCase,
+    private val recognizeText: RecognizeTextUseCase
 ) : ViewModel() {
 
     private val initialId: Long? = savedStateHandle.get<Long>(COURSE_ID_ARG)?.takeIf { it > 0L }
@@ -185,7 +183,7 @@ class AdminCourseDetailViewModel @Inject constructor(
         viewModelScope.launch {
             _uiState.update { it.copy(isLoading = true, error = null) }
             try {
-                val recognizedText = textRecognizer.recognize(listOf(photoFile))
+                val recognizedText = recognizeText(listOf(photoFile))
                 _uiState.update { state ->
                     val currentSyllabus = state.syllabus.trim()
                     val newSyllabus = if (currentSyllabus.isBlank()) {
@@ -195,9 +193,12 @@ class AdminCourseDetailViewModel @Inject constructor(
                     }
                     state.copy(isLoading = false, syllabus = newSyllabus.take(MAX_SYLLABUS))
                 }
-            } catch (e: Exception) {
+            } catch (cancellation: CancellationException) {
+                throw cancellation
+            } catch (_: Exception) {
                 _uiState.update { state ->
-                    state.copy(isLoading = false, error = e.localizedMessage ?: "Error al reconocer texto de la fotografía")
+                    // El mensaje de ML Kit viene en inglés: se muestra siempre el texto traducido.
+                    state.copy(isLoading = false, error = L10n.getString(R.string.admin_syllabus_ocr_error))
                 }
             }
         }
@@ -234,45 +235,24 @@ class AdminCourseDetailViewModel @Inject constructor(
                     )
                 )
             }
-            try {
-                val courseAssessments = quizDataSource.getCourseAssessments(courseId)
-                val assessmentIds = courseAssessments.map { it.id }.toSet()
-                val allAttempts = quizDataSource.getUserAttempts(student.userId)
-
-                val courseAttempts = if (assessmentIds.isNotEmpty()) {
-                    allAttempts.filter { it.assessmentId in assessmentIds }
-                } else {
-                    allAttempts
-                }
-
-                val completed = courseAttempts.filter { it.status.equals("COMPLETED", ignoreCase = true) && it.score != null }
-                val finalGrade = if (completed.isNotEmpty()) completed.mapNotNull { it.score }.average() else student.averageGrade
-
-                val attemptItems = courseAttempts.map { att ->
-                    StudentQuizAttempt(
-                        title = att.assessmentTitle.takeIf { !it.isNullOrBlank() } ?: "Evaluación #${att.assessmentId}",
-                        scorePercent = (att.score ?: 0.0).roundToInt(),
-                        status = att.status.orEmpty(),
-                        completedAt = att.completedAt
-                    )
-                }
-
-                _uiState.update { state ->
-                    state.copy(
-                        selectedStudentDetail = StudentCourseDetail(
-                            student = student,
-                            finalGrade = finalGrade,
-                            attempts = attemptItems,
+            // Misma regla que la lista (CourseGrades): la nota del detalle siempre coincide.
+            val result = getStudentCourseGrades(courseId, student.userId)
+            _uiState.update { state ->
+                // Si el admin ya cerró el detalle o abrió otro estudiante, se descarta.
+                val current = state.selectedStudentDetail
+                    ?.takeIf { it.student.enrollmentId == student.enrollmentId }
+                    ?: return@update state
+                state.copy(
+                    selectedStudentDetail = when (result) {
+                        is Resource.Success -> current.copy(
+                            finalGrade = result.data.finalGrade,
+                            attempts = result.data.attempts,
                             isLoadingAttempts = false
                         )
-                    )
-                }
-            } catch (_: Exception) {
-                _uiState.update { state ->
-                    state.copy(
-                        selectedStudentDetail = state.selectedStudentDetail?.copy(isLoadingAttempts = false)
-                    )
-                }
+                        is Resource.Error -> current.copy(isLoadingAttempts = false, attemptsError = result.message)
+                        is Resource.Loading -> current
+                    }
+                )
             }
         }
     }
