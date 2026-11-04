@@ -1,4 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
+
 <resources>
     <!-- Scan Steps -->
     <string name="step_reading">Leyendo el texto de tus páginas</string>
@@ -18,8 +19,8 @@
 
     <!-- Login & Register ViewModel -->
     <string name="login_error_empty">Ingresa tu correo y contraseña.</string>
-    <string name="login_error_role_mismatch_student">Estas credenciales pertenecen a una cuenta de estudiante. Selecciona Estudiante para continuar.</string>
-    <string name="login_error_role_mismatch_admin">Estas credenciales pertenecen a una cuenta de administrador. Selecciona Administrador para continuar.</string>
+    <string name="login_error_not_admin">Esta cuenta no tiene permisos de administrador.</string>
+    <string name="login_error_is_admin">Esta es una cuenta de administrador. Selecciona «Administrador» para entrar.</string>
     <string name="register_error_name">Ingresa tu nombre completo.</string>
     <string name="register_error_email">Ingresa un correo válido.</string>
     <string name="register_error_password_len">La contraseña debe tener al menos 6 caracteres.</string>
@@ -72,4 +73,17 @@
     <!-- Fallbacks -->
     <string name="fallback_untitled_note">Nota sin título</string>
     <string name="fallback_no_course">Sin curso</string>
+    <string name="user_fallback_name">Usuario</string>
+
+    <!-- F12: textos que estaban fijos en el código -->
+    <string name="scan_no_subjects">No estás inscrito en ninguna materia. Agrega una en Perfil → Administrar materias.</string>
+    <string name="scan_default_title">Apunte de %1$s</string>
+    <string name="scan_process_before_save">Procesa el escaneo antes de guardar.</string>
+    <string name="scan_choose_subject">Elige la materia del apunte.</string>
+    <string name="scan_tags_label">Etiquetas</string>
+    <string name="joined_subject">¡Te uniste a la materia!</string>
+    <string name="api_error_unknown">Ocurrió un error inesperado</string>
+
+    <string name="login_error_role_mismatch_student">Esta cuenta es de administrador. Selecciona \"Admin\" para ingresar.</string>
+    <string name="login_error_role_mismatch_admin">Esta cuenta es de estudiante. Selecciona \"Estudiante\" para ingresar.</string>
 </resources>

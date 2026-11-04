@@ -12,6 +12,7 @@ import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -27,7 +28,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import ApunteIA.FrontEnd.R
-import ApunteIA.FrontEnd.domain.error.AuthError
+import ApunteIA.FrontEnd.domain.model.LoginRole
 import ApunteIA.FrontEnd.presentation.ui.theme.SpaceCadet
 import ApunteIA.FrontEnd.presentation.viewmodel.LoginViewModel
 import ApunteIA.FrontEnd.util.LanguageManager
@@ -62,8 +63,9 @@ fun LoginScreen(
         mutableStateOf("")
     }
 
-    var selectedRole by remember {
-        mutableStateOf("Estudiante")
+    // rememberSaveable: la pestaña elegida sobrevive a la rotación y al cambio de idioma.
+    var selectedRole by rememberSaveable {
+        mutableStateOf(LoginRole.STUDENT)
     }
 
     var selectedLanguage by remember {
@@ -195,9 +197,9 @@ fun LoginScreen(
                 text = stringResource(
                     R.string.role_student
                 ),
-                selected = selectedRole == "Estudiante",
+                selected = selectedRole == LoginRole.STUDENT,
                 onClick = {
-                    selectedRole = "Estudiante"
+                    selectedRole = LoginRole.STUDENT
                 },
                 modifier = Modifier.weight(1f)
             )
@@ -206,9 +208,9 @@ fun LoginScreen(
                 text = stringResource(
                     R.string.role_admin
                 ),
-                selected = selectedRole == "Administrador",
+                selected = selectedRole == LoginRole.ADMIN,
                 onClick = {
-                    selectedRole = "Administrador"
+                    selectedRole = LoginRole.ADMIN
                 },
                 modifier = Modifier.weight(1f)
             )
@@ -314,26 +316,14 @@ fun LoginScreen(
 
         // Error login
 
-        val roleErrorMessage = when (val err = uiState.authError) {
-            is AuthError.InvalidCredentials -> stringResource(R.string.auth_error_credentials)
-            is AuthError.NoConnection -> stringResource(R.string.auth_error_connection)
-            is AuthError.ServerError -> stringResource(R.string.auth_error_server, err.code)
-            is AuthError.Rejected -> err.reason
-            is AuthError.RoleMismatchStudent -> stringResource(R.string.login_error_role_mismatch_student)
-            is AuthError.RoleMismatchAdmin -> stringResource(R.string.login_error_role_mismatch_admin)
-            is AuthError.Unknown -> stringResource(R.string.auth_error_unknown)
-            null -> null
-        }
-        val displayedErrorMessage = roleErrorMessage ?: uiState.errorMessage
-
-        if (displayedErrorMessage != null) {
+        if (uiState.errorMessage != null) {
 
             Spacer(
                 modifier = Modifier.height(12.dp)
             )
 
             Text(
-                text = displayedErrorMessage,
+                text = uiState.errorMessage.orEmpty(),
                 color = MaterialTheme.colorScheme.error,
                 fontSize = 14.sp,
                 modifier = Modifier.fillMaxWidth()

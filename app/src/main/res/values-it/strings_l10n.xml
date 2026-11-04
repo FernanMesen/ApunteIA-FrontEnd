@@ -18,8 +18,8 @@
 
     <!-- Login & Register ViewModel -->
     <string name="login_error_empty">Inserisci email e password.</string>
-    <string name="login_error_role_mismatch_student">Queste credenziali appartengono a un account studente. Seleziona Studente per continuare.</string>
-    <string name="login_error_role_mismatch_admin">Queste credenziali appartengono a un account amministratore. Seleziona Amministratore per continuare.</string>
+    <string name="login_error_not_admin">Questo account non ha i permessi di amministratore.</string>
+    <string name="login_error_is_admin">Questo è un account amministratore. Seleziona «Amministratore» per accedere.</string>
     <string name="register_error_name">Inserisci il tuo nome completo.</string>
     <string name="register_error_email">Inserisci un\'email valida.</string>
     <string name="register_error_password_len">La password deve contenere almeno 6 caratteri.</string>
@@ -72,4 +72,17 @@
     <!-- Fallbacks -->
     <string name="fallback_untitled_note">Nota senza titolo</string>
     <string name="fallback_no_course">Nessun corso</string>
+    <string name="user_fallback_name">Utente</string>
+
+    <!-- F12: textos que estaban fijos en el código -->
+    <string name="scan_no_subjects">Non sei iscritto a nessuna materia. Aggiungine una in Profilo → Gestisci materie.</string>
+    <string name="scan_default_title">Appunti di %1$s</string>
+    <string name="scan_process_before_save">Elabora la scansione prima di salvare.</string>
+    <string name="scan_choose_subject">Scegli la materia degli appunti.</string>
+    <string name="scan_tags_label">Tag</string>
+    <string name="joined_subject">Ti sei iscritto alla materia!</string>
+    <string name="api_error_unknown">Si è verificato un errore imprevisto</string>
+
+    <string name="login_error_role_mismatch_student">Questo è un account amministratore. Seleziona \"Admin\" per accedere.</string>
+    <string name="login_error_role_mismatch_admin">Questo è un account studente. Seleziona \"Studente\" per accedere.</string>
 </resources>

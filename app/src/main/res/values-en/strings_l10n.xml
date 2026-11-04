@@ -18,8 +18,8 @@
 
     <!-- Login & Register ViewModel -->
     <string name="login_error_empty">Enter your email and password.</string>
-    <string name="login_error_role_mismatch_student">These credentials belong to a student account. Select Student to continue.</string>
-    <string name="login_error_role_mismatch_admin">These credentials belong to an admin account. Select Administrator to continue.</string>
+    <string name="login_error_not_admin">This account doesn\'t have administrator permissions.</string>
+    <string name="login_error_is_admin">This is an administrator account. Select “Administrator” to sign in.</string>
     <string name="register_error_name">Enter your full name.</string>
     <string name="register_error_email">Enter a valid email.</string>
     <string name="register_error_password_len">Password must be at least 6 characters.</string>
@@ -72,4 +72,17 @@
     <!-- Fallbacks -->
     <string name="fallback_untitled_note">Untitled note</string>
     <string name="fallback_no_course">No course</string>
+    <string name="user_fallback_name">User</string>
+
+    <!-- F12: textos que estaban fijos en el código -->
+    <string name="scan_no_subjects">You\'re not enrolled in any subject. Add one in Profile → Manage subjects.</string>
+    <string name="scan_default_title">%1$s notes</string>
+    <string name="scan_process_before_save">Process the scan before saving.</string>
+    <string name="scan_choose_subject">Choose the subject for these notes.</string>
+    <string name="scan_tags_label">Tags</string>
+    <string name="joined_subject">You joined the subject!</string>
+    <string name="api_error_unknown">An unexpected error occurred</string>
+
+    <string name="login_error_role_mismatch_student">This is an admin account. Select \"Admin\" to sign in.</string>
+    <string name="login_error_role_mismatch_admin">This is a student account. Select \"Student\" to sign in.</string>
 </resources>
