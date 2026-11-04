@@ -1,6 +1,7 @@
 package ApunteIA.FrontEnd.presentation.viewmodel
 
 import ApunteIA.FrontEnd.R
+import ApunteIA.FrontEnd.domain.error.AuthError
 import ApunteIA.FrontEnd.domain.usecase.LoginUseCase
 import ApunteIA.FrontEnd.domain.util.Resource
 import ApunteIA.FrontEnd.util.L10n
@@ -15,6 +16,7 @@ import javax.inject.Inject
 
 data class LoginUiState(
     val isLoading: Boolean = false,
+    val authError: AuthError? = null,
     val errorMessage: String? = null,
     val loginSuccess: Boolean = false
 )
@@ -31,18 +33,19 @@ class LoginViewModel @Inject constructor(
     private val _uiState = MutableStateFlow(LoginUiState())
     val uiState: StateFlow<LoginUiState> = _uiState.asStateFlow()
 
-    fun login(email: String, password: String) {
+    fun login(email: String, password: String, selectedRole: String) {
         if (email.isBlank() || password.isBlank()) {
             _uiState.value = _uiState.value.copy(
+                authError = null,
                 errorMessage = L10n.getString(R.string.login_error_empty)
             )
             return
         }
 
         viewModelScope.launch {
-            _uiState.value = _uiState.value.copy(isLoading = true, errorMessage = null)
+            _uiState.value = _uiState.value.copy(isLoading = true, authError = null, errorMessage = null)
 
-            when (val result = loginUseCase(email.trim(), password)) {
+            when (val result = loginUseCase(email.trim(), password, selectedRole)) {
                 is Resource.Success -> {
                     _uiState.value = _uiState.value.copy(
                         isLoading = false,
@@ -50,9 +53,11 @@ class LoginViewModel @Inject constructor(
                     )
                 }
                 is Resource.Error -> {
+                    val err = result.throwable as? AuthError
                     _uiState.value = _uiState.value.copy(
                         isLoading = false,
-                        errorMessage = result.message
+                        authError = err,
+                        errorMessage = if (err == null) result.message else null
                     )
                 }
                 is Resource.Loading -> Unit

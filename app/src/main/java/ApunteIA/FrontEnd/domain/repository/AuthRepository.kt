@@ -6,7 +6,7 @@ import kotlinx.coroutines.flow.Flow
 
 interface AuthRepository {
     /** Inicia sesión contra POST /auth/login y guarda el JWT. */
-    suspend fun login(email: String, password: String): Resource<AuthSession>
+    suspend fun login(email: String, password: String, selectedRole: String = "Estudiante"): Resource<AuthSession>
 
     /** Crea la cuenta (POST /auth/register) y luego inicia sesión. */
     suspend fun register(fullName: String, email: String, password: String): Resource<AuthSession>

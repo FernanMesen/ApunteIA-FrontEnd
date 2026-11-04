@@ -18,6 +18,8 @@
 
     <!-- Login & Register ViewModel -->
     <string name="login_error_empty">Enter your email and password.</string>
+    <string name="login_error_role_mismatch_student">These credentials belong to a student account. Select Student to continue.</string>
+    <string name="login_error_role_mismatch_admin">These credentials belong to an admin account. Select Administrator to continue.</string>
     <string name="register_error_name">Enter your full name.</string>
     <string name="register_error_email">Enter a valid email.</string>
     <string name="register_error_password_len">Password must be at least 6 characters.</string>

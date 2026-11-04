@@ -19,6 +19,7 @@ fun Throwable.toNoteError(): NoteError = when (this) {
 }
 
 fun Throwable.toAuthError(): AuthError = when (this) {
+    is AuthError -> this
     is IOException -> AuthError.NoConnection
     is HttpException -> when (code()) {
         401 -> AuthError.InvalidCredentials

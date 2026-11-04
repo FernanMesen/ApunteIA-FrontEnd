@@ -18,6 +18,8 @@
 
     <!-- Login & Register ViewModel -->
     <string name="login_error_empty">Ingresa tu correo y contraseña.</string>
+    <string name="login_error_role_mismatch_student">Estas credenciales pertenecen a una cuenta de estudiante. Selecciona Estudiante para continuar.</string>
+    <string name="login_error_role_mismatch_admin">Estas credenciales pertenecen a una cuenta de administrador. Selecciona Administrador para continuar.</string>
     <string name="register_error_name">Ingresa tu nombre completo.</string>
     <string name="register_error_email">Ingresa un correo válido.</string>
     <string name="register_error_password_len">La contraseña debe tener al menos 6 caracteres.</string>

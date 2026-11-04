@@ -18,6 +18,8 @@
 
     <!-- Login & Register ViewModel -->
     <string name="login_error_empty">Digite seu e-mail e senha.</string>
+    <string name="login_error_role_mismatch_student">Estas credenciais pertencem a uma conta de estudante. Selecione Estudante para continuar.</string>
+    <string name="login_error_role_mismatch_admin">Estas credenciais pertencem a uma conta de administrador. Selecione Administrador para continuar.</string>
     <string name="register_error_name">Digite seu nome completo.</string>
     <string name="register_error_email">Digite um e-mail válido.</string>
     <string name="register_error_password_len">A senha deve ter pelo menos 6 caracteres.</string>
@@ -35,7 +37,7 @@
     <string name="note_error_503">A IA não está disponível no momento.</string>
     <string name="note_error_server">O servidor de anotações está com problemas (Erro %1$d).</string>
     <string name="note_error_invalid_data">Os dados recebidos não são válidos.</string>
-    <string name="note_error_unknown">Ocorreu un erro inesperado ao gerenciar suas anotações.</string>
+    <string name="note_error_unknown">Ocorreu un erro inesperado al gestionar suas anotações.</string>
 
     <string name="main_error_connection">Sem conexão para atualizar o painel.</string>
     <string name="main_error_server">O servidor principal falhou (Erro %1$d).</string>

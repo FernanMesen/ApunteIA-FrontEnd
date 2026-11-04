@@ -1,7 +1,6 @@
 package ApunteIA.FrontEnd.util
 
 import android.content.Context
-import android.content.res.Configuration
 import ApunteIA.FrontEnd.R
 
 object L10n {
@@ -17,15 +16,10 @@ object L10n {
             return getFallbackString(resId, *formatArgs)
         }
         return try {
-            val locale = LanguageManager.getLocale()
-            val config = Configuration(ctx.resources.configuration).apply {
-                setLocale(locale)
-            }
-            val localizedContext = ctx.createConfigurationContext(config)
             if (formatArgs.isNotEmpty()) {
-                localizedContext.getString(resId, *formatArgs)
+                ctx.getString(resId, *formatArgs)
             } else {
-                localizedContext.getString(resId)
+                ctx.getString(resId)
             }
         } catch (_: Exception) {
             getFallbackString(resId, *formatArgs)
@@ -50,6 +44,8 @@ object L10n {
             R.string.error_ai_title -> "La IA no respondió"
             R.string.error_ai_msg -> "Tu apunte quedó guardado: puedes reintentar el resumen ahora o más tarde desde Notas."
             R.string.login_error_empty -> "Ingresa tu correo y contraseña."
+            R.string.login_error_role_mismatch_student -> "Estas credenciales pertenecen a una cuenta de estudiante. Selecciona Estudiante para continuar."
+            R.string.login_error_role_mismatch_admin -> "Estas credenciales pertenecen a una cuenta de administrador. Selecciona Administrador para continuar."
             R.string.register_error_name -> "Ingresa tu nombre completo."
             R.string.register_error_email -> "Ingresa un correo válido."
             R.string.register_error_password_len -> "La contraseña debe tener al menos 6 caracteres."
