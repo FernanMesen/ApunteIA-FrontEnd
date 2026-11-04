@@ -24,3 +24,11 @@ data class CourseStudent(
     val email: String,
     val averageGrade: Double? = null
 )
+
+/** Nota de un estudiante en un curso y los intentos que la forman (ver CourseGrades). */
+data class StudentCourseGrades(
+    /** Promedio del mejor intento de cada evaluación del curso; null = sin calificación. */
+    val finalGrade: Double?,
+    /** Intentos completados de evaluaciones del curso, del más reciente al más antiguo. */
+    val attempts: List<AssessmentAttempt>
+)

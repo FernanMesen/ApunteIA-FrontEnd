@@ -18,6 +18,8 @@
 
     <!-- Login & Register ViewModel -->
     <string name="login_error_empty">Digite seu e-mail e senha.</string>
+    <string name="login_error_not_admin">Esta conta não tem permissões de administrador.</string>
+    <string name="login_error_is_admin">Esta é uma conta de administrador. Selecione «Administrador» para entrar.</string>
     <string name="register_error_name">Digite seu nome completo.</string>
     <string name="register_error_email">Digite um e-mail válido.</string>
     <string name="register_error_password_len">A senha deve ter pelo menos 6 caracteres.</string>
@@ -70,4 +72,14 @@
     <!-- Fallbacks -->
     <string name="fallback_untitled_note">Anotação sem título</string>
     <string name="fallback_no_course">Sem curso</string>
+    <string name="user_fallback_name">Usuário</string>
+
+    <!-- F12: textos que estaban fijos en el código -->
+    <string name="scan_no_subjects">Você não está inscrito em nenhuma disciplina. Adicione uma em Perfil → Gerenciar disciplinas.</string>
+    <string name="scan_default_title">Anotação de %1$s</string>
+    <string name="scan_process_before_save">Processe a digitalização antes de salvar.</string>
+    <string name="scan_choose_subject">Escolha a disciplina da anotação.</string>
+    <string name="scan_tags_label">Tags</string>
+    <string name="joined_subject">Você entrou na disciplina!</string>
+    <string name="api_error_unknown">Ocorreu um erro inesperado</string>
 </resources>

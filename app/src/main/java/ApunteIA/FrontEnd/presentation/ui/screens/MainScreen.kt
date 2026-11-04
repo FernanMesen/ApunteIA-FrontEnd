@@ -161,10 +161,13 @@ fun MainScreen(
                         }
                     }
 
+                    // Solo estudiantes: el admin no tiene escáner, Notas, Auditoría ni Reforzar.
                     item {
                         CycleSection(
-                            onOrganizarClick = onNotas,
-                            onReforzarClick = onReforzar
+                            onCaptureClick = onCameraClick,
+                            onNotesClick = onNotas,
+                            onAuditClick = onAuditoria,
+                            onReinforceClick = onReforzar
                         )
                     }
 
@@ -352,7 +355,12 @@ fun StatLine(label: String, value: String, valueColor: Color) {
 }
 
 @Composable
-fun CycleSection(onOrganizarClick: () -> Unit, onReforzarClick: () -> Unit) {
+fun CycleSection(
+    onCaptureClick: () -> Unit,
+    onNotesClick: () -> Unit,
+    onAuditClick: () -> Unit,
+    onReinforceClick: () -> Unit
+) {
     Column {
         Text(
             text = stringResource(R.string.your_cycle_header),
@@ -365,13 +373,13 @@ fun CycleSection(onOrganizarClick: () -> Unit, onReforzarClick: () -> Unit) {
             modifier = Modifier.fillMaxWidth(),
             verticalAlignment = Alignment.CenterVertically
         ) {
-            CycleItem("1", stringResource(R.string.cycle_step_1), false)
+            CycleItem("1", stringResource(R.string.cycle_step_1), false, onClick = onCaptureClick)
             CycleConnector(Modifier.weight(1f))
-            CycleItem("2", stringResource(R.string.cycle_step_2), false, onClick = onOrganizarClick)
+            CycleItem("2", stringResource(R.string.cycle_step_2), false, onClick = onNotesClick)
             CycleConnector(Modifier.weight(1f))
-            CycleItem("3", stringResource(R.string.cycle_step_3), false)
+            CycleItem("3", stringResource(R.string.cycle_step_3), false, onClick = onAuditClick)
             CycleConnector(Modifier.weight(1f))
-            CycleItem("4", stringResource(R.string.cycle_step_4), true, onClick = onReforzarClick)
+            CycleItem("4", stringResource(R.string.cycle_step_4), true, onClick = onReinforceClick)
         }
     }
 }

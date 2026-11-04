@@ -64,7 +64,7 @@
     <string name="quizzes_done_stat">Quizzes completed</string>
     <string name="your_cycle_header">YOUR CYCLE</string>
     <string name="cycle_step_1">Capture</string>
-    <string name="cycle_step_2">Organize</string>
+    <string name="cycle_step_2">Notes</string>
     <string name="cycle_step_3">Audit</string>
     <string name="cycle_step_4">Reinforce</string>
     <string name="recent_activity_header">RECENT ACTIVITY</string>
@@ -75,6 +75,7 @@
     <string name="status_missing">Missing</string>
     <string name="program_covered">of syllabus covered</string>
     <string name="practice_this">Practice this →</string>
+    <string name="scan_notes_cta">Scan notes →</string>
     <string name="audit_title">Audit</string>
     <string name="audit_subtitle">Compared with your course syllabus</string>
     <string name="no_topics_for_category">No topics for this category</string>
@@ -294,6 +295,7 @@
     <string name="quizzes_done">Quizzes completed</string>
     <string name="profile_ai_language">AI response language</string>
     <string name="ai_lang_same_as_app">Same as app</string>
+    <string name="ai_lang_same_as_app_short">App</string>
     <string name="ai_lang_spanish">Spanish</string>
     <string name="ai_lang_english">English</string>
     <string name="ai_lang_portuguese">Portuguese</string>

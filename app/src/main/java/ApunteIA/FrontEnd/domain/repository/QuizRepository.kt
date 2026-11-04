@@ -17,4 +17,12 @@ interface QuizRepository {
     suspend fun submitQuiz(attemptId: Long, answers: List<Int?>): Resource<QuizResult>
 
     suspend fun getMyAttempts(): Resource<List<AssessmentAttempt>>
+
+    // ---------- Vista del administrador ----------
+
+    /** Ids de las evaluaciones de un curso (GET /courses/{id}/assessments). */
+    suspend fun getCourseAssessmentIds(courseId: Long): Resource<Set<Long>>
+
+    /** Intentos de cualquier usuario (GET /users/{id}/attempts). */
+    suspend fun getUserAttempts(userId: Long): Resource<List<AssessmentAttempt>>
 }

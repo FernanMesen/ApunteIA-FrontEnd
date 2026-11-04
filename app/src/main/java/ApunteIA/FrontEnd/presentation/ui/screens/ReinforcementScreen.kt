@@ -148,7 +148,12 @@ fun ReinforcementScreen(
                         )
 
                         else -> Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
-                            uiState.visibleNotes.take(MAX_NOTES).forEach { note ->
+                            // La nota seleccionada (p. ej. desde "Practicar esto") siempre se muestra.
+                            val firstNotes = uiState.visibleNotes.take(MAX_NOTES)
+                            val selected = uiState.visibleNotes.find { it.id == uiState.selectedNoteId }
+                            val shownNotes = if (selected == null || selected in firstNotes) firstNotes
+                                else listOf(selected) + firstNotes.take(MAX_NOTES - 1)
+                            shownNotes.forEach { note ->
                                 NoteOption(
                                     note = note,
                                     isSelected = note.id == uiState.selectedNoteId,

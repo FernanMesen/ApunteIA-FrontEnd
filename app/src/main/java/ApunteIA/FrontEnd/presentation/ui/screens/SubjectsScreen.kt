@@ -18,16 +18,17 @@ fun SubjectsScreen(
     onNext: () -> Unit
 ) {
 
+    // Vacíos: antes venían ejemplos fijos en español; ahora se ve el placeholder traducido.
     var subject1 by remember {
-        mutableStateOf("Química Orgánica")
+        mutableStateOf("")
     }
 
     var subject2 by remember {
-        mutableStateOf("Biología Celular")
+        mutableStateOf("")
     }
 
     var subject3 by remember {
-        mutableStateOf("Cálculo II")
+        mutableStateOf("")
     }
 
     Column(

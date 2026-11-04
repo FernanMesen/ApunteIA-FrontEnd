@@ -198,7 +198,14 @@ class FakeQuizDataSource : QuizDataSource {
         submitted = answers
         return submitResult(answers)
     }
-    override suspend fun getUserAttempts(userId: Long): List<AttemptDto> = attempts
+    /** Intentos por usuario (vista del admin); si un usuario no está, se usa [attempts]. */
+    val attemptsByUser = mutableMapOf<Long, List<AttemptDto>>()
+    val userAttemptRequests = mutableListOf<Long>()
+
+    override suspend fun getUserAttempts(userId: Long): List<AttemptDto> {
+        userAttemptRequests += userId
+        return attemptsByUser[userId] ?: attempts
+    }
 }
 
 fun assessment(id: Long, title: String, questions: Int = 2, courseId: Long = 1) = AssessmentDto(

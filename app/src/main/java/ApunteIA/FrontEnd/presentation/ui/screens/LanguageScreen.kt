@@ -58,7 +58,7 @@ fun LanguageScreen(
                 ) {
                     Icon(
                         imageVector = Icons.Default.KeyboardArrowLeft,
-                        contentDescription = "Back",
+                        contentDescription = stringResource(R.string.back),
                         tint = ApuntesGreen
                     )
                 }

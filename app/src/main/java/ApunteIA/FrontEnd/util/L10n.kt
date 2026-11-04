@@ -50,6 +50,8 @@ object L10n {
             R.string.error_ai_title -> "La IA no respondió"
             R.string.error_ai_msg -> "Tu apunte quedó guardado: puedes reintentar el resumen ahora o más tarde desde Notas."
             R.string.login_error_empty -> "Ingresa tu correo y contraseña."
+            R.string.login_error_not_admin -> "Esta cuenta no tiene permisos de administrador."
+            R.string.login_error_is_admin -> "Esta es una cuenta de administrador. Selecciona «Administrador» para entrar."
             R.string.register_error_name -> "Ingresa tu nombre completo."
             R.string.register_error_email -> "Ingresa un correo válido."
             R.string.register_error_password_len -> "La contraseña debe tener al menos 6 caracteres."
@@ -96,6 +98,14 @@ object L10n {
             R.string.error_enroll_course -> "No se pudo inscribir en el curso"
             R.string.error_course_not_found -> "No existe un curso con el código \"%1\$s\"."
             R.string.fallback_course_id -> "Curso %1\$d"
+            R.string.scan_no_subjects -> "No estás inscrito en ninguna materia. Agrega una en Perfil → Administrar materias."
+            R.string.scan_default_title -> "Apunte de %1\$s"
+            R.string.scan_process_before_save -> "Procesa el escaneo antes de guardar."
+            R.string.scan_choose_subject -> "Elige la materia del apunte."
+            R.string.scan_tags_label -> "Etiquetas"
+            R.string.api_error_unknown -> "Ocurrió un error inesperado"
+            R.string.admin_syllabus_ocr_error -> "No se pudo reconocer el texto de la fotografía."
+            R.string.admin_assessment_fallback -> "Evaluación #%1\$d"
             else -> ""
         }
         return if (formatArgs.isNotEmpty()) {

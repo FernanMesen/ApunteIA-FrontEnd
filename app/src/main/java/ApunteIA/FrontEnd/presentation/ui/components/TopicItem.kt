@@ -156,7 +156,8 @@ fun TopicCard(topic: Topic, onPracticeClick: () -> Unit) {
                     border = if (isDark) BorderStroke(1.dp, Color(0xFF394867)) else null
                 ) {
                     Text(
-                        text = stringResource(R.string.practice_this),
+                        // id negativo = materia sin apuntes: el botón lleva a escanear.
+                        text = stringResource(if (topic.id > 0) R.string.practice_this else R.string.scan_notes_cta),
                         modifier = Modifier.padding(horizontal = 16.dp, vertical = 10.dp),
                         color = if (isDark) Color.White else DarkGreen, fontSize = 13.sp, fontWeight = FontWeight.Medium
                     )

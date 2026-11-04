@@ -12,6 +12,7 @@ import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -27,6 +28,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import ApunteIA.FrontEnd.R
+import ApunteIA.FrontEnd.domain.model.LoginRole
 import ApunteIA.FrontEnd.presentation.ui.theme.SpaceCadet
 import ApunteIA.FrontEnd.presentation.viewmodel.LoginViewModel
 import ApunteIA.FrontEnd.util.LanguageManager
@@ -61,8 +63,9 @@ fun LoginScreen(
         mutableStateOf("")
     }
 
-    var selectedRole by remember {
-        mutableStateOf("Estudiante")
+    // rememberSaveable: la pestaña elegida sobrevive a la rotación y al cambio de idioma.
+    var selectedRole by rememberSaveable {
+        mutableStateOf(LoginRole.STUDENT)
     }
 
     var selectedLanguage by remember {
@@ -194,9 +197,9 @@ fun LoginScreen(
                 text = stringResource(
                     R.string.role_student
                 ),
-                selected = selectedRole == "Estudiante",
+                selected = selectedRole == LoginRole.STUDENT,
                 onClick = {
-                    selectedRole = "Estudiante"
+                    selectedRole = LoginRole.STUDENT
                 },
                 modifier = Modifier.weight(1f)
             )
@@ -205,9 +208,9 @@ fun LoginScreen(
                 text = stringResource(
                     R.string.role_admin
                 ),
-                selected = selectedRole == "Administrador",
+                selected = selectedRole == LoginRole.ADMIN,
                 onClick = {
-                    selectedRole = "Administrador"
+                    selectedRole = LoginRole.ADMIN
                 },
                 modifier = Modifier.weight(1f)
             )
@@ -337,7 +340,8 @@ fun LoginScreen(
             onClick = {
                 viewModel.login(
                     email,
-                    password
+                    password,
+                    selectedRole
                 )
             },
             enabled = !uiState.isLoading,

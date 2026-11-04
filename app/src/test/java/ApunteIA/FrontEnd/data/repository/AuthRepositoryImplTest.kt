@@ -1,5 +1,8 @@
 package ApunteIA.FrontEnd.data.repository
 
+import ApunteIA.FrontEnd.data.datasource.model.LoginResponseDto
+import ApunteIA.FrontEnd.domain.model.LoginRole
+import ApunteIA.FrontEnd.domain.usecase.LoginUseCase
 import ApunteIA.FrontEnd.domain.util.Resource
 import ApunteIA.FrontEnd.fakes.FakeAuthDataSource
 import ApunteIA.FrontEnd.fakes.FakeSessionStore
@@ -90,5 +93,48 @@ class AuthRepositoryImplTest {
         session.save(FakeSessionStore.loggedIn().session!!)
         repository.logout()
         assertNull(repository.currentSession())
+    }
+
+    // ---- F3: la pestaña del Login debe coincidir con el rol de la cuenta ----
+
+    private fun adminLoginResponse() = LoginResponseDto(
+        token = "jwt-admin", userName = "Admin", expiresIn = 7200, userId = 1,
+        email = "admin@apunteia.com", role = "ADMIN"
+    )
+
+    @Test
+    fun `student account choosing Administrator is rejected and no session is kept`() = runBlocking {
+        val result = LoginUseCase(repository)("demo@apunteia.com", "123456", LoginRole.ADMIN)
+
+        assertTrue(result is Resource.Error)
+        assertEquals("Esta cuenta no tiene permisos de administrador.", (result as Resource.Error).message)
+        assertNull(session.currentSession())
+    }
+
+    @Test
+    fun `admin account choosing Student is rejected and no session is kept`() = runBlocking {
+        dataSource.loginResult = { adminLoginResponse() }
+
+        val result = LoginUseCase(repository)("admin@apunteia.com", "Admin123!", LoginRole.STUDENT)
+
+        assertTrue(result is Resource.Error)
+        assertTrue((result as Resource.Error).message.startsWith("Esta es una cuenta de administrador"))
+        assertNull(session.currentSession())
+    }
+
+    @Test
+    fun `matching role logs in and keeps the session`() = runBlocking {
+        dataSource.loginResult = { adminLoginResponse() }
+        val admin = LoginUseCase(repository)("admin@apunteia.com", "Admin123!", LoginRole.ADMIN)
+        assertTrue(admin is Resource.Success)
+        assertEquals("ADMIN", session.currentSession()?.role)
+
+        repository.logout()
+        dataSource.loginResult = {
+            LoginResponseDto(token = "jwt", userName = "Maya Rodríguez", expiresIn = 7200, userId = 2, email = "demo@apunteia.com", role = "STUDENT")
+        }
+        val student = LoginUseCase(repository)("demo@apunteia.com", "123456", LoginRole.STUDENT)
+        assertTrue(student is Resource.Success)
+        assertEquals("STUDENT", session.currentSession()?.role)
     }
 }

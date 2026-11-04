@@ -8,6 +8,7 @@ import ApunteIA.FrontEnd.domain.usecase.GenerateQuizFromNoteUseCase
 import ApunteIA.FrontEnd.domain.usecase.GetAvailableQuizzesUseCase
 import ApunteIA.FrontEnd.domain.usecase.GetNotesUseCase
 import ApunteIA.FrontEnd.domain.util.Resource
+import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -45,10 +46,19 @@ data class ReinforcementUiState(
  */
 @HiltViewModel
 class ReinforcementViewModel @Inject constructor(
+    savedStateHandle: SavedStateHandle,
     private val getNotesUseCase: GetNotesUseCase,
     private val getAvailableQuizzesUseCase: GetAvailableQuizzesUseCase,
     private val generateQuizFromNote: GenerateQuizFromNoteUseCase
 ) : ViewModel() {
+
+    /**
+     * Nota que pidió "Practicar esto" en Auditoría. Se aplica solo en la primera carga
+     * exitosa, para no pisar lo que el usuario elija después (load() corre en cada resume).
+     */
+    private var pendingNoteId: Int? = savedStateHandle.get<Long>(NOTE_ID_ARG)
+        ?.takeIf { it > 0 }
+        ?.toInt()
 
     private val _uiState = MutableStateFlow(ReinforcementUiState())
     val uiState: StateFlow<ReinforcementUiState> = _uiState.asStateFlow()
@@ -60,13 +70,21 @@ class ReinforcementViewModel @Inject constructor(
             when (val notes = getNotesUseCase()) {
                 is Resource.Success -> {
                     val quizzes = (quizzesDeferred.await() as? Resource.Success)?.data.orEmpty()
+                    val requested = pendingNoteId?.let { id -> notes.data.find { it.id == id } }
+                    pendingNoteId = null
                     _uiState.update { state ->
                         val stillSelected = notes.data.any { it.id == state.selectedNoteId }
                         state.copy(
                             isLoading = false,
                             notes = notes.data,
                             quizzes = quizzes,
-                            selectedNoteId = if (stillSelected) state.selectedNoteId else notes.data.firstOrNull()?.id
+                            selectedNoteId = when {
+                                requested != null -> requested.id
+                                stillSelected -> state.selectedNoteId
+                                else -> notes.data.firstOrNull()?.id
+                            },
+                            // Si el filtro "solo débiles" ocultaría la nota pedida, se apaga.
+                            onlyWeak = state.onlyWeak && (requested == null || requested.status == NoteStatus.WEAK)
                         )
                     }
                 }
@@ -114,4 +132,8 @@ class ReinforcementViewModel @Inject constructor(
     fun onQuizOpened() = _uiState.update { it.copy(quizToOpen = null) }
 
     fun dismissError() = _uiState.update { it.copy(error = null) }
+
+    companion object {
+        const val NOTE_ID_ARG = "noteId"
+    }
 }
