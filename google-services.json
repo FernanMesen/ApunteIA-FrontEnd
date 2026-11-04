@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "482887196007",
+    "project_id": "apunteia",
+    "storage_bucket": "apunteia.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:482887196007:android:6e1ebd5dfd2cb1bbb7e3c2",
+        "android_client_info": {
+          "package_name": "com.una"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyACKHJzVa6VaX3rZeKkgp_c5LvkXABPRY4"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
