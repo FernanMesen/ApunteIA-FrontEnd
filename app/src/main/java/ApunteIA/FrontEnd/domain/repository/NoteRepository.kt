@@ -15,7 +15,7 @@ interface NoteRepository {
 
     suspend fun getNote(id: Long): Resource<Note>
 
-    suspend fun createNote(title: String, content: String, courseId: Long): Resource<Note>
+    suspend fun createNote(title: String, content: String, courseId: Long, noteDate: String? = null): Resource<Note>
 
     suspend fun updateNote(
         id: Long,

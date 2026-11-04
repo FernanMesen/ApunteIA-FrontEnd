@@ -24,7 +24,10 @@ data class NoteDto(
     @SerializedName("createdAt")
     val createdAt: String?,
     @SerializedName("updatedAt")
-    val updatedAt: String?
+    val updatedAt: String?,
+    /** Fecha del apunte "yyyy-MM-dd" (puede ser null en notas viejas). */
+    @SerializedName("noteDate")
+    val noteDate: String? = null
 )
 
 data class CreateNoteRequestDto(
@@ -35,7 +38,9 @@ data class CreateNoteRequestDto(
     @SerializedName("userId")
     val userId: Long,
     @SerializedName("courseId")
-    val courseId: Long
+    val courseId: Long,
+    @SerializedName("noteDate")
+    val noteDate: String? = null
 )
 
 data class UpdateNoteRequestDto(
@@ -48,5 +53,7 @@ data class UpdateNoteRequestDto(
     @SerializedName("courseId")
     val courseId: Long,
     @SerializedName("summary")
-    val summary: String? = null
+    val summary: String? = null,
+    @SerializedName("noteDate")
+    val noteDate: String? = null
 )

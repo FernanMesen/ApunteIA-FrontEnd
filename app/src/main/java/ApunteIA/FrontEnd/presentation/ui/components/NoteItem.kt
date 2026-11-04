@@ -71,7 +71,8 @@ fun FilterChip(text: String, isSelected: Boolean, onClick: () -> Unit) {
 @Composable
 fun NoteCard(note: Note, onClick: () -> Unit) {
     val classNumText = if (note.classNumber > 0) stringResource(R.string.class_number, note.classNumber) else ""
-    val scannedText = if (note.date.isNotBlank()) stringResource(R.string.scanned_date, IsoDates.shortDate(note.date)) else ""
+    val formattedDate = IsoDates.shortDate(note.date)
+    val scannedText = if (formattedDate.isNotBlank()) stringResource(R.string.note_date_label, formattedDate) else ""
 
     Card(
         modifier = Modifier.fillMaxWidth().clickable { onClick() },

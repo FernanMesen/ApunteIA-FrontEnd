@@ -9,6 +9,7 @@ data class Note(
     val title: String,
     val className: String,
     val classNumber: Int,
+    /** Fecha ISO del apunte (noteDate) o, si no tiene, la de creación. Se formatea en la UI con IsoDates.shortDate. */
     val date: String,
     val preview: String,
     val status: NoteStatus,

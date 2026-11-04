@@ -28,7 +28,7 @@ fun NoteDto.toDomain(
         title = title.orEmpty().ifBlank { L10n.getString(R.string.fallback_untitled_note) },
         className = course?.name ?: courseCode.orEmpty().ifBlank { L10n.getString(R.string.fallback_no_course) },
         classNumber = classNumber,
-        date = IsoDates.shortDate(createdAt),
+        date = noteDate?.takeIf { it.isNotBlank() } ?: createdAt.orEmpty(),
         preview = text.replace(Regex("\\s+"), " ").trim().take(PREVIEW_LENGTH),
         status = status,
         courseId = courseId ?: 0L,

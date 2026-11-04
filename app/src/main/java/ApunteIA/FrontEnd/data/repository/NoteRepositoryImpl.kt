@@ -35,13 +35,14 @@ class NoteRepositoryImpl @Inject constructor(
             ?: dataSource.getNote(id).toDomain(catalog.byId())
     }
 
-    override suspend fun createNote(title: String, content: String, courseId: Long): Resource<Note> =
+    override suspend fun createNote(title: String, content: String, courseId: Long, noteDate: String?): Resource<Note> =
         safeApiCall(errorMapper) {
             val request = CreateNoteRequestDto(
                 title = title,
                 content = content,
                 userId = loader.requireUserId(),
-                courseId = courseId
+                courseId = courseId,
+                noteDate = noteDate
             )
             loader.invalidate()
             dataSource.createNote(request).toDomain(catalog.byId())

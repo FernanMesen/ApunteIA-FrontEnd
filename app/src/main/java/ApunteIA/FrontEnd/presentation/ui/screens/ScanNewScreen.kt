@@ -25,13 +25,15 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import ApunteIA.FrontEnd.R
 import ApunteIA.FrontEnd.presentation.model.MaterialType
-import ApunteIA.FrontEnd.presentation.ui.theme.BackgroundBeige
-import ApunteIA.FrontEnd.presentation.ui.theme.DarkGreen
-import ApunteIA.FrontEnd.presentation.ui.theme.TextGray
+import androidx.compose.ui.text.style.TextOverflow
 import ApunteIA.FrontEnd.presentation.ui.theme.StatusRed
+import ApunteIA.FrontEnd.presentation.ui.theme.isDarkTheme
 import androidx.compose.foundation.horizontalScroll
 import ApunteIA.FrontEnd.presentation.viewmodel.ScanViewModel
+import ApunteIA.FrontEnd.domain.util.IsoDates
+import androidx.compose.ui.draw.clip
 import java.util.Calendar
+import java.util.TimeZone
 
 @Composable
 fun ScanNewScreen(
@@ -41,11 +43,12 @@ fun ScanNewScreen(
 ) {
     val state by viewModel.uiState.collectAsState()
     val context = LocalContext.current
+    val isDark = isDarkTheme()
 
     Column(
         modifier = Modifier
             .fillMaxSize()
-            .background(BackgroundBeige)
+            .background(scanBackground())
             .padding(horizontal = 20.dp)
     ) {
         ScanTopBar(title = stringResource(R.string.new_scan_title), onClose = onClose)
@@ -71,14 +74,14 @@ fun ScanNewScreen(
             }
             if (state.isLoadingSubjects) {
                 Spacer(modifier = Modifier.height(8.dp))
-                LinearProgressIndicator(color = DarkGreen, modifier = Modifier.fillMaxWidth())
+                LinearProgressIndicator(color = scanAccent(), modifier = Modifier.fillMaxWidth())
             }
             state.subjectsError?.let { message ->
                 Spacer(modifier = Modifier.height(8.dp))
                 Text(text = message, color = StatusRed, fontSize = 13.sp)
                 Text(
                     text = stringResource(R.string.retry),
-                    color = DarkGreen,
+                    color = scanAccent(),
                     fontSize = 13.sp,
                     fontWeight = FontWeight.Medium,
                     modifier = Modifier.clickable { viewModel.loadSubjects() }.padding(top = 4.dp)
@@ -99,45 +102,43 @@ fun ScanNewScreen(
 
             SectionLabel(stringResource(R.string.date_header))
             Spacer(modifier = Modifier.height(10.dp))
-            Box(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .clickable {
-                        val calendar = Calendar.getInstance()
-                        DatePickerDialog(
-                            context,
-                            { _, year, month, dayOfMonth ->
-                                viewModel.onDateChange(
-                                    "%02d/%02d/%04d".format(month + 1, dayOfMonth, year)
-                                )
-                            },
-                            calendar.get(Calendar.YEAR),
-                            calendar.get(Calendar.MONTH),
-                            calendar.get(Calendar.DAY_OF_MONTH)
-                        ).show()
-                    }
-            ) {
-                OutlinedTextField(
-                    value = state.date,
+            // El TextField de solo lectura se come el toque, así que un Box transparente
+            // encima recibe el clic y abre el calendario.
+            Box {
+                ScanTextField(
+                    value = IsoDates.shortDate(state.date), // en el formato del idioma de la app
                     onValueChange = {},
-                    placeholder = { Text("mm/dd/yyyy", color = TextGray) },
+                    placeholder = stringResource(R.string.date_placeholder),
                     readOnly = true,
-                    enabled = false,
-                    singleLine = true,
                     trailingIcon = {
-                        Icon(Icons.Default.CalendarToday, contentDescription = null, tint = TextGray)
-                    },
-                    shape = RoundedCornerShape(16.dp),
+                        Icon(Icons.Default.CalendarToday, contentDescription = null, tint = scanMuted())
+                    }
+                )
+                Box(
                     modifier = Modifier
-                        .fillMaxWidth()
-                        .height(58.dp),
-                    colors = OutlinedTextFieldDefaults.colors(
-                        disabledContainerColor = Color.White,
-                        disabledBorderColor = Color(0xFFE0E0E0),
-                        disabledTextColor = DarkGreen,
-                        disabledPlaceholderColor = TextGray,
-                        disabledTrailingIconColor = TextGray
-                    )
+                        .matchParentSize()
+                        .clip(RoundedCornerShape(16.dp))
+                        .clickable {
+                            // Abrir el calendario en la fecha elegida (o en hoy).
+                            val calendar = Calendar.getInstance()
+                            IsoDates.parse(state.date)?.let { millis ->
+                                calendar.timeZone = TimeZone.getTimeZone("UTC")
+                                calendar.timeInMillis = millis
+                            }
+                            DatePickerDialog(
+                                context,
+                                // Oscuro: calendario oscuro (0 = tema por defecto, el mismo de siempre en claro).
+                                if (isDark) android.R.style.Theme_Material_Dialog_Alert else 0,
+                                { _, year, month, dayOfMonth ->
+                                    viewModel.onDateChange(IsoDates.isoDateOf(year, month, dayOfMonth))
+                                },
+                                calendar.get(Calendar.YEAR),
+                                calendar.get(Calendar.MONTH),
+                                calendar.get(Calendar.DAY_OF_MONTH)
+                            ).apply {
+                                datePicker.maxDate = System.currentTimeMillis() // no se permiten fechas futuras
+                            }.show()
+                        }
                 )
             }
 
@@ -186,23 +187,25 @@ fun ScanNewScreen(
             Row(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .background(Color.White, RoundedCornerShape(16.dp))
+                    .background(scanCard(), RoundedCornerShape(16.dp))
                     .padding(horizontal = 16.dp, vertical = 14.dp),
                 horizontalArrangement = Arrangement.SpaceBetween,
                 verticalAlignment = Alignment.CenterVertically
             ) {
+                // weight: en PT ("Digitalização de várias páginas") el texto baja de línea sin empujar el switch.
                 Text(
                     text = stringResource(R.string.multipage_scan_option),
-                    color = DarkGreen,
+                    color = scanText(),
                     fontSize = 15.sp,
-                    fontWeight = FontWeight.Medium
+                    fontWeight = FontWeight.Medium,
+                    modifier = Modifier.weight(1f).padding(end = 12.dp)
                 )
                 Switch(
                     checked = state.multiPageScan,
                     onCheckedChange = viewModel::toggleMultiPageScan,
                     colors = SwitchDefaults.colors(
                         checkedThumbColor = Color.White,
-                        checkedTrackColor = DarkGreen
+                        checkedTrackColor = scanButton()
                     )
                 )
             }
@@ -219,11 +222,18 @@ fun ScanNewScreen(
                 .padding(bottom = 20.dp),
             shape = RoundedCornerShape(28.dp),
             colors = ButtonDefaults.buttonColors(
-                containerColor = DarkGreen,
-                disabledContainerColor = DarkGreen.copy(alpha = 0.4f)
+                containerColor = scanButton(),
+                disabledContainerColor = scanButton().copy(alpha = 0.4f)
             )
         ) {
-            Text(stringResource(R.string.continue_action), color = Color.White, fontWeight = FontWeight.Bold, fontSize = 16.sp)
+            Text(
+                stringResource(R.string.continue_action),
+                color = Color.White,
+                fontWeight = FontWeight.Bold,
+                fontSize = 16.sp,
+                maxLines = 1,
+                overflow = TextOverflow.Ellipsis
+            )
         }
     }
 }
@@ -234,7 +244,7 @@ fun SectionLabel(text: String) {
         text = text,
         fontSize = 12.sp,
         fontWeight = FontWeight.SemiBold,
-        color = TextGray,
+        color = scanMuted(),
         letterSpacing = 0.5.sp
     )
 }
@@ -252,7 +262,7 @@ fun ScanTextField(
     OutlinedTextField(
         value = value,
         onValueChange = onValueChange,
-        placeholder = { Text(placeholder, color = TextGray) },
+        placeholder = { Text(placeholder, color = scanMuted(), maxLines = 1, overflow = TextOverflow.Ellipsis) },
         readOnly = readOnly,
         singleLine = true,
         trailingIcon = trailingIcon,
@@ -262,11 +272,14 @@ fun ScanTextField(
             .fillMaxWidth()
             .height(58.dp),
         colors = OutlinedTextFieldDefaults.colors(
-            focusedContainerColor = Color.White,
-            unfocusedContainerColor = Color.White,
-            focusedBorderColor = DarkGreen,
-            unfocusedBorderColor = Color(0xFFE0E0E0),
-            cursorColor = DarkGreen
+            focusedContainerColor = scanCard(),
+            unfocusedContainerColor = scanCard(),
+            focusedBorderColor = scanAccent(),
+            unfocusedBorderColor = scanBorder(),
+            cursorColor = scanAccent(),
+            // En claro es el mismo onSurface de siempre (DarkGreen); en oscuro, blanco.
+            focusedTextColor = MaterialTheme.colorScheme.onSurface,
+            unfocusedTextColor = MaterialTheme.colorScheme.onSurface
         )
     )
 }

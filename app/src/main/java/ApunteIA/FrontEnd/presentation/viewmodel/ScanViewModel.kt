@@ -13,6 +13,7 @@ import ApunteIA.FrontEnd.domain.usecase.RecognizeTextUseCase
 import ApunteIA.FrontEnd.domain.usecase.UpdateNoteUseCase
 import ApunteIA.FrontEnd.util.AiLanguagePreferenceManager
 import ApunteIA.FrontEnd.util.L10n
+import ApunteIA.FrontEnd.domain.util.IsoDates
 import ApunteIA.FrontEnd.domain.util.Resource
 import ApunteIA.FrontEnd.presentation.model.CapturedPage
 import ApunteIA.FrontEnd.presentation.model.MaterialType
@@ -39,7 +40,8 @@ data class ScanUiState(
     val subjectsError: String? = null,
     val subject: String = "",
     val className: String = "",
-    val date: String = "",
+    /** Fecha del apunte en ISO ("yyyy-MM-dd"); por defecto hoy. */
+    val date: String = IsoDates.todayIsoDate(),
     val materialType: MaterialType = MaterialType.HANDWRITTEN,
     val multiPageScan: Boolean = true,
 
@@ -259,7 +261,7 @@ class ScanViewModel @Inject constructor(
 
             // 2. Guardar la nota en el backend
             val title = state.className.trim().ifBlank { L10n.getString(R.string.scan_default_title, course.name) }
-            val noteId = when (val created = createNote(title, text, course.id)) {
+            val noteId = when (val created = createNote(title, text, course.id, state.date)) {
                 is Resource.Success -> created.data.id.toLong()
                 is Resource.Error -> {
                     fail(ProcessingError.upload(created.message))

@@ -85,4 +85,8 @@
 
     <string name="login_error_role_mismatch_student">This is an admin account. Select \"Admin\" to sign in.</string>
     <string name="login_error_role_mismatch_admin">This is a student account. Select \"Student\" to sign in.</string>
+
+    <!-- Fechas según el idioma -->
+    <string name="date_placeholder">mm/dd/yyyy</string>
+    <string name="note_date_label">Date: %1$s</string>
 </resources>

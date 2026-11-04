@@ -4,7 +4,6 @@ import android.content.Context
 import ApunteIA.FrontEnd.R
 import ApunteIA.FrontEnd.util.LanguageManager
 import ApunteIA.FrontEnd.util.L10n
-import java.text.DateFormat
 import java.text.SimpleDateFormat
 import java.util.Calendar
 import java.util.Locale
@@ -38,12 +37,36 @@ object IsoDates {
         }
     }
 
-    /** Fecha corta con formato sensible a Locale. */
+    /**
+     * Patrón de fecha con año completo según el idioma de la app:
+     * inglés → MM/dd/yyyy (mes/día/año); español, portugués, italiano → dd/MM/yyyy (día/mes/año).
+     */
+    fun datePattern(locale: Locale = LanguageManager.getLocale()): String =
+        if (locale.language == "en") "MM/dd/yyyy" else "dd/MM/yyyy"
+
+    /**
+     * Fecha corta en el formato del idioma de la app.
+     * - Fecha sola ("2026-11-04"): es un día del calendario, se formatea en UTC para que no
+     *   se corra un día por la zona horaria.
+     * - Fecha con hora ("2026-11-04T23:18:01"): viene en UTC del servidor y se muestra en la
+     *   zona horaria del teléfono.
+     */
     fun shortDate(iso: String?): String {
         val millis = parse(iso) ?: return ""
+        val dateOnly = iso!!.trim().length == 10
         val locale = LanguageManager.getLocale()
-        return DateFormat.getDateInstance(DateFormat.SHORT, locale).format(millis)
+        return SimpleDateFormat(datePattern(locale), locale).apply {
+            if (dateOnly) timeZone = TimeZone.getTimeZone("UTC")
+        }.format(millis)
     }
+
+    /** Hoy en formato ISO ("2026-11-04"), según la zona horaria del teléfono. */
+    fun todayIsoDate(): String =
+        SimpleDateFormat("yyyy-MM-dd", Locale.US).format(System.currentTimeMillis())
+
+    /** Fecha ISO a partir de lo que devuelve el DatePickerDialog (mes base 0). */
+    fun isoDateOf(year: Int, monthZeroBased: Int, day: Int): String =
+        String.format(Locale.US, "%04d-%02d-%02d", year, monthZeroBased + 1, day)
 
     /** Clave de día local ("2026-10-29") para agrupar actividad por día. */
     fun dayKey(millis: Long): String =

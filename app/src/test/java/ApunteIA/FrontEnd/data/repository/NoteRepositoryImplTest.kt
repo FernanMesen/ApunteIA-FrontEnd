@@ -61,6 +61,17 @@ class NoteRepositoryImplTest {
         assertTrue(result is Resource.Success)
         assertEquals(2L, backend.notes.lastCreate?.userId)
         assertEquals(1L, backend.notes.lastCreate?.courseId)
+        assertEquals(null, backend.notes.lastCreate?.noteDate)
+    }
+
+    @Test
+    fun `createNote sends the note date`() = runBlocking {
+        val backend = TestBackend(session = FakeSessionStore.loggedIn(userId = 2))
+
+        val result = repository(backend).createNote("Clase 5", "texto", 1, "2026-10-20")
+
+        assertTrue(result is Resource.Success)
+        assertEquals("2026-10-20", backend.notes.lastCreate?.noteDate)
     }
 
     @Test

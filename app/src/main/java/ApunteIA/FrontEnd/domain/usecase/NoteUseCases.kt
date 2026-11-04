@@ -18,8 +18,8 @@ class GetNoteDetailUseCase @Inject constructor(
 class CreateNoteUseCase @Inject constructor(
     private val repository: NoteRepository
 ) {
-    suspend operator fun invoke(title: String, content: String, courseId: Long): Resource<Note> =
-        repository.createNote(title.trim(), content.trim(), courseId)
+    suspend operator fun invoke(title: String, content: String, courseId: Long, noteDate: String? = null): Resource<Note> =
+        repository.createNote(title.trim(), content.trim(), courseId, noteDate?.takeIf { it.isNotBlank() })
 }
 
 class UpdateNoteUseCase @Inject constructor(
