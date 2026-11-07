@@ -1,11 +1,10 @@
 package ApunteIA.FrontEnd.domain.usecase
 
-import ApunteIA.FrontEnd.R
+import ApunteIA.FrontEnd.domain.error.AuthError
 import ApunteIA.FrontEnd.domain.model.AuthSession
 import ApunteIA.FrontEnd.domain.model.LoginRole
 import ApunteIA.FrontEnd.domain.repository.AuthRepository
 import ApunteIA.FrontEnd.domain.util.Resource
-import ApunteIA.FrontEnd.util.L10n
 import javax.inject.Inject
 
 /**
@@ -26,10 +25,10 @@ class LoginUseCase @Inject constructor(
         if (LoginRole.fromBackendRole(result.data.role) == expectedRole) return result
 
         repository.logout()
-        val message = when (expectedRole) {
-            LoginRole.ADMIN -> R.string.login_error_not_admin
-            LoginRole.STUDENT -> R.string.login_error_is_admin
+        val error = when (expectedRole) {
+            LoginRole.ADMIN -> AuthError.NotAdmin
+            LoginRole.STUDENT -> AuthError.IsAdmin
         }
-        return Resource.Error(L10n.getString(message))
+        return Resource.Error(error.toUserMessage(), error)
     }
 }

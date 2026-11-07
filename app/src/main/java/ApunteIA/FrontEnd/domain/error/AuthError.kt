@@ -11,6 +11,8 @@ sealed class AuthError : Exception() {
     data class Rejected(val reason: String) : AuthError()
     data object RoleMismatchStudent : AuthError()
     data object RoleMismatchAdmin : AuthError()
+    data object NotAdmin : AuthError()
+    data object IsAdmin : AuthError()
     data object Unknown : AuthError()
 
     fun toUserMessage(): String = when (this) {
@@ -20,6 +22,8 @@ sealed class AuthError : Exception() {
         is Rejected -> reason
         is RoleMismatchStudent -> L10n.getString(R.string.login_error_role_mismatch_student)
         is RoleMismatchAdmin -> L10n.getString(R.string.login_error_role_mismatch_admin)
+        is NotAdmin -> L10n.getString(R.string.login_error_not_admin)
+        is IsAdmin -> L10n.getString(R.string.login_error_is_admin)
         is Unknown -> L10n.getString(R.string.auth_error_unknown)
     }
 }

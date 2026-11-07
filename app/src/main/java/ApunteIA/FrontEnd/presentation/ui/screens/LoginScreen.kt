@@ -28,6 +28,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import ApunteIA.FrontEnd.R
+import ApunteIA.FrontEnd.domain.error.AuthError
 import ApunteIA.FrontEnd.domain.model.LoginRole
 import ApunteIA.FrontEnd.presentation.ui.theme.SpaceCadet
 import ApunteIA.FrontEnd.presentation.viewmodel.LoginViewModel
@@ -316,14 +317,28 @@ fun LoginScreen(
 
         // Error login
 
-        if (uiState.errorMessage != null) {
+        val roleErrorMessage = when (val err = uiState.authError) {
+            is AuthError.InvalidCredentials -> stringResource(R.string.auth_error_credentials)
+            is AuthError.NoConnection -> stringResource(R.string.auth_error_connection)
+            is AuthError.ServerError -> stringResource(R.string.auth_error_server, err.code)
+            is AuthError.Rejected -> err.reason
+            is AuthError.RoleMismatchStudent -> stringResource(R.string.login_error_role_mismatch_student)
+            is AuthError.RoleMismatchAdmin -> stringResource(R.string.login_error_role_mismatch_admin)
+            is AuthError.NotAdmin -> stringResource(R.string.login_error_not_admin)
+            is AuthError.IsAdmin -> stringResource(R.string.login_error_is_admin)
+            is AuthError.Unknown -> stringResource(R.string.auth_error_unknown)
+            null -> null
+        }
+        val displayedErrorMessage = roleErrorMessage ?: uiState.errorMessage
+
+        if (displayedErrorMessage != null) {
 
             Spacer(
                 modifier = Modifier.height(12.dp)
             )
 
             Text(
-                text = uiState.errorMessage.orEmpty(),
+                text = displayedErrorMessage,
                 color = MaterialTheme.colorScheme.error,
                 fontSize = 14.sp,
                 modifier = Modifier.fillMaxWidth()
