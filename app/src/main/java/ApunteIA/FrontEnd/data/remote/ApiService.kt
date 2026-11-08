@@ -11,6 +11,7 @@ import ApunteIA.FrontEnd.data.datasource.model.EnrollmentDto
 import ApunteIA.FrontEnd.data.datasource.model.GenerateAssessmentRequestDto
 import ApunteIA.FrontEnd.data.datasource.model.ForgotPasswordRequestDto
 import ApunteIA.FrontEnd.data.datasource.model.ResetPasswordRequestDto
+import ApunteIA.FrontEnd.data.datasource.model.DirectResetPasswordRequestDto
 import ApunteIA.FrontEnd.data.datasource.model.LoginRequestDto
 import ApunteIA.FrontEnd.data.datasource.model.LoginResponseDto
 import ApunteIA.FrontEnd.data.datasource.model.NoteDto
@@ -50,6 +51,9 @@ interface ApiService {
 
     @POST("auth/reset-password")
     suspend fun resetPassword(@Body request: ResetPasswordRequestDto): Response<Unit>
+
+    @POST("auth/direct-reset-password")
+    suspend fun directResetPassword(@Body request: DirectResetPasswordRequestDto): Response<Unit>
 
     @PUT("auth/password")
     suspend fun changePassword(@Body request: ChangePasswordRequestDto): Response<Unit>

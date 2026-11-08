@@ -23,16 +23,20 @@ import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.hilt.navigation.compose.hiltViewModel
 import ApunteIA.FrontEnd.R
 import ApunteIA.FrontEnd.presentation.ui.theme.SpaceCadet
+import ApunteIA.FrontEnd.presentation.viewmodel.ChangePasswordViewModel
 
 @Composable
 fun ChangePasswordScreen(
     onBack: () -> Unit,
-    onFinish: () -> Unit = {}
+    onFinish: () -> Unit = {},
+    viewModel: ChangePasswordViewModel = hiltViewModel()
 ) {
     val isDark = MaterialTheme.colorScheme.primary == SpaceCadet
     val primaryColor = MaterialTheme.colorScheme.primary
+    val uiState by viewModel.uiState.collectAsState()
     
     var currentPassword by remember { mutableStateOf("") }
     var newPassword by remember { mutableStateOf("") }
@@ -41,9 +45,6 @@ fun ChangePasswordScreen(
     var currentVisible by remember { mutableStateOf(false) }
     var newVisible by remember { mutableStateOf(false) }
     var confirmVisible by remember { mutableStateOf(false) }
-    
-    var errorMessage by remember { mutableStateOf<String?>(null) }
-    var isSuccess by remember { mutableStateOf(false) }
 
     Scaffold(
         containerColor = MaterialTheme.colorScheme.background,
@@ -90,7 +91,7 @@ fun ChangePasswordScreen(
                 .padding(horizontal = 32.dp),
             contentAlignment = Alignment.Center
         ) {
-            if (isSuccess) {
+            if (uiState.isSuccess) {
                 Column(
                     horizontalAlignment = Alignment.CenterHorizontally,
                     modifier = Modifier.fillMaxWidth()
@@ -225,9 +226,9 @@ fun ChangePasswordScreen(
                         modifier = Modifier.fillMaxWidth()
                     )
 
-                    if (errorMessage != null) {
+                    if (uiState.errorMessage != null) {
                         Spacer(modifier = Modifier.height(12.dp))
-                        Text(text = errorMessage.orEmpty(), color = MaterialTheme.colorScheme.error, fontSize = 14.sp)
+                        Text(text = uiState.errorMessage.orEmpty(), color = MaterialTheme.colorScheme.error, fontSize = 14.sp)
                     }
                     
                     Spacer(modifier = Modifier.height(32.dp))
@@ -235,20 +236,20 @@ fun ChangePasswordScreen(
                     Button(
                         onClick = {
                             if (currentPassword.isBlank()) {
-                                errorMessage = "Ingresa tu contraseña actual"
+                                viewModel.setError("Ingresa tu contraseña actual")
                                 return@Button
                             }
                             if (newPassword.length < 6) {
-                                errorMessage = "La nueva contraseña debe tener al menos 6 caracteres"
+                                viewModel.setError("La nueva contraseña debe tener al menos 6 caracteres")
                                 return@Button
                             }
                             if (newPassword != confirmPassword) {
-                                errorMessage = "Las contraseñas no coinciden"
+                                viewModel.setError("Las contraseñas no coinciden")
                                 return@Button
                             }
-                            errorMessage = null
-                            isSuccess = true
+                            viewModel.changePassword(currentPassword, newPassword)
                         },
+                        enabled = !uiState.isLoading,
                         modifier = Modifier
                             .fillMaxWidth()
                             .height(56.dp),
@@ -258,11 +259,19 @@ fun ChangePasswordScreen(
                             contentColor = Color.White
                         )
                     ) {
-                        Text(
-                            text = stringResource(R.string.update_password_button),
-                            fontSize = 16.sp,
-                            fontWeight = FontWeight.Bold
-                        )
+                        if (uiState.isLoading) {
+                            CircularProgressIndicator(
+                                modifier = Modifier.size(22.dp),
+                                color = Color.White,
+                                strokeWidth = 2.dp
+                            )
+                        } else {
+                            Text(
+                                text = stringResource(R.string.update_password_button),
+                                fontSize = 16.sp,
+                                fontWeight = FontWeight.Bold
+                            )
+                        }
                     }
                 }
             }

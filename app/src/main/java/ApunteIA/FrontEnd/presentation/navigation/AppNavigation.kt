@@ -326,7 +326,31 @@ fun AppNavigation(
             }
 
             composable(Routes.FORGOT_PASSWORD) {
-                ForgotPasswordScreen(onBack = { navController.popBackStack() })
+                ForgotPasswordScreen(
+                    onBack = { navController.popBackStack() },
+                    onNavigateToDirectReset = { email ->
+                        navController.navigate(Routes.directResetPassword(email))
+                    }
+                )
+            }
+
+            composable(
+                route = "${Routes.DIRECT_RESET_PASSWORD}?email={email}",
+                arguments = listOf(
+                    navArgument("email") {
+                        type = NavType.StringType
+                        nullable = true
+                        defaultValue = null
+                    }
+                )
+            ) { backStackEntry ->
+                val email = backStackEntry.arguments?.getString("email")
+                DirectResetPasswordScreen(
+                    email = email,
+                    onBackToLogin = {
+                        navController.resetTo(Routes.LOGIN)
+                    }
+                )
             }
 
             composable(

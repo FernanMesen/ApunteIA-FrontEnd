@@ -24,6 +24,7 @@ object Routes {
     const val FORGOT_PASSWORD = "forgot_password"
     const val RESET_PASSWORD = "reset_password"
     const val RESET_PASSWORD_PATTERN = "reset_password?token={token}"
+    const val DIRECT_RESET_PASSWORD = "direct_reset_password"
     const val JOIN_SUBJECT = "join_subject"
 
     // Administración (solo ADMIN)
@@ -54,4 +55,5 @@ object Routes {
     fun reforzar(noteId: Long) = "$REFORZAR?noteId=$noteId"
     /** courseId = 0 abre el formulario para crear un curso nuevo. */
     fun adminCourse(courseId: Long) = "$ADMIN_COURSE/$courseId"
+    fun directResetPassword(email: String) = "$DIRECT_RESET_PASSWORD?email=$email"
 }

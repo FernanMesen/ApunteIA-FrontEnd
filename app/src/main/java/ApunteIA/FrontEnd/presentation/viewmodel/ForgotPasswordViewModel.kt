@@ -12,6 +12,7 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
+import java.io.IOException
 import javax.inject.Inject
 
 data class ForgotPasswordUiState(
@@ -33,16 +34,36 @@ class ForgotPasswordViewModel @Inject constructor(
         viewModelScope.launch {
             _uiState.value = ForgotPasswordUiState(isLoading = true)
             try {
-                apiService.forgotPassword(ForgotPasswordRequestDto(email))
+                val response = apiService.forgotPassword(ForgotPasswordRequestDto(email))
+                if (response.isSuccessful) {
+                    _uiState.value = ForgotPasswordUiState(
+                        isLoading = false,
+                        isSuccess = true,
+                        message = L10n.getString(R.string.forgot_password_success_neutral)
+                    )
+                } else {
+                    if (response.code() >= 500) {
+                        _uiState.value = ForgotPasswordUiState(
+                            isLoading = false,
+                            errorMessage = L10n.getString(R.string.api_error_unknown)
+                        )
+                    } else {
+                        // Respuesta pública genérica para evitar enumeración de correos
+                        _uiState.value = ForgotPasswordUiState(
+                            isLoading = false,
+                            isSuccess = true,
+                            message = L10n.getString(R.string.forgot_password_success_neutral)
+                        )
+                    }
+                }
+            } catch (e: IOException) {
                 _uiState.value = ForgotPasswordUiState(
                     isLoading = false,
-                    isSuccess = true,
-                    message = L10n.getString(R.string.forgot_password_success_neutral)
+                    errorMessage = e.toFriendlyMessage(L10n.getString(R.string.auth_error_connection))
                 )
             } catch (e: Exception) {
                 _uiState.value = ForgotPasswordUiState(
                     isLoading = false,
-                    isSuccess = false,
                     errorMessage = e.toFriendlyMessage(L10n.getString(R.string.api_error_unknown))
                 )
             }
