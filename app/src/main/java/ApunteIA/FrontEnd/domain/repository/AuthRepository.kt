@@ -21,4 +21,6 @@ interface AuthRepository {
 
     /** Despierta el backend (Render duerme tras 15 min sin tráfico). Ignora errores. */
     suspend fun warmUp()
+
+    suspend fun deleteAccount(): Resource<Unit>
 }

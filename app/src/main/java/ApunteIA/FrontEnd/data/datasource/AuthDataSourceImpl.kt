@@ -19,4 +19,8 @@ class AuthDataSourceImpl @Inject constructor(
     override suspend fun ping() {
         apiService.ping().body()?.close()
     }
+
+    override suspend fun deleteAccount() {
+        apiService.deleteAccount()
+    }
 }

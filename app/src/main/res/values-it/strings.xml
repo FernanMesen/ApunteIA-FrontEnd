@@ -298,6 +298,7 @@
     <string name="ai_lang_same_as_app_short">App</string>
     <string name="ai_lang_spanish">Spagnolo</string>
     <string name="ai_lang_english">Inglese</string>
+    <string name="forgot_password_success_neutral">Se l\'account è idoneo, puoi procedere con il recupero.</string>
     <string name="ai_lang_portuguese">Portoghese</string>
     <string name="ai_lang_italian">Italiano</string>
 
@@ -310,11 +311,13 @@
     <string name="privacy_card2_desc">Le tue note vengono elaborate dai nostri modelli di IA esclusivamente per generare riassunti, audit e quiz di studio. Non utilizziamo le tue informazioni personali per addestrare modelli pubblici senza il tuo consenso.</string>
     <string name="privacy_card3_title">I tuoi diritti sui dati</string>
     <string name="privacy_card3_desc">Hai il controllo totale delle tue informazioni. Puoi esportare tutti i tuoi dati o eliminare definitivamente il tuo account dalle impostazioni del profilo in qualsiasi momento.</string>
-    <string name="privacy_preferences_header">Preferenze sulla Privacy</string>
-    <string name="privacy_analytics_title">Analisi di utilizzo anonimo</string>
-    <string name="privacy_analytics_desc">Aiutaci a migliorare l\'applicazione condividendo statistiche di utilizzo senza dati personali.</string>
-    <string name="privacy_personalization_title">Personalizzazione intelligente</string>
-    <string name="privacy_personalization_desc">Consenti all\'IA di adattare i quiz in base alla tua cronologia di studio.</string>
+    <string name="privacy_preferences_header">Come vengono usati i tuoi dati</string>
+    <string name="privacy_analytics_title">Analisi di utilizzo</string>
+    <string name="privacy_analytics_desc">L\'app al momento non raccoglie statistiche di utilizzo per l\'analisi.</string>
+    <string name="privacy_analytics_status">Non raccolte</string>
+    <string name="privacy_personalization_title">Personalizzazione IA</string>
+    <string name="privacy_personalization_desc">I quiz vengono generati dalla nota selezionata. La cronologia di studio non viene usata per personalizzarli.</string>
+    <string name="privacy_personalization_status">Cronologia non usata</string>
     <string name="privacy_version">Versione dell\'informativa sulla privacy: 2.6.0\nAggiornato a novembre 2026</string>
 
     <string name="export_header">Download e Backup delle Informazioni</string>

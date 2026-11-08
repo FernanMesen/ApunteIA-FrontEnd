@@ -1,9 +1,11 @@
 package ApunteIA.FrontEnd.presentation.viewmodel
 
 import ApunteIA.FrontEnd.domain.model.AuthSession
+import ApunteIA.FrontEnd.domain.repository.AuthRepository
 import ApunteIA.FrontEnd.domain.usecase.GetCurrentSessionUseCase
 import ApunteIA.FrontEnd.domain.usecase.LogoutUseCase
 import ApunteIA.FrontEnd.domain.usecase.WarmUpBackendUseCase
+import ApunteIA.FrontEnd.domain.util.Resource
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -32,7 +34,8 @@ data class CurrentUser(
 class SessionViewModel @Inject constructor(
     private val getCurrentSession: GetCurrentSessionUseCase,
     private val logoutUseCase: LogoutUseCase,
-    private val warmUpBackend: WarmUpBackendUseCase
+    private val warmUpBackend: WarmUpBackendUseCase,
+    private val authRepository: AuthRepository
 ) : ViewModel() {
 
     /** Se calcula una sola vez al abrir la app. */
@@ -55,6 +58,14 @@ class SessionViewModel @Inject constructor(
     fun logout() {
         logoutUseCase()
         _currentUser.value = null
+    }
+
+    suspend fun deleteAccount(): Resource<Unit> {
+        val result = authRepository.deleteAccount()
+        if (result is Resource.Success) {
+            logout()
+        }
+        return result
     }
 
     private fun AuthSession.toUser() = CurrentUser(

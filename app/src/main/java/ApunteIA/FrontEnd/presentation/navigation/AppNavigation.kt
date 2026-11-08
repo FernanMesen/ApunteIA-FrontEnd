@@ -7,8 +7,10 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.platform.LocalContext
 import androidx.hilt.navigation.compose.hiltViewModel
+import kotlinx.coroutines.launch
 import androidx.navigation.NavHostController
 import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
@@ -16,6 +18,7 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.navigation
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
+import androidx.navigation.navDeepLink
 import ApunteIA.FrontEnd.R
 import ApunteIA.FrontEnd.presentation.ui.components.LocalCurrentUser
 import ApunteIA.FrontEnd.presentation.ui.components.RefreshOnResume
@@ -92,6 +95,9 @@ fun AppNavigation(
                     },
                     onRegister = {
                         navController.navigate(Routes.REGISTER)
+                    },
+                    onForgotPassword = {
+                        navController.navigate(Routes.FORGOT_PASSWORD)
                     }
                 )
             }
@@ -185,6 +191,7 @@ fun AppNavigation(
                 val statsViewModel: MainViewModel = hiltViewModel()
                 val statsState by statsViewModel.uiState.collectAsState()
                 val aiLanguageOption by themeViewModel.aiLanguageOption.collectAsState()
+                val coroutineScope = rememberCoroutineScope()
                 RefreshOnResume { statsViewModel.refresh() }
                 ProfileScreen(
                     onBack = { navController.popBackStack() },
@@ -206,7 +213,13 @@ fun AppNavigation(
                     notesCount = statsState.userStats?.notesCount,
                     quizzesCount = statsState.userStats?.quizzesDoneCount,
                     isAdmin = currentUser?.isAdmin == true,
-                    onAdminCourses = { navController.navigate(Routes.ADMIN_COURSES) }
+                    onAdminCourses = { navController.navigate(Routes.ADMIN_COURSES) },
+                    onDeleteAccount = {
+                        coroutineScope.launch {
+                            sessionViewModel.deleteAccount()
+                            navController.resetTo(Routes.LOGIN)
+                        }
+                    }
                 )
             }
 
@@ -295,11 +308,11 @@ fun AppNavigation(
             }
 
             composable(Routes.PRIVACY) {
-                PlaceholderScreen(title = "Privacidad", onBack = { navController.popBackStack() })
+                PrivacyScreen(onBack = { navController.popBackStack() })
             }
 
             composable(Routes.EXPORT_DATA) {
-                PlaceholderScreen(title = "Exportar mis datos", onBack = { navController.popBackStack() })
+                ExportDataScreen(onBack = { navController.popBackStack() })
             }
 
             composable(Routes.CHANGE_PASSWORD) {
@@ -307,6 +320,32 @@ fun AppNavigation(
                     onBack = { navController.popBackStack() },
                     onFinish = {
                         sessionViewModel.logout()
+                        navController.resetTo(Routes.LOGIN)
+                    }
+                )
+            }
+
+            composable(Routes.FORGOT_PASSWORD) {
+                ForgotPasswordScreen(onBack = { navController.popBackStack() })
+            }
+
+            composable(
+                route = "${Routes.RESET_PASSWORD}?token={token}",
+                deepLinks = listOf(
+                    navDeepLink { uriPattern = "apunteia://reset-password?token={token}" }
+                ),
+                arguments = listOf(
+                    navArgument("token") {
+                        type = NavType.StringType
+                        nullable = true
+                        defaultValue = null
+                    }
+                )
+            ) { backStackEntry ->
+                val token = backStackEntry.arguments?.getString("token")
+                ResetPasswordScreen(
+                    token = token,
+                    onBackToLogin = {
                         navController.resetTo(Routes.LOGIN)
                     }
                 )

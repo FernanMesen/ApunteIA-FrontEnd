@@ -49,6 +49,18 @@ class AuthRepositoryImplTest {
     }
 
     @Test
+    fun `login with deleted account shows the backend message and does not save a session`() = runBlocking {
+        val message = "No existe una cuenta registrada con este correo."
+        dataSource.loginResult = { throw httpError(401, message) }
+
+        val result = repository.login("deleted@user.com", "badpass")
+
+        assertTrue(result is Resource.Error)
+        assertEquals(message, (result as Resource.Error).message)
+        assertNull(session.currentSession())
+    }
+
+    @Test
     fun `login with blocked account shows the backend message`() = runBlocking {
         dataSource.loginResult = { throw httpError(403, "La cuenta está bloqueada. Contacte al administrador") }
 

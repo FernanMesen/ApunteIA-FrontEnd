@@ -54,4 +54,11 @@ class AuthRepositoryImpl @Inject constructor(
     override suspend fun warmUp() {
         runCatching { dataSource.ping() }
     }
+
+    override suspend fun deleteAccount(): Resource<Unit> = safeApiCall(
+        errorMapper = { it.toAuthError().toUserMessage() }
+    ) {
+        dataSource.deleteAccount()
+        sessionManager.clear()
+    }
 }

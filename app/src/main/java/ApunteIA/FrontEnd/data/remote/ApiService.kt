@@ -2,12 +2,15 @@ package ApunteIA.FrontEnd.data.remote
 
 import ApunteIA.FrontEnd.data.datasource.model.AssessmentDto
 import ApunteIA.FrontEnd.data.datasource.model.AttemptDto
+import ApunteIA.FrontEnd.data.datasource.model.ChangePasswordRequestDto
 import ApunteIA.FrontEnd.data.datasource.model.CourseDto
 import ApunteIA.FrontEnd.data.datasource.model.CourseRequestDto
 import ApunteIA.FrontEnd.data.datasource.model.CreateNoteRequestDto
 import ApunteIA.FrontEnd.data.datasource.model.EnrollUserRequestDto
 import ApunteIA.FrontEnd.data.datasource.model.EnrollmentDto
 import ApunteIA.FrontEnd.data.datasource.model.GenerateAssessmentRequestDto
+import ApunteIA.FrontEnd.data.datasource.model.ForgotPasswordRequestDto
+import ApunteIA.FrontEnd.data.datasource.model.ResetPasswordRequestDto
 import ApunteIA.FrontEnd.data.datasource.model.LoginRequestDto
 import ApunteIA.FrontEnd.data.datasource.model.LoginResponseDto
 import ApunteIA.FrontEnd.data.datasource.model.NoteDto
@@ -26,6 +29,7 @@ import retrofit2.http.POST
 import retrofit2.http.PUT
 import retrofit2.http.Path
 import retrofit2.http.Query
+import retrofit2.http.Streaming
 
 /**
  * Endpoints reales del backend ApunteIA (Spring Boot en Render).
@@ -41,9 +45,25 @@ interface ApiService {
     @POST("auth/register")
     suspend fun register(@Body request: RegisterRequestDto): UserDto
 
+    @POST("auth/forgot-password")
+    suspend fun forgotPassword(@Body request: ForgotPasswordRequestDto): Response<Unit>
+
+    @POST("auth/reset-password")
+    suspend fun resetPassword(@Body request: ResetPasswordRequestDto): Response<Unit>
+
+    @PUT("auth/password")
+    suspend fun changePassword(@Body request: ChangePasswordRequestDto): Response<Unit>
+
     /** Petición liviana para "despertar" Render (plan gratuito) antes del login. */
     @GET("courses")
     suspend fun ping(): Response<ResponseBody>
+
+    @GET("users/me/export")
+    @Streaming
+    suspend fun exportData(@Query("format") format: String): ResponseBody
+
+    @DELETE("users/me")
+    suspend fun deleteAccount(): Response<Unit>
 
     // ---------- Cursos e inscripciones ----------
 

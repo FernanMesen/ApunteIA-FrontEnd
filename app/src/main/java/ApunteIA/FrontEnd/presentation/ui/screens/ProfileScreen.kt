@@ -49,7 +49,8 @@ fun ProfileScreen(
     notesCount: Int? = null,
     quizzesCount: Int? = null,
     isAdmin: Boolean = false,
-    onAdminCourses: () -> Unit = {}
+    onAdminCourses: () -> Unit = {},
+    onDeleteAccount: () -> Unit = {}
 ) {
     var showDeleteDialog by remember { mutableStateOf(false) }
     val isThemeDark = MaterialTheme.colorScheme.primary == SpaceCadet
@@ -77,7 +78,7 @@ fun ProfileScreen(
                 Button(
                     onClick = {
                         showDeleteDialog = false
-                        onLogout()
+                        onDeleteAccount()
                     },
                     colors = ButtonDefaults.buttonColors(
                         containerColor = if (isThemeDark) Color(0xFF3B2525) else StatusRed,

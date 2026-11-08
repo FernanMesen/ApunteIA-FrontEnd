@@ -33,11 +33,16 @@ import ApunteIA.FrontEnd.domain.model.LoginRole
 import ApunteIA.FrontEnd.presentation.ui.theme.SpaceCadet
 import ApunteIA.FrontEnd.presentation.viewmodel.LoginViewModel
 import ApunteIA.FrontEnd.util.LanguageManager
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Visibility
+import androidx.compose.material.icons.filled.VisibilityOff
+import androidx.compose.ui.text.input.VisualTransformation
 
 @Composable
 fun LoginScreen(
     onLogin: () -> Unit,
     onRegister: () -> Unit,
+    onForgotPassword: () -> Unit = {},
     viewModel: LoginViewModel = hiltViewModel()
 ) {
     val isDark = MaterialTheme.colorScheme.primary == SpaceCadet
@@ -273,6 +278,10 @@ fun LoginScreen(
 
         // Contraseña
 
+        var passwordVisible by remember {
+            mutableStateOf(false)
+        }
+
         OutlinedTextField(
             value = password,
             onValueChange = {
@@ -286,7 +295,19 @@ fun LoginScreen(
                     color = MaterialTheme.colorScheme.onSurfaceVariant
                 )
             },
-            visualTransformation = PasswordVisualTransformation(),
+            visualTransformation = if (passwordVisible) VisualTransformation.None else PasswordVisualTransformation(),
+            trailingIcon = {
+                val image = if (passwordVisible)
+                    Icons.Default.Visibility
+                else
+                    Icons.Default.VisibilityOff
+
+                val description = if (passwordVisible) "Ocultar contraseña" else "Mostrar contraseña"
+
+                IconButton(onClick = { passwordVisible = !passwordVisible }) {
+                    Icon(imageVector = image, contentDescription = description, tint = MaterialTheme.colorScheme.onSurfaceVariant)
+                }
+            },
             singleLine = true,
             shape = RoundedCornerShape(18.dp),
             modifier = Modifier
@@ -420,7 +441,7 @@ fun LoginScreen(
             fontSize = 14.sp,
             textDecoration = TextDecoration.Underline,
             modifier = Modifier.clickable {
-                comingSoon()
+                onForgotPassword()
             }
         )
 

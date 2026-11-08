@@ -21,6 +21,9 @@ object Routes {
     const val PRIVACY = "privacy"
     const val EXPORT_DATA = "export_data"
     const val CHANGE_PASSWORD = "change_password"
+    const val FORGOT_PASSWORD = "forgot_password"
+    const val RESET_PASSWORD = "reset_password"
+    const val RESET_PASSWORD_PATTERN = "reset_password?token={token}"
     const val JOIN_SUBJECT = "join_subject"
 
     // Administración (solo ADMIN)

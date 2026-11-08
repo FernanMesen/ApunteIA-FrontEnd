@@ -9,7 +9,7 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.KeyboardArrowLeft
 import androidx.compose.material3.*
-import androidx.compose.runtime.*
+import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -24,9 +24,6 @@ import ApunteIA.FrontEnd.R
 fun PrivacyScreen(
     onBack: () -> Unit
 ) {
-    var analyticsEnabled by remember { mutableStateOf(true) }
-    var aiPersonalizationEnabled by remember { mutableStateOf(true) }
-
     Scaffold(
         containerColor = MaterialTheme.colorScheme.background,
         topBar = {
@@ -147,9 +144,10 @@ fun PrivacyScreen(
                                     color = MaterialTheme.colorScheme.onSurfaceVariant
                                 )
                             }
-                            Switch(
-                                checked = analyticsEnabled,
-                                onCheckedChange = { analyticsEnabled = it }
+                            Text(
+                                text = stringResource(R.string.privacy_analytics_status),
+                                style = MaterialTheme.typography.labelMedium,
+                                color = MaterialTheme.colorScheme.primary
                             )
                         }
 
@@ -173,9 +171,10 @@ fun PrivacyScreen(
                                     color = MaterialTheme.colorScheme.onSurfaceVariant
                                 )
                             }
-                            Switch(
-                                checked = aiPersonalizationEnabled,
-                                onCheckedChange = { aiPersonalizationEnabled = it }
+                            Text(
+                                text = stringResource(R.string.privacy_personalization_status),
+                                style = MaterialTheme.typography.labelMedium,
+                                color = MaterialTheme.colorScheme.primary
                             )
                         }
                     }

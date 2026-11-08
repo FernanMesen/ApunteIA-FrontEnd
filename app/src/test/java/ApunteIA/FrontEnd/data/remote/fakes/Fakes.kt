@@ -66,6 +66,7 @@ class FakeAuthDataSource : AuthDataSource {
         return registerResult()
     }
     override suspend fun ping() = Unit
+    override suspend fun deleteAccount() = Unit
 }
 
 class FakeCourseDataSource(

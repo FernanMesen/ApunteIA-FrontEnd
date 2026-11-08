@@ -298,6 +298,7 @@
     <string name="ai_lang_same_as_app_short">App</string>
     <string name="ai_lang_spanish">Spanish</string>
     <string name="ai_lang_english">English</string>
+    <string name="forgot_password_success_neutral">If the account is eligible, you can proceed with recovery.</string>
     <string name="ai_lang_portuguese">Portuguese</string>
     <string name="ai_lang_italian">Italian</string>
 
@@ -310,11 +311,13 @@
     <string name="privacy_card2_desc">Your notes are processed by our AI models exclusively to generate summaries, audits, and study quizzes. We do not use your personal information to train public models without your consent.</string>
     <string name="privacy_card3_title">Your data rights</string>
     <string name="privacy_card3_desc">You have total control over your information. You can export all your data or permanently delete your account from your profile settings at any time.</string>
-    <string name="privacy_preferences_header">Privacy Preferences</string>
-    <string name="privacy_analytics_title">Anonymous usage analytics</string>
-    <string name="privacy_analytics_desc">Help us improve the app by sharing usage statistics without personal data.</string>
-    <string name="privacy_personalization_title">Smart personalization</string>
-    <string name="privacy_personalization_desc">Allow AI to adapt quizzes based on your study history.</string>
+    <string name="privacy_preferences_header">How your data is used</string>
+    <string name="privacy_analytics_title">Usage analytics</string>
+    <string name="privacy_analytics_desc">The app currently does not collect usage statistics for analytics.</string>
+    <string name="privacy_analytics_status">Not collected</string>
+    <string name="privacy_personalization_title">AI personalization</string>
+    <string name="privacy_personalization_desc">Quizzes are generated from the selected note. Study history is not used to personalize them.</string>
+    <string name="privacy_personalization_status">Study history not used</string>
     <string name="privacy_version">Privacy policy version: 2.6.0\nUpdated in November 2026</string>
 
     <string name="export_header">Information Download and Backup</string>

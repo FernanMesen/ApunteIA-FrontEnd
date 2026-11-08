@@ -7,4 +7,5 @@ interface AuthDataSource {
     suspend fun login(email: String, password: String): LoginResponseDto
     suspend fun register(fullName: String, email: String, password: String): UserDto
     suspend fun ping()
+    suspend fun deleteAccount()
 }

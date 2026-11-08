@@ -298,6 +298,7 @@
     <string name="ai_lang_same_as_app_short">App</string>
     <string name="ai_lang_spanish">Español</string>
     <string name="ai_lang_english">English</string>
+    <string name="forgot_password_success_neutral">Si la cuenta es elegible, podrás continuar con la recuperación.</string>
     <string name="ai_lang_portuguese">Português</string>
     <string name="ai_lang_italian">Italiano</string>
 
@@ -310,11 +311,13 @@
     <string name="privacy_card2_desc">Tus apuntes son procesados por nuestros modelos de IA exclusivamente para generar resúmenes, auditorías y cuestionarios de estudio. No utilizamos tu información personal para entrenar modelos públicos sin tu consentimiento.</string>
     <string name="privacy_card3_title">Derechos sobre tus datos</string>
     <string name="privacy_card3_desc">Tienes el control total de tu información. Puedes exportar todos tus datos o eliminar tu cuenta de forma permanente desde la configuración de tu perfil en cualquier momento.</string>
-    <string name="privacy_preferences_header">Preferencias de Privacidad</string>
-    <string name="privacy_analytics_title">Análisis de uso anónimo</string>
-    <string name="privacy_analytics_desc">Ayúdanos a mejorar la aplicación compartiendo estadísticas de uso sin datos personales.</string>
-    <string name="privacy_personalization_title">Personalización inteligente</string>
-    <string name="privacy_personalization_desc">Permitir que la IA adapte los cuestionarios basándose en tu historial de estudio.</string>
+    <string name="privacy_preferences_header">Cómo se usan tus datos</string>
+    <string name="privacy_analytics_title">Análisis de uso</string>
+    <string name="privacy_analytics_desc">La aplicación actualmente no recopila estadísticas de uso para analítica.</string>
+    <string name="privacy_analytics_status">No se recopila</string>
+    <string name="privacy_personalization_title">Personalización con IA</string>
+    <string name="privacy_personalization_desc">Los cuestionarios se generan a partir de la nota seleccionada. El historial de estudio no se usa para personalizarlos.</string>
+    <string name="privacy_personalization_status">No se usa el historial</string>
     <string name="privacy_version">Versión de política de privacidad: 2.6.0\nActualizado en noviembre de 2026</string>
 
     <string name="export_header">Descarga y Respaldo de Información</string>

@@ -22,7 +22,14 @@ fun Throwable.toAuthError(): AuthError = when (this) {
     is AuthError -> this
     is IOException -> AuthError.NoConnection
     is HttpException -> when (code()) {
-        401 -> AuthError.InvalidCredentials
+        401, 404 -> {
+            val message = backendMessage()
+            if (message.isNullOrBlank() || message.equals("Credenciales inválidas", ignoreCase = true)) {
+                AuthError.InvalidCredentials
+            } else {
+                AuthError.Rejected(message)
+            }
+        }
         else -> {
             val message = backendMessage()
             if (message != null) AuthError.Rejected(message) else AuthError.ServerError(code())
