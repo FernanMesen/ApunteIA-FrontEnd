@@ -1,9 +1,7 @@
 package ApunteIA.FrontEnd.presentation.ui.screens
-
 import android.Manifest
 import android.content.Context
 import android.content.pm.PackageManager
-import android.os.Build
 import androidx.camera.core.CameraSelector
 import androidx.camera.core.ImageCapture
 import androidx.camera.core.ImageCaptureException
@@ -64,7 +62,6 @@ fun ScanCameraScreen(
     onDone: () -> Unit
 ) {
     val state by viewModel.uiState.collectAsState()
-    val photosMode by viewModel.photosMode.collectAsState()
     val cameraMode by viewModel.cameraMode.collectAsState()
     val context = LocalContext.current
 
@@ -99,33 +96,10 @@ fun ScanCameraScreen(
         }
     }
 
-    val photosPermissionName = remember {
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
-            Manifest.permission.READ_MEDIA_IMAGES
-        } else {
-            Manifest.permission.READ_EXTERNAL_STORAGE
-        }
-    }
-
     val isCameraAllowed = cameraMode != "DENIED" && (
             cameraMode == "WHILE_USING_APP" || cameraMode == "FULL_ACCESS" ||
-            ContextCompat.checkSelfPermission(context, Manifest.permission.CAMERA) == PackageManager.PERMISSION_GRANTED
-    )
-
-    val isPhotoAllowed = photosMode != "DENIED" && (
-            photosMode == "FULL_ACCESS" || photosMode == "WHILE_USING_APP" ||
-            ContextCompat.checkSelfPermission(context, photosPermissionName) == PackageManager.PERMISSION_GRANTED
-    )
-
-    val photoPermissionLauncher = rememberLauncherForActivityResult(
-        contract = ActivityResultContracts.RequestPermission()
-    ) { granted ->
-        if (granted) {
-            galleryLauncher.launch("image/*")
-        } else {
-            android.widget.Toast.makeText(context, "Acceso a fotos denegado", android.widget.Toast.LENGTH_SHORT).show()
-        }
-    }
+                    ContextCompat.checkSelfPermission(context, Manifest.permission.CAMERA) == PackageManager.PERMISSION_GRANTED
+            )
 
     LaunchedEffect(Unit) {
         if (!hasCameraPermission) {
@@ -204,18 +178,12 @@ fun ScanCameraScreen(
                 verticalAlignment = Alignment.CenterVertically
             ) {
                 IconButton(
-                    onClick = {
-                        if (isPhotoAllowed) {
-                            galleryLauncher.launch("image/*")
-                        } else {
-                            photoPermissionLauncher.launch(photosPermissionName)
-                        }
-                    },
+                    onClick = { galleryLauncher.launch("image/*") },
                     modifier = Modifier
                         .size(48.dp)
                         .background(scanSoftFill(), RoundedCornerShape(14.dp))
                 ) {
-                    Icon(Icons.Default.Image, contentDescription = null, tint = scanText())
+                    Icon(Icons.Default.Image, contentDescription = "Abrir galería", tint = scanText())
                 }
 
                 Spacer(modifier = Modifier.weight(1f))
@@ -379,3 +347,4 @@ private fun ViewfinderCorners() {
         drawLine(color, Offset(size.width, size.height), Offset(size.width, size.height - cornerLength), stroke, StrokeCap.Round)
     }
 }
+
