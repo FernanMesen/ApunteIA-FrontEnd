@@ -43,6 +43,7 @@ fun ProfileScreen(
     onThemeToggle: (Boolean) -> Unit = {},
     aiLanguageOption: AiLanguageOption = AiLanguageOption.SAME_AS_APP,
     onAiLanguageChange: (AiLanguageOption) -> Unit = {},
+    cameraModeStr: String = "NOT_CONFIGURED",
     onManageSubjects: () -> Unit = {},
     onStudyHistory: () -> Unit = {},
     onCameraAccess: () -> Unit = {},
@@ -147,6 +148,7 @@ fun ProfileScreen(
                     onThemeToggle = onThemeToggle,
                     aiLanguageOption = aiLanguageOption,
                     onAiLanguageChange = onAiLanguageChange,
+                    cameraModeStr = cameraModeStr,
                     onManageSubjects = onManageSubjects,
                     onStudyHistory = onStudyHistory,
                     onCameraAccess = onCameraAccess,
@@ -323,6 +325,7 @@ fun ConfigSection(
     onThemeToggle: (Boolean) -> Unit,
     aiLanguageOption: AiLanguageOption,
     onAiLanguageChange: (AiLanguageOption) -> Unit,
+    cameraModeStr: String = "NOT_CONFIGURED",
     onManageSubjects: () -> Unit,
     onStudyHistory: () -> Unit,
     onCameraAccess: () -> Unit,
@@ -392,13 +395,11 @@ fun ConfigSection(
                 HorizontalDivider(color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.08f), thickness = 0.5.dp)
                 HorizontalDivider(color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.08f), thickness = 0.5.dp)
                 val context = LocalContext.current
-                val prefs = remember(context) { context.getSharedPreferences("apunteia_permissions", Context.MODE_PRIVATE) }
-                val cameraSaved = prefs.getString("camera_mode", null)
                 val cameraGranted = ContextCompat.checkSelfPermission(context, android.Manifest.permission.CAMERA) == PackageManager.PERMISSION_GRANTED
                 val cameraStatus = when {
-                    cameraGranted || cameraSaved == "WHILE_USING_APP" -> stringResource(R.string.permission_status_while)
-                    cameraSaved == "FULL_ACCESS" -> stringResource(R.string.permission_status_full)
-                    cameraSaved == "DENIED" -> stringResource(R.string.permission_status_denied)
+                    cameraModeStr == "DENIED" -> stringResource(R.string.permission_status_denied)
+                    cameraModeStr == "FULL_ACCESS" -> stringResource(R.string.permission_status_full)
+                    cameraModeStr == "WHILE_USING_APP" || cameraGranted -> stringResource(R.string.permission_status_while)
                     else -> stringResource(R.string.permission_status_while)
                 }
 

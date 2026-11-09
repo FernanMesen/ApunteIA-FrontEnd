@@ -158,7 +158,13 @@ fun AppNavigation(
             }
 
             composable(Routes.PERMISSIONS) {
+                val cameraModeStr by themeViewModel.cameraMode.collectAsState()
+                val photosModeStr by themeViewModel.photosMode.collectAsState()
                 PermissionsScreen(
+                    cameraModeStr = cameraModeStr,
+                    photosModeStr = photosModeStr,
+                    onCameraModeChange = { themeViewModel.updateCameraMode(it.name) },
+                    onPhotosModeChange = { themeViewModel.updatePhotosMode(it.name) },
                     onBack = { navController.popBackStack() },
                     onFinish = { navController.resetTo(Routes.MAIN) }
                 )
