@@ -9,11 +9,12 @@ import kotlinx.coroutines.runBlocking
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertTrue
 import org.junit.Test
+import ApunteIA.FrontEnd.util.AiLanguagePreferenceManager
 import java.io.IOException
 
 class QuizRepositoryImplTest {
 
-    private fun repository(backend: TestBackend) = QuizRepositoryImpl(backend.quizzes, backend.loader)
+    private fun repository(backend: TestBackend) = QuizRepositoryImpl(backend.quizzes, backend.loader, AiLanguagePreferenceManager(null))
 
     @Test
     fun `startQuiz loads the questions without the correct answer and opens an attempt`() = runBlocking {

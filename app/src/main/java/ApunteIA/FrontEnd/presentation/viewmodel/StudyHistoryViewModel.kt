@@ -92,23 +92,37 @@ class StudyHistoryViewModel @Inject constructor(
     private fun applyPeriod() {
         val data = overview ?: return
         val now = System.currentTimeMillis()
-        val periodDays = if (_uiState.value.isWeekly) 7 else 30
+        val isWeekly = _uiState.value.isWeekly
+        val periodDays = if (isWeekly) 7 else 30
         val since = now - periodDays * DAY_MS
 
         val completed = data.attempts.filter { StudyInsights.isCompleted(it) }
-        val inPeriod = completed.filter { (IsoDates.parse(it.completedAt) ?: 0L) >= since }
-        val precision = if (inPeriod.isEmpty()) 0 else inPeriod.sumOf { it.scorePercent } / inPeriod.size
-        val seconds = inPeriod.sumOf { it.durationSeconds }
+        val inPeriodAttempts = completed.filter { (IsoDates.parse(it.completedAt) ?: 0L) >= since }
+        val precision = if (inPeriodAttempts.isEmpty()) 0 else inPeriodAttempts.sumOf { it.scorePercent } / inPeriodAttempts.size
+        val seconds = inPeriodAttempts.sumOf { it.durationSeconds }
 
-        // Actividad (notas + quizzes) de lunes a domingo de esta semana.
-        val weekStart = IsoDates.startOfWeek(now)
-        val counts = IntArray(7)
-        StudyInsights.activityMillis(data.notes, data.attempts).forEach { millis ->
-            val index = ((millis - weekStart) / DAY_MS).toInt()
-            if (index in 0..6) counts[index]++
+        val activityMillisList = StudyInsights.activityMillis(data.notes, data.attempts).filter { it >= since }
+
+        val progressValues = if (isWeekly) {
+            val weekStart = IsoDates.startOfWeek(now)
+            val counts = IntArray(7)
+            activityMillisList.forEach { millis ->
+                val index = ((millis - weekStart) / DAY_MS).toInt()
+                if (index in 0..6) counts[index]++
+            }
+            val max = counts.maxOrNull()?.takeIf { it > 0 } ?: 1
+            counts.map { it.toFloat() / max }
+        } else {
+            // 4 barras (semanas del mes)
+            val counts = IntArray(4)
+            activityMillisList.forEach { millis ->
+                val daysAgo = ((now - millis) / DAY_MS).toInt()
+                val weekIndex = 3 - (daysAgo / 7).coerceIn(0, 3)
+                if (weekIndex in 0..3) counts[weekIndex]++
+            }
+            val max = counts.maxOrNull()?.takeIf { it > 0 } ?: 1
+            counts.map { it.toFloat() / max }
         }
-        val max = counts.maxOrNull()?.takeIf { it > 0 } ?: 1
-        val weekly = counts.map { it.toFloat() / max }
 
         val subjects = data.myCourses.map { course ->
             val topics = data.topics.filter { it.className == course.name }
@@ -119,6 +133,9 @@ class StudyHistoryViewModel @Inject constructor(
             )
         }
 
+        val filteredNotes = data.notes.filter { (IsoDates.parse(it.createdAtIso) ?: 0L) >= since }
+        val filteredAttempts = data.attempts.filter { (IsoDates.parse(it.completedAt) ?: 0L) >= since }
+
         _uiState.value = _uiState.value.copy(
             isLoading = false,
             error = null,
@@ -126,12 +143,12 @@ class StudyHistoryViewModel @Inject constructor(
                 precision = precision,
                 streak = StudyInsights.streakDays(StudyInsights.activityMillis(data.notes, data.attempts), now),
                 studyTime = formatDuration(seconds),
-                weeklyProgress = weekly,
+                weeklyProgress = progressValues,
                 strongAreas = data.topics.count { it.status == TopicStatus.SOLID },
                 weakAreas = data.topics.count { it.status != TopicStatus.SOLID }
             ),
             subjects = subjects,
-            recentActivity = StudyInsights.recentActivity(data.notes, data.attempts, limit = 8, now = now)
+            recentActivity = StudyInsights.recentActivity(filteredNotes, filteredAttempts, limit = 8, now = now)
         )
     }
 

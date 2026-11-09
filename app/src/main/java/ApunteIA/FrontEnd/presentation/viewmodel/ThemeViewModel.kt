@@ -3,6 +3,7 @@ package ApunteIA.FrontEnd.presentation.viewmodel
 import androidx.lifecycle.ViewModel
 import ApunteIA.FrontEnd.util.AiLanguageOption
 import ApunteIA.FrontEnd.util.AiLanguagePreferenceManager
+import ApunteIA.FrontEnd.util.PermissionManager
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -11,13 +12,17 @@ import javax.inject.Inject
 
 @HiltViewModel
 class ThemeViewModel @Inject constructor(
-    private val aiLanguagePreferenceManager: AiLanguagePreferenceManager
+    private val aiLanguagePreferenceManager: AiLanguagePreferenceManager,
+    private val permissionManager: PermissionManager
 ) : ViewModel() {
     private val _isDarkMode = MutableStateFlow(false)
     val isDarkMode: StateFlow<Boolean> = _isDarkMode.asStateFlow()
 
     private val _aiLanguageOption = MutableStateFlow(aiLanguagePreferenceManager.aiLanguageOption)
     val aiLanguageOption: StateFlow<AiLanguageOption> = _aiLanguageOption.asStateFlow()
+
+    val cameraMode: StateFlow<String> = permissionManager.cameraMode
+    val photosMode: StateFlow<String> = permissionManager.photosMode
 
     fun toggleTheme(isDark: Boolean) {
         _isDarkMode.value = isDark
@@ -26,5 +31,13 @@ class ThemeViewModel @Inject constructor(
     fun setAiLanguageOption(option: AiLanguageOption) {
         aiLanguagePreferenceManager.aiLanguageOption = option
         _aiLanguageOption.value = option
+    }
+
+    fun updateCameraMode(mode: String) {
+        permissionManager.updateCameraMode(mode)
+    }
+
+    fun updatePhotosMode(mode: String) {
+        permissionManager.updatePhotosMode(mode)
     }
 }

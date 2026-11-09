@@ -13,6 +13,7 @@ import ApunteIA.FrontEnd.domain.model.QuizSession
 import ApunteIA.FrontEnd.domain.repository.QuizRepository
 import ApunteIA.FrontEnd.domain.usecase.StudyInsights
 import ApunteIA.FrontEnd.domain.util.Resource
+import ApunteIA.FrontEnd.util.AiLanguagePreferenceManager
 import kotlinx.coroutines.async
 import kotlinx.coroutines.awaitAll
 import kotlinx.coroutines.coroutineScope
@@ -21,17 +22,19 @@ import javax.inject.Inject
 
 class QuizRepositoryImpl @Inject constructor(
     private val dataSource: QuizDataSource,
-    private val loader: StudyDataLoader
+    private val loader: StudyDataLoader,
+    private val aiLanguagePreferenceManager: AiLanguagePreferenceManager
 ) : QuizRepository {
 
     private val errorMapper: (Throwable) -> String = { it.toQuizError().toUserMessage() }
 
     override suspend fun getAvailableQuizzes(): Resource<List<Assessment>> = safeApiCall(errorMapper) {
         coroutineScope {
+            val lang = aiLanguagePreferenceManager.getEffectiveLanguageCode()
             val attempts = async { runCatching { loader.myAttempts() }.getOrDefault(emptyList()) }
             val courses = loader.myCourses()
             val assessments = courses
-                .map { course -> async { dataSource.getCourseAssessments(course.id) } }
+                .map { course -> async { dataSource.getCourseAssessments(course.id, lang) } }
                 .awaitAll()
                 .flatten()
                 .distinctBy { it.id }
@@ -47,7 +50,8 @@ class QuizRepositoryImpl @Inject constructor(
 
     override suspend fun startQuiz(assessmentId: Long): Resource<QuizSession> = safeApiCall(errorMapper) {
         val userId = loader.requireUserId()
-        val assessment = dataSource.getAssessment(assessmentId)
+        val lang = aiLanguagePreferenceManager.getEffectiveLanguageCode()
+        val assessment = dataSource.getAssessment(assessmentId, lang)
         val attempt = try {
             dataSource.startAttempt(assessmentId, userId)
         } catch (e: HttpException) {

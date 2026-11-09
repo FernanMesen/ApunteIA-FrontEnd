@@ -8,6 +8,7 @@ import ApunteIA.FrontEnd.domain.util.Resource
 import ApunteIA.FrontEnd.fakes.TestBackend
 import ApunteIA.FrontEnd.fakes.assessment
 import ApunteIA.FrontEnd.fakes.attempt
+import ApunteIA.FrontEnd.util.AiLanguagePreferenceManager
 import kotlinx.coroutines.runBlocking
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertNull
@@ -40,7 +41,7 @@ class CourseStudentGradesUseCaseTest {
     }
 
     private fun useCases(quizDataSource: QuizDataSource = backend.quizzes): Pair<GetCourseStudentsUseCase, GetStudentCourseGradesUseCase> {
-        val quizRepository = QuizRepositoryImpl(quizDataSource, backend.loader)
+        val quizRepository = QuizRepositoryImpl(quizDataSource, backend.loader, AiLanguagePreferenceManager(null))
         val courseRepository = CourseRepositoryImpl(backend.courses, backend.loader, backend.catalog, quizDataSource)
         val grades = GetStudentCourseGradesUseCase(quizRepository)
         return GetCourseStudentsUseCase(courseRepository, quizRepository, grades) to grades
@@ -98,7 +99,7 @@ class CourseStudentGradesUseCaseTest {
     @Test
     fun `students list still loads when the course quizzes cannot be read`() = runBlocking {
         val failing = object : QuizDataSource by backend.quizzes {
-            override suspend fun getCourseAssessments(courseId: Long) = throw IOException()
+            override suspend fun getCourseAssessments(courseId: Long, language: String?) = throw IOException()
         }
         val (getStudents, _) = useCases(failing)
 

@@ -7,6 +7,7 @@ import ApunteIA.FrontEnd.domain.model.Topic
 import ApunteIA.FrontEnd.domain.usecase.GetMyCoursesUseCase
 import ApunteIA.FrontEnd.domain.usecase.GetTopicsUseCase
 import ApunteIA.FrontEnd.domain.util.Resource
+import ApunteIA.FrontEnd.util.CustomSubjectStore
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.async
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -30,7 +31,8 @@ fun courseColor(courseId: Long): String = COURSE_COLORS[(courseId % COURSE_COLOR
 @HiltViewModel
 class ManageSubjectsViewModel @Inject constructor(
     private val getMyCoursesUseCase: GetMyCoursesUseCase,
-    private val getTopicsUseCase: GetTopicsUseCase
+    private val getTopicsUseCase: GetTopicsUseCase,
+    private val customSubjectStore: CustomSubjectStore
 ) : ViewModel() {
 
     private val _uiState = MutableStateFlow(CoursesUiState())
@@ -69,6 +71,12 @@ class ManageSubjectsViewModel @Inject constructor(
     }
 
     fun refresh() {
+        loadCourses()
+    }
+
+    fun addCustomSubject(name: String, code: String, description: String) {
+        if (name.isBlank()) return
+        customSubjectStore.addCustomCourse(name, code, description)
         loadCourses()
     }
 }

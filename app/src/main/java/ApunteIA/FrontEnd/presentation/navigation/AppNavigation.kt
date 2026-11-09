@@ -304,7 +304,10 @@ fun AppNavigation(
             }
 
             composable(Routes.CAMERA_ACCESS) {
-                PlaceholderScreen(title = "Acceso a cámara", onBack = { navController.popBackStack() })
+                PermissionsScreen(
+                    onBack = { navController.popBackStack() },
+                    onFinish = { navController.popBackStack() }
+                )
             }
 
             composable(Routes.PRIVACY) {

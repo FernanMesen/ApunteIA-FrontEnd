@@ -1,7 +1,9 @@
 package ApunteIA.FrontEnd.presentation.ui.screens
 
 import android.Manifest
+import android.content.Context
 import android.content.pm.PackageManager
+import android.os.Build
 import androidx.camera.core.CameraSelector
 import androidx.camera.core.ImageCapture
 import androidx.camera.core.ImageCaptureException
@@ -62,6 +64,8 @@ fun ScanCameraScreen(
     onDone: () -> Unit
 ) {
     val state by viewModel.uiState.collectAsState()
+    val photosMode by viewModel.photosMode.collectAsState()
+    val cameraMode by viewModel.cameraMode.collectAsState()
     val context = LocalContext.current
 
     var hasCameraPermission by remember {
@@ -74,6 +78,54 @@ fun ScanCameraScreen(
     val permissionLauncher = rememberLauncherForActivityResult(
         contract = ActivityResultContracts.RequestPermission()
     ) { granted -> hasCameraPermission = granted }
+
+    val galleryLauncher = rememberLauncherForActivityResult(
+        contract = ActivityResultContracts.GetContent()
+    ) { uri ->
+        uri?.let { selectedUri ->
+            val scansDir = File(context.filesDir, "scans").apply { mkdirs() }
+            val fileName = SimpleDateFormat("yyyyMMdd_HHmmss_SSS", Locale.US).format(java.util.Date())
+            val photoFile = File(scansDir, "GALLERY_$fileName.jpg")
+            try {
+                context.contentResolver.openInputStream(selectedUri)?.use { inputStream ->
+                    photoFile.outputStream().use { outputStream ->
+                        inputStream.copyTo(outputStream)
+                    }
+                }
+                viewModel.capturePage(photoFile)
+            } catch (e: Exception) {
+                e.printStackTrace()
+            }
+        }
+    }
+
+    val photosPermissionName = remember {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+            Manifest.permission.READ_MEDIA_IMAGES
+        } else {
+            Manifest.permission.READ_EXTERNAL_STORAGE
+        }
+    }
+
+    val isCameraAllowed = cameraMode != "DENIED" && (
+            cameraMode == "WHILE_USING_APP" || cameraMode == "FULL_ACCESS" ||
+            ContextCompat.checkSelfPermission(context, Manifest.permission.CAMERA) == PackageManager.PERMISSION_GRANTED
+    )
+
+    val isPhotoAllowed = photosMode != "DENIED" && (
+            photosMode == "FULL_ACCESS" || photosMode == "WHILE_USING_APP" ||
+            ContextCompat.checkSelfPermission(context, photosPermissionName) == PackageManager.PERMISSION_GRANTED
+    )
+
+    val photoPermissionLauncher = rememberLauncherForActivityResult(
+        contract = ActivityResultContracts.RequestPermission()
+    ) { granted ->
+        if (granted) {
+            galleryLauncher.launch("image/*")
+        } else {
+            android.widget.Toast.makeText(context, "Acceso a fotos denegado", android.widget.Toast.LENGTH_SHORT).show()
+        }
+    }
 
     LaunchedEffect(Unit) {
         if (!hasCameraPermission) {
@@ -112,7 +164,7 @@ fun ScanCameraScreen(
 
         Spacer(modifier = Modifier.height(8.dp))
 
-        if (hasCameraPermission) {
+        if (isCameraAllowed) {
             var imageCapture by remember { mutableStateOf<ImageCapture?>(null) }
 
             Box(
@@ -152,7 +204,13 @@ fun ScanCameraScreen(
                 verticalAlignment = Alignment.CenterVertically
             ) {
                 IconButton(
-                    onClick = { /* Importar desde galería */ },
+                    onClick = {
+                        if (isPhotoAllowed) {
+                            galleryLauncher.launch("image/*")
+                        } else {
+                            photoPermissionLauncher.launch(photosPermissionName)
+                        }
+                    },
                     modifier = Modifier
                         .size(48.dp)
                         .background(scanSoftFill(), RoundedCornerShape(14.dp))

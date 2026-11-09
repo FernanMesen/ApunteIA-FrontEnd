@@ -13,6 +13,7 @@ import ApunteIA.FrontEnd.domain.usecase.RecognizeTextUseCase
 import ApunteIA.FrontEnd.domain.usecase.UpdateNoteUseCase
 import ApunteIA.FrontEnd.util.AiLanguagePreferenceManager
 import ApunteIA.FrontEnd.util.L10n
+import ApunteIA.FrontEnd.util.PermissionManager
 import ApunteIA.FrontEnd.domain.util.IsoDates
 import ApunteIA.FrontEnd.domain.util.Resource
 import ApunteIA.FrontEnd.presentation.model.CapturedPage
@@ -93,8 +94,12 @@ class ScanViewModel @Inject constructor(
     private val updateNote: UpdateNoteUseCase,
     private val deleteNote: DeleteNoteUseCase,
     private val aiLanguagePreferenceManager: AiLanguagePreferenceManager,
+    private val permissionManager: PermissionManager,
     @ApplicationScope private val appScope: CoroutineScope
 ) : ViewModel() {
+
+    val photosMode: StateFlow<String> = permissionManager.photosMode
+    val cameraMode: StateFlow<String> = permissionManager.cameraMode
 
     private var nextPageId = 1
     private var nextSectionId = 1

@@ -39,6 +39,63 @@ fun ManageSubjectsScreen(
     val snackbarHostState = remember { SnackbarHostState() }
     val retryText = stringResource(R.string.retry)
 
+    var showAddDialog by remember { mutableStateOf(false) }
+    var newName by remember { mutableStateOf("") }
+    var newCode by remember { mutableStateOf("") }
+    var newDesc by remember { mutableStateOf("") }
+
+    if (showAddDialog) {
+        AlertDialog(
+            onDismissRequest = { showAddDialog = false },
+            title = { Text("Añadir materia personalizada", fontWeight = FontWeight.Bold) },
+            text = {
+                Column(verticalArrangement = Arrangement.spacedBy(12.dp)) {
+                    OutlinedTextField(
+                        value = newName,
+                        onValueChange = { newName = it },
+                        label = { Text("Nombre de la materia") },
+                        singleLine = true,
+                        modifier = Modifier.fillMaxWidth()
+                    )
+                    OutlinedTextField(
+                        value = newCode,
+                        onValueChange = { newCode = it },
+                        label = { Text("Código (ej. MAT-101)") },
+                        singleLine = true,
+                        modifier = Modifier.fillMaxWidth()
+                    )
+                    OutlinedTextField(
+                        value = newDesc,
+                        onValueChange = { newDesc = it },
+                        label = { Text("Profesor / Descripción") },
+                        singleLine = true,
+                        modifier = Modifier.fillMaxWidth()
+                    )
+                }
+            },
+            confirmButton = {
+                Button(
+                    onClick = {
+                        if (newName.isNotBlank()) {
+                            viewModel.addCustomSubject(newName, newCode, newDesc)
+                            newName = ""
+                            newCode = ""
+                            newDesc = ""
+                            showAddDialog = false
+                        }
+                    }
+                ) {
+                    Text("Añadir")
+                }
+            },
+            dismissButton = {
+                OutlinedButton(onClick = { showAddDialog = false }) {
+                    Text("Cancelar")
+                }
+            }
+        )
+    }
+
     LaunchedEffect(uiState.error) {
         uiState.error?.let { errorMessage ->
             val result = snackbarHostState.showSnackbar(
@@ -72,7 +129,19 @@ fun ManageSubjectsScreen(
                     .padding(horizontal = 24.dp),
                 verticalArrangement = Arrangement.spacedBy(16.dp)
             ) {
-                item { Spacer(modifier = Modifier.height(8.dp)) }
+                item {
+                    Spacer(modifier = Modifier.height(8.dp))
+                    Button(
+                        onClick = { showAddDialog = true },
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .height(50.dp),
+                        shape = RoundedCornerShape(16.dp),
+                        colors = ButtonDefaults.buttonColors(containerColor = MaterialTheme.colorScheme.primary)
+                    ) {
+                        Text("+ Añadir materia personalizada", color = Color.White, fontWeight = FontWeight.Bold)
+                    }
+                }
 
                 if (uiState.isLoading && uiState.courses.isEmpty()) {
                     item {

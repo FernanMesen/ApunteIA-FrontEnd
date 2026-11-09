@@ -12,6 +12,7 @@ import ApunteIA.FrontEnd.domain.model.CourseInfo
 import ApunteIA.FrontEnd.domain.model.Note
 import ApunteIA.FrontEnd.domain.model.StudyOverview
 import ApunteIA.FrontEnd.domain.usecase.StudyInsights
+import ApunteIA.FrontEnd.util.CustomSubjectStore
 import ApunteIA.FrontEnd.util.L10n
 import kotlinx.coroutines.async
 import kotlinx.coroutines.coroutineScope
@@ -51,7 +52,8 @@ class StudyDataLoader @Inject constructor(
     private val noteDataSource: NoteDataSource,
     private val courseDataSource: CourseDataSource,
     private val quizDataSource: QuizDataSource,
-    private val catalog: CourseCatalog
+    private val catalog: CourseCatalog,
+    private val customSubjectStore: CustomSubjectStore
 ) {
     private var lastOverview: StudyOverview? = null
     private var lastOverviewAt: Long = 0L
@@ -68,8 +70,9 @@ class StudyDataLoader @Inject constructor(
         val userId = requireUserId()
         val enrollments = async { courseDataSource.getEnrollments(userId) }
         val catalogById = async { runCatching { catalog.byId() }.getOrDefault(emptyMap()) }
+        val customCourses = customSubjectStore.getCustomCourses()
         val byId = catalogById.await()
-        enrollments.await().map { enrollment ->
+        val backendCourses = enrollments.await().map { enrollment ->
             val known = byId[enrollment.courseId]
             CourseInfo(
                 id = enrollment.courseId,
@@ -78,7 +81,8 @@ class StudyDataLoader @Inject constructor(
                 description = known?.description.orEmpty(),
                 syllabus = known?.syllabus.orEmpty()
             )
-        }.distinctBy { it.id }
+        }
+        (backendCourses + customCourses).distinctBy { it.id }
     }
 
     suspend fun myAttempts(): List<AssessmentAttempt> =

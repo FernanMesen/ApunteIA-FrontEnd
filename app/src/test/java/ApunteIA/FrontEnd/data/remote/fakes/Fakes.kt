@@ -18,6 +18,7 @@ import ApunteIA.FrontEnd.data.datasource.model.UpdateNoteRequestDto
 import ApunteIA.FrontEnd.data.datasource.model.UserDto
 import ApunteIA.FrontEnd.data.repository.CourseCatalog
 import ApunteIA.FrontEnd.data.repository.StudyDataLoader
+import ApunteIA.FrontEnd.util.CustomSubjectStore
 import ApunteIA.FrontEnd.data.session.SessionStore
 import ApunteIA.FrontEnd.domain.model.AuthSession
 import kotlinx.coroutines.flow.MutableSharedFlow
@@ -189,8 +190,8 @@ class FakeQuizDataSource : QuizDataSource {
         })
     }
 
-    override suspend fun getAssessment(id: Long): AssessmentDto = assessments.getValue(id)
-    override suspend fun getCourseAssessments(courseId: Long): List<AssessmentDto> = courseAssessments[courseId].orEmpty()
+    override suspend fun getAssessment(id: Long, language: String?): AssessmentDto = assessments.getValue(id)
+    override suspend fun getCourseAssessments(courseId: Long, language: String?): List<AssessmentDto> = courseAssessments[courseId].orEmpty()
     override suspend fun startAttempt(assessmentId: Long, userId: Long): AttemptDto {
         startError?.let { throw it }
         return attempt(id = 7, assessmentId = assessmentId, status = "IN_PROGRESS", score = null)
@@ -237,8 +238,9 @@ class TestBackend(
     val session: FakeSessionStore = FakeSessionStore.loggedIn(),
     val notes: FakeNoteDataSource = FakeNoteDataSource(),
     val courses: FakeCourseDataSource = FakeCourseDataSource(),
-    val quizzes: FakeQuizDataSource = FakeQuizDataSource()
+    val quizzes: FakeQuizDataSource = FakeQuizDataSource(),
+    customSubjects: CustomSubjectStore = CustomSubjectStore(null)
 ) {
     val catalog = CourseCatalog(courses)
-    val loader = StudyDataLoader(session, notes, courses, quizzes, catalog)
+    val loader = StudyDataLoader(session, notes, courses, quizzes, catalog, customSubjects)
 }

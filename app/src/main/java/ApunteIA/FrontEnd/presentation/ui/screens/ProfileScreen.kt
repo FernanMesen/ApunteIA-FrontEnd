@@ -1,5 +1,9 @@
 package ApunteIA.FrontEnd.presentation.ui.screens
 
+import android.content.Context
+import android.content.pm.PackageManager
+import androidx.core.content.ContextCompat
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
@@ -386,10 +390,33 @@ fun ConfigSection(
                     trailing = { AiLanguageDropdown(aiLanguageOption, onAiLanguageChange) }
                 )
                 HorizontalDivider(color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.08f), thickness = 0.5.dp)
+                HorizontalDivider(color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.08f), thickness = 0.5.dp)
+                val context = LocalContext.current
+                val prefs = remember(context) { context.getSharedPreferences("apunteia_permissions", Context.MODE_PRIVATE) }
+                val cameraSaved = prefs.getString("camera_mode", null)
+                val cameraGranted = ContextCompat.checkSelfPermission(context, android.Manifest.permission.CAMERA) == PackageManager.PERMISSION_GRANTED
+                val cameraStatus = when {
+                    cameraGranted || cameraSaved == "WHILE_USING_APP" -> stringResource(R.string.permission_status_while)
+                    cameraSaved == "FULL_ACCESS" -> stringResource(R.string.permission_status_full)
+                    cameraSaved == "DENIED" -> stringResource(R.string.permission_status_denied)
+                    else -> stringResource(R.string.permission_status_while)
+                }
+
                 ConfigItem(
                     label = stringResource(R.string.profile_camera_access),
                     onClick = onCameraAccess,
-                    trailing = { Icon(Icons.Default.Check, null, tint = MaterialTheme.colorScheme.onSurfaceVariant, modifier = Modifier.size(16.dp)) }
+                    trailing = {
+                        Row(verticalAlignment = Alignment.CenterVertically) {
+                            Text(
+                                text = cameraStatus,
+                                fontSize = 12.sp,
+                                fontWeight = FontWeight.Bold,
+                                color = MaterialTheme.colorScheme.primary,
+                                modifier = Modifier.padding(end = 4.dp)
+                            )
+                            Icon(Icons.Default.KeyboardArrowRight, null, tint = MaterialTheme.colorScheme.onSurfaceVariant, modifier = Modifier.size(14.dp))
+                        }
+                    }
                 )
                 HorizontalDivider(color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.08f), thickness = 0.5.dp)
                 ConfigItem(

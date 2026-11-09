@@ -1,6 +1,7 @@
 package ApunteIA.FrontEnd.presentation.ui.screens
 
 import android.Manifest
+import android.content.Context
 import android.content.pm.PackageManager
 import android.os.Build
 import androidx.activity.compose.rememberLauncherForActivityResult
@@ -33,6 +34,7 @@ import androidx.compose.ui.window.Dialog
 import androidx.core.content.ContextCompat
 import kotlinx.coroutines.launch
 import ApunteIA.FrontEnd.R
+import ApunteIA.FrontEnd.presentation.ui.components.RefreshOnResume
 import ApunteIA.FrontEnd.presentation.ui.theme.DarkButton
 import ApunteIA.FrontEnd.presentation.ui.theme.DarkDisabled
 import ApunteIA.FrontEnd.presentation.ui.theme.DarkSoftFill
@@ -68,14 +70,57 @@ fun PermissionsScreen(
         }
     }
 
+    val prefs = remember { context.getSharedPreferences("apunteia_permissions", Context.MODE_PRIVATE) }
+
     var cameraMode by remember {
+        val saved = prefs.getString("camera_mode", null)
         val granted = ContextCompat.checkSelfPermission(context, Manifest.permission.CAMERA) == PackageManager.PERMISSION_GRANTED
-        mutableStateOf(if (granted) PermissionAccessMode.WHILE_USING_APP else PermissionAccessMode.NOT_CONFIGURED)
+        val initial = when {
+            granted -> PermissionAccessMode.WHILE_USING_APP
+            saved != null -> try { PermissionAccessMode.valueOf(saved) } catch (_: Exception) { PermissionAccessMode.NOT_CONFIGURED }
+            else -> PermissionAccessMode.NOT_CONFIGURED
+        }
+        mutableStateOf(initial)
     }
 
     var photosMode by remember {
+        val saved = prefs.getString("photos_mode", null)
         val granted = ContextCompat.checkSelfPermission(context, photosPermissionName) == PackageManager.PERMISSION_GRANTED
-        mutableStateOf(if (granted) PermissionAccessMode.FULL_ACCESS else PermissionAccessMode.NOT_CONFIGURED)
+        val initial = when {
+            granted -> PermissionAccessMode.FULL_ACCESS
+            saved != null -> try { PermissionAccessMode.valueOf(saved) } catch (_: Exception) { PermissionAccessMode.NOT_CONFIGURED }
+            else -> PermissionAccessMode.NOT_CONFIGURED
+        }
+        mutableStateOf(initial)
+    }
+
+    RefreshOnResume {
+        val grantedCam = ContextCompat.checkSelfPermission(context, Manifest.permission.CAMERA) == PackageManager.PERMISSION_GRANTED
+        val savedCam = prefs.getString("camera_mode", null)
+        if (grantedCam) {
+            cameraMode = PermissionAccessMode.WHILE_USING_APP
+        } else if (savedCam != null) {
+            try {
+                cameraMode = PermissionAccessMode.valueOf(savedCam)
+            } catch (_: Exception) {}
+        }
+
+        val grantedPhotos = ContextCompat.checkSelfPermission(context, photosPermissionName) == PackageManager.PERMISSION_GRANTED
+        val savedPhotos = prefs.getString("photos_mode", null)
+        if (grantedPhotos) {
+            photosMode = PermissionAccessMode.FULL_ACCESS
+        } else if (savedPhotos != null) {
+            try {
+                photosMode = PermissionAccessMode.valueOf(savedPhotos)
+            } catch (_: Exception) {}
+        }
+    }
+
+    LaunchedEffect(cameraMode) {
+        prefs.edit().putString("camera_mode", cameraMode.name).apply()
+    }
+    LaunchedEffect(photosMode) {
+        prefs.edit().putString("photos_mode", photosMode.name).apply()
     }
 
     var activeDialogTarget by remember { mutableStateOf<PermissionTarget?>(null) }

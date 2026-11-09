@@ -136,10 +136,16 @@ interface ApiService {
     // ---------- Evaluaciones e intentos ----------
 
     @GET("courses/{id}/assessments")
-    suspend fun getCourseAssessments(@Path("id") courseId: Long): List<AssessmentDto>
+    suspend fun getCourseAssessments(
+        @Path("id") courseId: Long,
+        @Query("language") language: String? = null
+    ): List<AssessmentDto>
 
     @GET("assessments/{id}")
-    suspend fun getAssessment(@Path("id") id: Long): AssessmentDto
+    suspend fun getAssessment(
+        @Path("id") id: Long,
+        @Query("language") language: String? = null
+    ): AssessmentDto
 
     @POST("assessments/{id}/attempts")
     suspend fun startAttempt(
