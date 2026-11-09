@@ -4,6 +4,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import ApunteIA.FrontEnd.domain.model.Note
 import ApunteIA.FrontEnd.domain.usecase.FilterNotesUseCase
+import ApunteIA.FrontEnd.domain.usecase.GetMyCoursesUseCase
 import ApunteIA.FrontEnd.domain.usecase.GetNotesUseCase
 import ApunteIA.FrontEnd.domain.util.Resource
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -20,6 +21,7 @@ import javax.inject.Inject
 data class NotesUiState(
     val isLoading: Boolean = false,
     val notes: List<Note> = emptyList(),
+    val courseNames: List<String> = emptyList(),
     val error: String? = null
 )
 
@@ -29,6 +31,7 @@ data class NotesUiState(
 @HiltViewModel
 class NotesViewModel @Inject constructor(
     private val getNotesUseCase: GetNotesUseCase,
+    private val getMyCoursesUseCase: GetMyCoursesUseCase,
     private val filterNotesUseCase: FilterNotesUseCase
 ) : ViewModel() {
 
@@ -42,8 +45,9 @@ class NotesViewModel @Inject constructor(
     val selectedCategory: StateFlow<String> = _selectedCategory.asStateFlow()
 
     val categories: StateFlow<List<String>> = _uiState
-        .map { state -> 
-            listOf<String>(FilterNotesUseCase.CATEGORY_ALL) + state.notes.map { it.className }.distinct() 
+        .map { state ->
+            listOf(FilterNotesUseCase.CATEGORY_ALL) +
+                    (state.courseNames + state.notes.map { it.className }).distinct()
         }
         .stateIn(
             scope = viewModelScope,
@@ -70,18 +74,23 @@ class NotesViewModel @Inject constructor(
     fun loadNotes() {
         viewModelScope.launch {
             _uiState.value = _uiState.value.copy(isLoading = true, error = null)
-            when (val resource = getNotesUseCase()) {
+            val notesResult = getNotesUseCase()
+            val courseNames = (getMyCoursesUseCase() as? Resource.Success)
+                ?.data?.map { it.name }.orEmpty()
+            when (notesResult) {
                 is Resource.Success -> {
                     _uiState.value = _uiState.value.copy(
                         isLoading = false,
-                        notes = resource.data,
+                        notes = notesResult.data,
+                        courseNames = courseNames,
                         error = null
                     )
                 }
                 is Resource.Error -> {
                     _uiState.value = _uiState.value.copy(
                         isLoading = false,
-                        error = resource.message
+                        courseNames = courseNames,
+                        error = notesResult.message
                     )
                 }
                 is Resource.Loading -> {

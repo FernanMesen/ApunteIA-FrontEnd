@@ -48,6 +48,16 @@ enum class PermissionAccessMode {
     DENIED
 }
 
+private fun resolveMode(
+    stored: String,
+    whenGranted: PermissionAccessMode
+): PermissionAccessMode = when (stored) {
+    "DENIED" -> PermissionAccessMode.DENIED
+    "FULL_ACCESS" -> PermissionAccessMode.FULL_ACCESS
+    "WHILE_USING_APP" -> PermissionAccessMode.WHILE_USING_APP
+    else -> PermissionAccessMode.NOT_CONFIGURED
+}
+
 private enum class PermissionTarget {
     CAMERA,
     PHOTOS
@@ -76,58 +86,27 @@ fun PermissionsScreen(
 
     val prefs = remember { context.getSharedPreferences("apunteia_permissions", Context.MODE_PRIVATE) }
 
-    val initialCameraMode = try { PermissionAccessMode.valueOf(cameraModeStr) } catch (_: Exception) { PermissionAccessMode.NOT_CONFIGURED }
-    val initialPhotosMode = try { PermissionAccessMode.valueOf(photosModeStr) } catch (_: Exception) { PermissionAccessMode.NOT_CONFIGURED }
+    val isGranted = { permission: String ->
+        ContextCompat.checkSelfPermission(context, permission) == PackageManager.PERMISSION_GRANTED
+    }
 
-    var cameraMode by remember(cameraModeStr) {
-        val granted = ContextCompat.checkSelfPermission(context, Manifest.permission.CAMERA) == PackageManager.PERMISSION_GRANTED
-        val mode = when {
-            cameraModeStr == "DENIED" -> PermissionAccessMode.DENIED
-            cameraModeStr == "WHILE_USING_APP" || cameraModeStr == "FULL_ACCESS" -> PermissionAccessMode.valueOf(cameraModeStr)
-            granted -> PermissionAccessMode.WHILE_USING_APP
-            else -> initialCameraMode
-        }
+    val storedCam = prefs.getString("camera_mode", null) ?: cameraModeStr
+    val storedPhotos = prefs.getString("photos_mode", null) ?: photosModeStr
+
+    var cameraMode by remember(storedCam) {
+        val initial = resolveMode(storedCam, PermissionAccessMode.WHILE_USING_APP)
+        val mode = if (initial == PermissionAccessMode.NOT_CONFIGURED && isGranted(Manifest.permission.CAMERA)) {
+            PermissionAccessMode.WHILE_USING_APP
+        } else initial
         mutableStateOf(mode)
     }
 
-    var photosMode by remember(photosModeStr) {
-        val granted = ContextCompat.checkSelfPermission(context, photosPermissionName) == PackageManager.PERMISSION_GRANTED
-        val mode = when {
-            photosModeStr == "DENIED" -> PermissionAccessMode.DENIED
-            photosModeStr == "FULL_ACCESS" || photosModeStr == "WHILE_USING_APP" -> PermissionAccessMode.valueOf(photosModeStr)
-            granted -> PermissionAccessMode.FULL_ACCESS
-            else -> initialPhotosMode
-        }
+    var photosMode by remember(storedPhotos) {
+        val initial = resolveMode(storedPhotos, PermissionAccessMode.FULL_ACCESS)
+        val mode = if (initial == PermissionAccessMode.NOT_CONFIGURED && isGranted(photosPermissionName)) {
+            PermissionAccessMode.FULL_ACCESS
+        } else initial
         mutableStateOf(mode)
-    }
-
-    RefreshOnResume {
-        val grantedCam = ContextCompat.checkSelfPermission(context, Manifest.permission.CAMERA) == PackageManager.PERMISSION_GRANTED
-        if (cameraModeStr == "DENIED") {
-            cameraMode = PermissionAccessMode.DENIED
-        } else if (cameraModeStr == "WHILE_USING_APP" || cameraModeStr == "FULL_ACCESS") {
-            cameraMode = PermissionAccessMode.valueOf(cameraModeStr)
-        } else if (grantedCam) {
-            cameraMode = PermissionAccessMode.WHILE_USING_APP
-        }
-
-        val grantedPhotos = ContextCompat.checkSelfPermission(context, photosPermissionName) == PackageManager.PERMISSION_GRANTED
-        if (photosModeStr == "DENIED") {
-            photosMode = PermissionAccessMode.DENIED
-        } else if (photosModeStr == "FULL_ACCESS" || photosModeStr == "WHILE_USING_APP") {
-            photosMode = PermissionAccessMode.valueOf(photosModeStr)
-        } else if (grantedPhotos) {
-            photosMode = PermissionAccessMode.FULL_ACCESS
-        }
-    }
-
-    LaunchedEffect(cameraMode) {
-        prefs.edit().putString("camera_mode", cameraMode.name).apply()
-        onCameraModeChange(cameraMode)
-    }
-    LaunchedEffect(photosMode) {
-        prefs.edit().putString("photos_mode", photosMode.name).apply()
-        onPhotosModeChange(photosMode)
     }
 
     var activeDialogTarget by remember { mutableStateOf<PermissionTarget?>(null) }
@@ -219,32 +198,32 @@ fun PermissionsScreen(
                 when (target) {
                     PermissionTarget.CAMERA -> {
                         cameraMode = mode
+                        prefs.edit().putString("camera_mode", mode.name).apply()
+                        onCameraModeChange(mode)
                         messageRes = when (mode) {
-                            PermissionAccessMode.FULL_ACCESS -> {
-                                cameraPermissionLauncher.launch(Manifest.permission.CAMERA)
-                                R.string.permission_msg_full_camera
+                            PermissionAccessMode.FULL_ACCESS, PermissionAccessMode.WHILE_USING_APP -> {
+                                if (!isGranted(Manifest.permission.CAMERA)) {
+                                    cameraPermissionLauncher.launch(Manifest.permission.CAMERA)
+                                }
+                                if (mode == PermissionAccessMode.FULL_ACCESS) R.string.permission_msg_full_camera
+                                else R.string.permission_msg_while_camera
                             }
-                            PermissionAccessMode.WHILE_USING_APP -> {
-                                cameraPermissionLauncher.launch(Manifest.permission.CAMERA)
-                                R.string.permission_msg_while_camera
-                            }
-                            PermissionAccessMode.DENIED -> R.string.permission_msg_denied_camera
-                            PermissionAccessMode.NOT_CONFIGURED -> R.string.permission_msg_denied_camera
+                            else -> R.string.permission_msg_denied_camera
                         }
                     }
                     PermissionTarget.PHOTOS -> {
                         photosMode = mode
+                        prefs.edit().putString("photos_mode", mode.name).apply()
+                        onPhotosModeChange(mode)
                         messageRes = when (mode) {
-                            PermissionAccessMode.FULL_ACCESS -> {
-                                photosPermissionLauncher.launch(photosPermissionName)
-                                R.string.permission_msg_full_photos
+                            PermissionAccessMode.FULL_ACCESS, PermissionAccessMode.WHILE_USING_APP -> {
+                                if (!isGranted(photosPermissionName)) {
+                                    photosPermissionLauncher.launch(photosPermissionName)
+                                }
+                                if (mode == PermissionAccessMode.FULL_ACCESS) R.string.permission_msg_full_photos
+                                else R.string.permission_msg_while_photos
                             }
-                            PermissionAccessMode.WHILE_USING_APP -> {
-                                photosPermissionLauncher.launch(photosPermissionName)
-                                R.string.permission_msg_while_photos
-                            }
-                            PermissionAccessMode.DENIED -> R.string.permission_msg_denied_photos
-                            PermissionAccessMode.NOT_CONFIGURED -> R.string.permission_msg_denied_photos
+                            else -> R.string.permission_msg_denied_photos
                         }
                     }
                 }

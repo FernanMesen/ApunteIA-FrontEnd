@@ -101,6 +101,14 @@ class ScanViewModel @Inject constructor(
     val photosMode: StateFlow<String> = permissionManager.photosMode
     val cameraMode: StateFlow<String> = permissionManager.cameraMode
 
+    fun updateCameraMode(mode: String) {
+        permissionManager.updateCameraMode(mode)
+    }
+
+    fun updatePhotosMode(mode: String) {
+        permissionManager.updatePhotosMode(mode)
+    }
+
     private var nextPageId = 1
     private var nextSectionId = 1
     private var nextBulletId = 1

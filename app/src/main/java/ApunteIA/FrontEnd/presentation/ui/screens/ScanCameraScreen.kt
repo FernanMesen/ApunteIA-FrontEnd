@@ -2,6 +2,8 @@ package ApunteIA.FrontEnd.presentation.ui.screens
 import android.Manifest
 import android.content.Context
 import android.content.pm.PackageManager
+import android.os.Build
+import android.widget.Toast
 import androidx.camera.core.CameraSelector
 import androidx.camera.core.ImageCapture
 import androidx.camera.core.ImageCaptureException
@@ -45,7 +47,10 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.viewinterop.AndroidView
 import androidx.core.content.ContextCompat
+import androidx.activity.result.PickVisualMediaRequest
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.compose.material3.OutlinedButton
+import ApunteIA.FrontEnd.presentation.ui.components.RefreshOnResume
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
@@ -59,10 +64,12 @@ import java.util.Locale
 fun ScanCameraScreen(
     viewModel: ScanViewModel,
     onClose: () -> Unit,
-    onDone: () -> Unit
+    onDone: () -> Unit,
+    onOpenPermissions: () -> Unit = {}
 ) {
     val state by viewModel.uiState.collectAsState()
     val cameraMode by viewModel.cameraMode.collectAsState()
+    val photosMode by viewModel.photosMode.collectAsState()
     val context = LocalContext.current
 
     var hasCameraPermission by remember {
@@ -74,10 +81,25 @@ fun ScanCameraScreen(
 
     val permissionLauncher = rememberLauncherForActivityResult(
         contract = ActivityResultContracts.RequestPermission()
-    ) { granted -> hasCameraPermission = granted }
+    ) { granted ->
+        hasCameraPermission = granted
+        if (granted) {
+            viewModel.updateCameraMode("WHILE_USING_APP")
+        } else {
+            viewModel.updateCameraMode("DENIED")
+        }
+    }
+
+    val photosPermissionName = remember {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+            Manifest.permission.READ_MEDIA_IMAGES
+        } else {
+            Manifest.permission.READ_EXTERNAL_STORAGE
+        }
+    }
 
     val galleryLauncher = rememberLauncherForActivityResult(
-        contract = ActivityResultContracts.GetContent()
+        contract = ActivityResultContracts.PickVisualMedia()
     ) { uri ->
         uri?.let { selectedUri ->
             val scansDir = File(context.filesDir, "scans").apply { mkdirs() }
@@ -96,13 +118,45 @@ fun ScanCameraScreen(
         }
     }
 
-    val isCameraAllowed = cameraMode != "DENIED" && (
-            cameraMode == "WHILE_USING_APP" || cameraMode == "FULL_ACCESS" ||
-                    ContextCompat.checkSelfPermission(context, Manifest.permission.CAMERA) == PackageManager.PERMISSION_GRANTED
-            )
+    val photoPermissionLauncher = rememberLauncherForActivityResult(
+        contract = ActivityResultContracts.RequestPermission()
+    ) { granted ->
+        if (granted) {
+            viewModel.updatePhotosMode("FULL_ACCESS")
+            galleryLauncher.launch(PickVisualMediaRequest(ActivityResultContracts.PickVisualMedia.ImageOnly))
+        } else {
+            viewModel.updatePhotosMode("DENIED")
+            Toast.makeText(context, "Acceso a fotos denegado. Actívalo en los permisos de la app.", Toast.LENGTH_LONG).show()
+        }
+    }
+
+    val photosBlocked = photosMode == "DENIED"
+    val cameraBlocked = cameraMode == "DENIED"
+
+    val openGallery = {
+        val hasOsPhotos = ContextCompat.checkSelfPermission(context, photosPermissionName) == PackageManager.PERMISSION_GRANTED
+        if (photosBlocked) {
+            Toast.makeText(
+                context,
+                "Acceso a fotos denegado. Actívalo en los permisos de la app.",
+                Toast.LENGTH_LONG
+            ).show()
+        } else if (hasOsPhotos || photosMode == "FULL_ACCESS" || photosMode == "WHILE_USING_APP") {
+            galleryLauncher.launch(PickVisualMediaRequest(ActivityResultContracts.PickVisualMedia.ImageOnly))
+        } else {
+            photoPermissionLauncher.launch(photosPermissionName)
+        }
+    }
+
+    RefreshOnResume {
+        hasCameraPermission = ContextCompat.checkSelfPermission(context, Manifest.permission.CAMERA) ==
+                PackageManager.PERMISSION_GRANTED
+    }
+
+    val isCameraAllowed = !cameraBlocked && (hasCameraPermission || cameraMode == "WHILE_USING_APP" || cameraMode == "FULL_ACCESS")
 
     LaunchedEffect(Unit) {
-        if (!hasCameraPermission) {
+        if (!cameraBlocked && !hasCameraPermission) {
             permissionLauncher.launch(Manifest.permission.CAMERA)
         }
     }
@@ -178,12 +232,12 @@ fun ScanCameraScreen(
                 verticalAlignment = Alignment.CenterVertically
             ) {
                 IconButton(
-                    onClick = { galleryLauncher.launch("image/*") },
+                    onClick = openGallery,
                     modifier = Modifier
                         .size(48.dp)
                         .background(scanSoftFill(), RoundedCornerShape(14.dp))
                 ) {
-                    Icon(Icons.Default.Image, contentDescription = "Abrir galería", tint = scanText())
+                    Icon(Icons.Default.Image, contentDescription = "Abrir galería", tint = scanText().copy(alpha = if (photosBlocked) 0.4f else 1f))
                 }
 
                 Spacer(modifier = Modifier.weight(1f))
@@ -237,7 +291,7 @@ fun ScanCameraScreen(
                 Icon(Icons.Default.CameraAlt, contentDescription = null, tint = scanAccent(), modifier = Modifier.size(48.dp))
                 Spacer(modifier = Modifier.height(12.dp))
                 Text(
-                    text = stringResource(R.string.camera_permission_needed),
+                    text = if (cameraBlocked) "Acceso a la cámara denegado. Actívalo en los permisos de la app." else stringResource(R.string.camera_permission_needed),
                     color = scanText(),
                     fontSize = 15.sp,
                     fontWeight = FontWeight.Medium,
@@ -245,11 +299,35 @@ fun ScanCameraScreen(
                 )
                 Spacer(modifier = Modifier.height(20.dp))
                 Button(
-                    onClick = { permissionLauncher.launch(Manifest.permission.CAMERA) },
+                    onClick = {
+                        if (cameraBlocked) onOpenPermissions() else permissionLauncher.launch(Manifest.permission.CAMERA)
+                    },
                     shape = RoundedCornerShape(24.dp),
                     colors = ButtonDefaults.buttonColors(containerColor = scanButton())
                 ) {
-                    Text(stringResource(R.string.allow_camera_access), color = Color.White, fontWeight = FontWeight.Bold)
+                    Text(
+                        text = if (cameraBlocked) "Configurar permisos" else stringResource(R.string.allow_camera_access),
+                        color = Color.White,
+                        fontWeight = FontWeight.Bold
+                    )
+                }
+                Spacer(modifier = Modifier.height(12.dp))
+                OutlinedButton(onClick = openGallery, shape = RoundedCornerShape(24.dp)) {
+                    Text("Abrir galería")
+                }
+                if (state.hasCapturedPages) {
+                    Spacer(modifier = Modifier.height(12.dp))
+                    Button(
+                        onClick = onDone,
+                        shape = RoundedCornerShape(24.dp),
+                        colors = ButtonDefaults.buttonColors(containerColor = scanButton())
+                    ) {
+                        Text(
+                            stringResource(R.string.ready_badge, state.capturedPages.size),
+                            color = Color.White,
+                            fontWeight = FontWeight.Bold
+                        )
+                    }
                 }
             }
         }
@@ -347,4 +425,3 @@ private fun ViewfinderCorners() {
         drawLine(color, Offset(size.width, size.height), Offset(size.width, size.height - cornerLength), stroke, StrokeCap.Round)
     }
 }
-

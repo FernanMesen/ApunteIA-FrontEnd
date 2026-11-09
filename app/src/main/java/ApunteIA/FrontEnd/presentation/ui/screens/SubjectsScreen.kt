@@ -5,19 +5,24 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.*
+import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import ApunteIA.FrontEnd.R
+import ApunteIA.FrontEnd.presentation.viewmodel.OnboardingSubjectsViewModel
 import ApunteIA.FrontEnd.presentation.ui.theme.lightOr
 
 @Composable
 fun SubjectsScreen(
     onBack: () -> Unit,
-    onNext: () -> Unit
+    onNext: () -> Unit,
+    viewModel: OnboardingSubjectsViewModel = hiltViewModel()
 ) {
+
+    val isSaving by viewModel.isSaving.collectAsState()
 
     // Vacíos: antes venían ejemplos fijos en español; ahora se ve el placeholder traducido.
     var subject1 by remember {
@@ -88,7 +93,9 @@ fun SubjectsScreen(
 
         ApuntesPrimaryButton(
             text = stringResource(R.string.next_button),
-            onClick = onNext
+            onClick = {
+                if (!isSaving) viewModel.save(listOf(subject1, subject2, subject3), onNext)
+            }
         )
 
         Spacer(modifier = Modifier.height(26.dp))

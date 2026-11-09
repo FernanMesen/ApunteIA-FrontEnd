@@ -310,7 +310,13 @@ fun AppNavigation(
             }
 
             composable(Routes.CAMERA_ACCESS) {
+                val cameraModeStr by themeViewModel.cameraMode.collectAsState()
+                val photosModeStr by themeViewModel.photosMode.collectAsState()
                 PermissionsScreen(
+                    cameraModeStr = cameraModeStr,
+                    photosModeStr = photosModeStr,
+                    onCameraModeChange = { themeViewModel.updateCameraMode(it.name) },
+                    onPhotosModeChange = { themeViewModel.updatePhotosMode(it.name) },
                     onBack = { navController.popBackStack() },
                     onFinish = { navController.popBackStack() }
                 )
@@ -540,7 +546,8 @@ fun AppNavigation(
                     ScanCameraScreen(
                         viewModel = scanViewModel,
                         onClose = { navController.popBackStack(Routes.SCAN_GRAPH, true) },
-                        onDone = { navController.navigate(Routes.SCAN_PAGES) }
+                        onDone = { navController.navigate(Routes.SCAN_PAGES) },
+                        onOpenPermissions = { navController.navigate(Routes.PERMISSIONS) }
                     )
                 }
 
