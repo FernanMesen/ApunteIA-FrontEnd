@@ -1,6 +1,8 @@
 package ApunteIA.FrontEnd.presentation.ui.screens
 
 import androidx.compose.foundation.background
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
@@ -41,6 +43,7 @@ fun StudyGoalScreen(
     Column(
         modifier = Modifier
             .fillMaxSize()
+            .verticalScroll(rememberScrollState())
             .background(onboardingBackground())
             .padding(horizontal = 24.dp)
     ) {
@@ -111,7 +114,7 @@ fun StudyGoalScreen(
             Spacer(modifier = Modifier.height(12.dp))
         }
 
-        Spacer(modifier = Modifier.weight(1f))
+        Spacer(modifier = Modifier.height(24.dp))
 
         ApuntesPrimaryButton(
             text = stringResource(R.string.next_button),

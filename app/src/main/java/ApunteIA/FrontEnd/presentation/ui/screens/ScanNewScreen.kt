@@ -34,6 +34,7 @@ import ApunteIA.FrontEnd.domain.util.IsoDates
 import androidx.compose.ui.draw.clip
 import java.util.Calendar
 import java.util.TimeZone
+import ApunteIA.FrontEnd.presentation.ui.layout.ResponsiveContent
 
 @Composable
 fun ScanNewScreen(
@@ -45,17 +46,19 @@ fun ScanNewScreen(
     val context = LocalContext.current
     val isDark = isDarkTheme()
 
-    Column(
-        modifier = Modifier
-            .fillMaxSize()
-            .background(scanBackground())
-            .padding(horizontal = 20.dp)
-    ) {
+    ResponsiveContent(maxWidth = 720.dp) {
+        Column(
+            modifier = Modifier
+                .fillMaxSize()
+                .background(scanBackground())
+                .padding(horizontal = 20.dp)
+        ) {
         ScanTopBar(title = stringResource(R.string.new_scan_title), onClose = onClose)
 
         Column(
             modifier = Modifier
                 .weight(1f)
+                .imePadding()
                 .verticalScroll(rememberScrollState())
         ) {
             SectionLabel(stringResource(R.string.subject_header))
@@ -70,6 +73,7 @@ fun ScanNewScreen(
                         isSelected = state.subject == subject,
                         onClick = { viewModel.selectSubject(subject) }
                     )
+                    }
                 }
             }
             if (state.isLoadingSubjects) {

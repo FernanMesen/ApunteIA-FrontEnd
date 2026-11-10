@@ -3,8 +3,10 @@ package ApunteIA.FrontEnd.presentation.ui.screens
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.horizontalScroll
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.*
@@ -22,6 +24,7 @@ import androidx.compose.ui.graphics.StrokeCap
 import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import ApunteIA.FrontEnd.R
@@ -203,7 +206,10 @@ fun GreetingSection(userName: String, streakDays: Int, isAdmin: Boolean = false)
                 text = userName.trim().substringBefore(' ').ifBlank { userName },
                 fontSize = 32.sp,
                 fontWeight = FontWeight.Bold,
-                color = MaterialTheme.colorScheme.onSurface
+                color = MaterialTheme.colorScheme.onSurface,
+                maxLines = 1,
+                overflow = TextOverflow.Ellipsis,
+                modifier = Modifier.weight(1f, fill = false).padding(end = 8.dp)
             )
 
             Surface(
@@ -370,15 +376,15 @@ fun CycleSection(
         )
         Spacer(modifier = Modifier.height(16.dp))
         Row(
-            modifier = Modifier.fillMaxWidth(),
+            modifier = Modifier.fillMaxWidth().horizontalScroll(rememberScrollState()),
             verticalAlignment = Alignment.CenterVertically
         ) {
             CycleItem("1", stringResource(R.string.cycle_step_1), false, onClick = onCaptureClick)
-            CycleConnector(Modifier.weight(1f))
+            CycleConnector(Modifier.width(28.dp))
             CycleItem("2", stringResource(R.string.cycle_step_2), false, onClick = onNotesClick)
-            CycleConnector(Modifier.weight(1f))
+            CycleConnector(Modifier.width(28.dp))
             CycleItem("3", stringResource(R.string.cycle_step_3), false, onClick = onAuditClick)
-            CycleConnector(Modifier.weight(1f))
+            CycleConnector(Modifier.width(28.dp))
             CycleItem("4", stringResource(R.string.cycle_step_4), true, onClick = onReinforceClick)
         }
     }

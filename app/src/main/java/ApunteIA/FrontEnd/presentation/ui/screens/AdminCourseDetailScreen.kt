@@ -51,6 +51,7 @@ import ApunteIA.FrontEnd.R
 import ApunteIA.FrontEnd.domain.model.CourseStudent
 import ApunteIA.FrontEnd.presentation.ui.theme.*
 import ApunteIA.FrontEnd.presentation.viewmodel.AdminCourseDetailViewModel
+import ApunteIA.FrontEnd.presentation.ui.layout.ResponsiveContent
 import ApunteIA.FrontEnd.presentation.viewmodel.StudentCourseDetail
 
 /**
@@ -237,14 +238,18 @@ fun AdminCourseDetailScreen(
             )
         }
     ) { paddingValues ->
-        LazyColumn(
-            modifier = Modifier
-                .fillMaxSize()
-                .padding(paddingValues)
-                .padding(horizontal = 24.dp),
-            verticalArrangement = Arrangement.spacedBy(14.dp),
-            contentPadding = PaddingValues(bottom = 32.dp)
+        ResponsiveContent(
+            modifier = Modifier.padding(paddingValues),
+            maxWidth = 840.dp
         ) {
+            LazyColumn(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .imePadding()
+                    .padding(horizontal = 24.dp),
+                verticalArrangement = Arrangement.spacedBy(14.dp),
+                contentPadding = PaddingValues(bottom = 32.dp)
+            ) {
             // ---------- Datos del curso ----------
             item {
                 OutlinedTextField(
@@ -416,6 +421,7 @@ fun AdminCourseDetailScreen(
             }
         }
     }
+}
 }
 
 @Composable

@@ -28,6 +28,7 @@ import ApunteIA.FrontEnd.presentation.ui.theme.*
 import ApunteIA.FrontEnd.presentation.viewmodel.StudyHistoryViewModel
 import ApunteIA.FrontEnd.presentation.viewmodel.SubjectProgress
 import ApunteIA.FrontEnd.presentation.viewmodel.StudyStats
+import ApunteIA.FrontEnd.presentation.ui.layout.ResponsiveContent
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -50,12 +51,13 @@ fun StudyHistoryScreen(
                 .fillMaxSize()
                 .padding(paddingValues)
         ) {
-            LazyColumn(
-                modifier = Modifier
-                    .fillMaxSize()
-                    .padding(horizontal = 24.dp),
-                verticalArrangement = Arrangement.spacedBy(24.dp)
-            ) {
+            ResponsiveContent(maxWidth = 900.dp) {
+                LazyColumn(
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .padding(horizontal = 24.dp),
+                    verticalArrangement = Arrangement.spacedBy(24.dp)
+                ) {
                 item {
                     PeriodSelector(
                         isWeekly = uiState.isWeekly,
@@ -123,6 +125,7 @@ fun StudyHistoryScreen(
             }
         }
     }
+}
 }
 
 @Composable

@@ -3,6 +3,8 @@ package ApunteIA.FrontEnd.presentation.ui.screens
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.shape.CircleShape
@@ -27,6 +29,7 @@ import ApunteIA.FrontEnd.domain.model.UserAnswer
 import ApunteIA.FrontEnd.domain.util.FormatUtils
 import ApunteIA.FrontEnd.presentation.ui.theme.*
 import ApunteIA.FrontEnd.presentation.viewmodel.QuizViewModel
+import ApunteIA.FrontEnd.presentation.ui.layout.ResponsiveContent
 
 @Composable
 fun QuizScreen(
@@ -152,12 +155,17 @@ fun QuizScreen(
                 }
             }
         ) { paddingValues ->
-            Column(
-                modifier = Modifier
-                    .fillMaxSize()
-                    .padding(paddingValues)
-                    .padding(horizontal = 20.dp, vertical = 10.dp)
+            ResponsiveContent(
+                modifier = Modifier.padding(paddingValues),
+                maxWidth = 900.dp
             ) {
+                Column(
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .verticalScroll(rememberScrollState())
+                        .imePadding()
+                        .padding(horizontal = 20.dp, vertical = 10.dp)
+                ) {
                 // Header: Close button and Progress bar
                 Row(
                     verticalAlignment = Alignment.CenterVertically,
@@ -245,6 +253,7 @@ fun QuizScreen(
                         color = MaterialTheme.colorScheme.onSurfaceVariant,
                         lineHeight = 20.sp
                     )
+                    }
                 }
             }
         }
@@ -351,12 +360,15 @@ fun ResultsScreen(
             }
         }
     ) { paddingValues ->
-        LazyColumn(
-            modifier = Modifier
-                .fillMaxSize()
-                .padding(paddingValues)
-                .padding(horizontal = 20.dp)
+        ResponsiveContent(
+            modifier = Modifier.padding(paddingValues),
+            maxWidth = 900.dp
         ) {
+            LazyColumn(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .padding(horizontal = 20.dp)
+            ) {
             item {
                 Spacer(modifier = Modifier.height(32.dp))
                 Text(
@@ -422,6 +434,7 @@ fun ResultsScreen(
 
             item {
                 Spacer(modifier = Modifier.height(20.dp))
+                }
             }
         }
     }

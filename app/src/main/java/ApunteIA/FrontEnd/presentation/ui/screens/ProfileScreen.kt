@@ -306,6 +306,7 @@ fun StatsSection(notesCount: Int?, quizzesCount: Int?) {
 
 @Composable
 fun StatItem(label: String, value: String) {
+    val isThemeDark = MaterialTheme.colorScheme.primary == SpaceCadet
     Row(
         modifier = Modifier
             .fillMaxWidth()
@@ -314,7 +315,12 @@ fun StatItem(label: String, value: String) {
         verticalAlignment = Alignment.CenterVertically
     ) {
         Text(text = label, fontSize = 16.sp, color = MaterialTheme.colorScheme.onSurfaceVariant)
-        Text(text = value, fontSize = 16.sp, fontWeight = FontWeight.Bold, color = MaterialTheme.colorScheme.primary)
+        Text(
+            text = value,
+            fontSize = 16.sp,
+            fontWeight = FontWeight.Bold,
+            color = if (isThemeDark) DarkAccent else MaterialTheme.colorScheme.primary
+        )
     }
 }
 
@@ -380,7 +386,7 @@ fun ConfigSection(
                                 text = LanguageManager.getCurrentLanguageShortCode(),
                                 fontSize = 13.sp,
                                 fontWeight = FontWeight.Bold,
-                                color = MaterialTheme.colorScheme.primary,
+                                color = if (isThemeDark) DarkAccent else MaterialTheme.colorScheme.primary,
                                 modifier = Modifier.padding(end = 4.dp)
                             )
                             Icon(Icons.Default.KeyboardArrowRight, null, tint = MaterialTheme.colorScheme.onSurfaceVariant, modifier = Modifier.size(14.dp))
@@ -412,7 +418,7 @@ fun ConfigSection(
                                 text = cameraStatus,
                                 fontSize = 12.sp,
                                 fontWeight = FontWeight.Bold,
-                                color = MaterialTheme.colorScheme.primary,
+                                color = if (isThemeDark) DarkAccent else MaterialTheme.colorScheme.primary,
                                 modifier = Modifier.padding(end = 4.dp)
                             )
                             Icon(Icons.Default.KeyboardArrowRight, null, tint = MaterialTheme.colorScheme.onSurfaceVariant, modifier = Modifier.size(14.dp))
@@ -480,7 +486,7 @@ fun AiLanguageDropdown(
                     text = chipLabel,
                     fontSize = 13.sp,
                     fontWeight = FontWeight.Bold,
-                    color = MaterialTheme.colorScheme.primary,
+                    color = if (isThemeDark) DarkAccent else MaterialTheme.colorScheme.primary,
                     maxLines = 1,
                     softWrap = false,
                     overflow = TextOverflow.Ellipsis
@@ -489,7 +495,7 @@ fun AiLanguageDropdown(
                 Icon(
                     imageVector = Icons.Default.KeyboardArrowDown,
                     contentDescription = null,
-                    tint = MaterialTheme.colorScheme.primary,
+                    tint = if (isThemeDark) DarkAccent else MaterialTheme.colorScheme.primary,
                     modifier = Modifier.size(16.dp)
                 )
             }
@@ -505,12 +511,12 @@ fun AiLanguageDropdown(
                     text = {
                         Text(
                             text = label,
-                            color = if (selected) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.onSurface,
+                            color = if (selected) (if (isThemeDark) DarkAccent else MaterialTheme.colorScheme.primary) else MaterialTheme.colorScheme.onSurface,
                             fontWeight = if (selected) FontWeight.Bold else FontWeight.Normal
                         )
                     },
                     trailingIcon = if (selected) {
-                        { Icon(Icons.Default.Check, null, tint = MaterialTheme.colorScheme.primary, modifier = Modifier.size(16.dp)) }
+                        { Icon(Icons.Default.Check, null, tint = if (isThemeDark) DarkAccent else MaterialTheme.colorScheme.primary, modifier = Modifier.size(16.dp)) }
                     } else null,
                     onClick = {
                         onOptionSelected(option)
@@ -567,7 +573,7 @@ fun AppearanceToggle(isDarkMode: Boolean, onThemeToggle: (Boolean) -> Unit) {
         ) {
             Text(
                 text = stringResource(R.string.light_theme),
-                color = if (!isDarkMode) Color.White else (if (isThemeDark) Color(0xFF9BA4B5) else TextGray),
+                color = if (!isDarkMode) Color.White else MaterialTheme.colorScheme.onSurface,
                 fontSize = 12.sp,
                 fontWeight = FontWeight.Bold
             )
@@ -583,7 +589,7 @@ fun AppearanceToggle(isDarkMode: Boolean, onThemeToggle: (Boolean) -> Unit) {
         ) {
             Text(
                 text = stringResource(R.string.dark_theme),
-                color = if (isDarkMode) Color.White else (if (isThemeDark) Color(0xFF9BA4B5) else TextGray),
+                color = if (isDarkMode) Color.White else MaterialTheme.colorScheme.onSurface,
                 fontSize = 12.sp,
                 fontWeight = FontWeight.Bold
             )

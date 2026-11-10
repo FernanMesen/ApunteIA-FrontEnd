@@ -54,7 +54,9 @@ import ApunteIA.FrontEnd.presentation.ui.components.RefreshOnResume
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
+import android.webkit.MimeTypeMap
 import ApunteIA.FrontEnd.R
+import ApunteIA.FrontEnd.presentation.ui.layout.ResponsiveContent
 import ApunteIA.FrontEnd.presentation.viewmodel.ScanViewModel
 import java.io.File
 import java.text.SimpleDateFormat
@@ -69,7 +71,6 @@ fun ScanCameraScreen(
 ) {
     val state by viewModel.uiState.collectAsState()
     val cameraMode by viewModel.cameraMode.collectAsState()
-    val photosMode by viewModel.photosMode.collectAsState()
     val context = LocalContext.current
 
     var hasCameraPermission by remember {
@@ -90,62 +91,39 @@ fun ScanCameraScreen(
         }
     }
 
-    val photosPermissionName = remember {
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
-            Manifest.permission.READ_MEDIA_IMAGES
-        } else {
-            Manifest.permission.READ_EXTERNAL_STORAGE
-        }
-    }
-
     val galleryLauncher = rememberLauncherForActivityResult(
         contract = ActivityResultContracts.PickVisualMedia()
     ) { uri ->
         uri?.let { selectedUri ->
-            val scansDir = File(context.filesDir, "scans").apply { mkdirs() }
-            val fileName = SimpleDateFormat("yyyyMMdd_HHmmss_SSS", Locale.US).format(java.util.Date())
-            val photoFile = File(scansDir, "GALLERY_$fileName.jpg")
             try {
-                context.contentResolver.openInputStream(selectedUri)?.use { inputStream ->
-                    photoFile.outputStream().use { outputStream ->
-                        inputStream.copyTo(outputStream)
+                val scansDir = File(context.filesDir, "scans").apply { mkdirs() }
+                val fileName = SimpleDateFormat("yyyyMMdd_HHmmss_SSS", Locale.US).format(java.util.Date())
+                val mimeType = context.contentResolver.getType(selectedUri)
+                val extension = mimeType?.let { MimeTypeMap.getSingleton().getExtensionFromMimeType(it) } ?: "jpg"
+                val photoFile = File(scansDir, "GALLERY_$fileName.$extension")
+
+                val inputStream = context.contentResolver.openInputStream(selectedUri)
+                    ?: throw java.io.IOException("No se pudo abrir la imagen")
+
+                inputStream.use { input ->
+                    photoFile.outputStream().use { output ->
+                        input.copyTo(output)
                     }
                 }
                 viewModel.capturePage(photoFile)
             } catch (e: Exception) {
                 e.printStackTrace()
+                Toast.makeText(context, "Error al cargar la imagen", Toast.LENGTH_SHORT).show()
             }
         }
     }
 
-    val photoPermissionLauncher = rememberLauncherForActivityResult(
-        contract = ActivityResultContracts.RequestPermission()
-    ) { granted ->
-        if (granted) {
-            viewModel.updatePhotosMode("FULL_ACCESS")
-            galleryLauncher.launch(PickVisualMediaRequest(ActivityResultContracts.PickVisualMedia.ImageOnly))
-        } else {
-            viewModel.updatePhotosMode("DENIED")
-            Toast.makeText(context, "Acceso a fotos denegado. Actívalo en los permisos de la app.", Toast.LENGTH_LONG).show()
-        }
-    }
-
-    val photosBlocked = photosMode == "DENIED"
     val cameraBlocked = cameraMode == "DENIED"
 
     val openGallery = {
-        val hasOsPhotos = ContextCompat.checkSelfPermission(context, photosPermissionName) == PackageManager.PERMISSION_GRANTED
-        if (photosBlocked) {
-            Toast.makeText(
-                context,
-                "Acceso a fotos denegado. Actívalo en los permisos de la app.",
-                Toast.LENGTH_LONG
-            ).show()
-        } else if (hasOsPhotos || photosMode == "FULL_ACCESS" || photosMode == "WHILE_USING_APP") {
-            galleryLauncher.launch(PickVisualMediaRequest(ActivityResultContracts.PickVisualMedia.ImageOnly))
-        } else {
-            photoPermissionLauncher.launch(photosPermissionName)
-        }
+        galleryLauncher.launch(
+            PickVisualMediaRequest(ActivityResultContracts.PickVisualMedia.ImageOnly)
+        )
     }
 
     RefreshOnResume {
@@ -161,12 +139,15 @@ fun ScanCameraScreen(
         }
     }
 
-    Column(
-        modifier = Modifier
-            .fillMaxSize()
-            .background(scanBackground())
-            .padding(horizontal = 20.dp)
-    ) {
+    ResponsiveContent(maxWidth = 1200.dp) {
+        BoxWithConstraints(modifier = Modifier.fillMaxSize()) {
+            val isLandscape = maxWidth > maxHeight
+            Column(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .background(scanBackground())
+                    .padding(horizontal = if (isLandscape) 12.dp else 20.dp)
+            ) {
         ScanTopBar(
             onClose = onClose,
             trailingContent = {
@@ -204,7 +185,7 @@ fun ScanCameraScreen(
                 Box(
                     modifier = Modifier
                         .fillMaxWidth()
-                        .aspectRatio(0.72f)
+                        .then(if (isLandscape) Modifier.fillMaxHeight() else Modifier.aspectRatio(0.72f))
                         .clip(RoundedCornerShape(20.dp))
                 ) {
                     CameraPreview(
@@ -228,7 +209,7 @@ fun ScanCameraScreen(
             Row(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .padding(vertical = 20.dp),
+                    .padding(vertical = if (isLandscape) 8.dp else 20.dp),
                 verticalAlignment = Alignment.CenterVertically
             ) {
                 IconButton(
@@ -237,7 +218,7 @@ fun ScanCameraScreen(
                         .size(48.dp)
                         .background(scanSoftFill(), RoundedCornerShape(14.dp))
                 ) {
-                    Icon(Icons.Default.Image, contentDescription = "Abrir galería", tint = scanText().copy(alpha = if (photosBlocked) 0.4f else 1f))
+                    Icon(Icons.Default.Image, contentDescription = "Abrir galería", tint = scanText())
                 }
 
                 Spacer(modifier = Modifier.weight(1f))
@@ -330,8 +311,10 @@ fun ScanCameraScreen(
                     }
                 }
             }
+            }
         }
     }
+}
 }
 
 /** Preview en vivo de CameraX, expone el [ImageCapture] ya vinculado al ciclo de vida. */

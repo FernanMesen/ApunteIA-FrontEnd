@@ -11,6 +11,8 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
@@ -34,6 +36,7 @@ import androidx.compose.ui.window.Dialog
 import androidx.core.content.ContextCompat
 import kotlinx.coroutines.launch
 import ApunteIA.FrontEnd.R
+import ApunteIA.FrontEnd.presentation.ui.layout.ResponsiveContent
 import ApunteIA.FrontEnd.presentation.ui.components.RefreshOnResume
 import ApunteIA.FrontEnd.presentation.ui.theme.DarkButton
 import ApunteIA.FrontEnd.presentation.ui.theme.DarkDisabled
@@ -131,12 +134,17 @@ fun PermissionsScreen(
         snackbarHost = { SnackbarHost(snackbarHostState) },
         containerColor = onboardingBackground()
     ) { innerPadding ->
-        Column(
-            modifier = Modifier
-                .fillMaxSize()
-                .padding(innerPadding)
-                .padding(horizontal = 24.dp)
+        ResponsiveContent(
+            modifier = Modifier.padding(innerPadding),
+            maxWidth = 720.dp
         ) {
+            Column(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .verticalScroll(rememberScrollState())
+                    .imePadding()
+                    .padding(horizontal = 24.dp)
+            ) {
             OnboardingHeader(
                 progress = 1f,
                 onBack = onBack
@@ -169,7 +177,7 @@ fun PermissionsScreen(
                 onClick = { activeDialogTarget = PermissionTarget.PHOTOS }
             )
 
-            Spacer(modifier = Modifier.weight(1f))
+            Spacer(modifier = Modifier.height(24.dp))
 
             ApuntesPrimaryButton(
                 text = stringResource(R.string.finish_setup_title),
@@ -177,6 +185,7 @@ fun PermissionsScreen(
             )
 
             Spacer(modifier = Modifier.height(26.dp))
+            }
         }
     }
 

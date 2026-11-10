@@ -30,6 +30,7 @@ import ApunteIA.FrontEnd.presentation.ui.theme.DarkThemeCard
 import ApunteIA.FrontEnd.presentation.ui.theme.lightOr
 import ApunteIA.FrontEnd.presentation.viewmodel.NoteDetailUiState
 import ApunteIA.FrontEnd.presentation.viewmodel.NoteDetailViewModel
+import ApunteIA.FrontEnd.presentation.ui.layout.ResponsiveContent
 
 /**
  * Detalle de una nota guardada en el backend, con las acciones de IA:
@@ -119,34 +120,39 @@ fun NoteDetailScreen(
         containerColor = MaterialTheme.colorScheme.background
     ) { paddingValues ->
         val note = uiState.note
-        when {
-            uiState.isLoading && note == null -> Box(
-                modifier = Modifier.fillMaxSize().padding(paddingValues),
-                contentAlignment = Alignment.Center
-            ) { CircularProgressIndicator() }
+        ResponsiveContent(
+            modifier = Modifier.padding(paddingValues),
+            maxWidth = 900.dp
+        ) {
+            when {
+                uiState.isLoading && note == null -> Box(
+                    modifier = Modifier.fillMaxSize(),
+                    contentAlignment = Alignment.Center
+                ) { CircularProgressIndicator() }
 
-            note == null -> Column(
-                modifier = Modifier.fillMaxSize().padding(paddingValues).padding(24.dp),
-                horizontalAlignment = Alignment.CenterHorizontally,
-                verticalArrangement = Arrangement.Center
-            ) {
-                Text(
-                    uiState.error ?: stringResource(R.string.no_notes_found),
-                    color = MaterialTheme.colorScheme.onSurfaceVariant,
-                    textAlign = TextAlign.Center
+                note == null -> Column(
+                    modifier = Modifier.fillMaxSize().padding(24.dp),
+                    horizontalAlignment = Alignment.CenterHorizontally,
+                    verticalArrangement = Arrangement.Center
+                ) {
+                    Text(
+                        uiState.error ?: stringResource(R.string.no_notes_found),
+                        color = MaterialTheme.colorScheme.onSurfaceVariant,
+                        textAlign = TextAlign.Center
+                    )
+                    Spacer(modifier = Modifier.height(16.dp))
+                    Button(onClick = { viewModel.load() }) { Text(stringResource(R.string.retry)) }
+                }
+
+                else -> NoteDetailContent(
+                    note = note,
+                    uiState = uiState,
+                    modifier = Modifier,
+                    onSummarize = { viewModel.summarize() },
+                    onGenerateQuiz = { viewModel.generateQuiz() },
+                    onDismissError = { viewModel.dismissActionError() }
                 )
-                Spacer(modifier = Modifier.height(16.dp))
-                Button(onClick = { viewModel.load() }) { Text(stringResource(R.string.retry)) }
             }
-
-            else -> NoteDetailContent(
-                note = note,
-                uiState = uiState,
-                modifier = Modifier.padding(paddingValues),
-                onSummarize = { viewModel.summarize() },
-                onGenerateQuiz = { viewModel.generateQuiz() },
-                onDismissError = { viewModel.dismissActionError() }
-            )
         }
     }
 }
@@ -166,6 +172,7 @@ private fun NoteDetailContent(
     Column(
         modifier = modifier
             .fillMaxSize()
+            .imePadding()
             .verticalScroll(rememberScrollState())
             .padding(20.dp)
     ) {

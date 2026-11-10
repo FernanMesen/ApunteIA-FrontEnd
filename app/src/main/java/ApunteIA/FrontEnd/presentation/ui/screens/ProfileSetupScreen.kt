@@ -9,6 +9,8 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.foundation.background
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
 import ApunteIA.FrontEnd.R
 
 @OptIn(ExperimentalLayoutApi::class)
@@ -32,6 +34,7 @@ fun ProfileSetupScreen(
     Column(
         modifier = Modifier
             .fillMaxSize()
+            .verticalScroll(rememberScrollState())
             .background(onboardingBackground())
             .padding(horizontal = 24.dp)
     ) {
@@ -137,7 +140,7 @@ fun ProfileSetupScreen(
             placeholder = stringResource(R.string.semester_placeholder)
         )
 
-        Spacer(modifier = Modifier.weight(1f))
+        Spacer(modifier = Modifier.height(24.dp))
 
         ApuntesPrimaryButton(
             text = stringResource(R.string.next_button),

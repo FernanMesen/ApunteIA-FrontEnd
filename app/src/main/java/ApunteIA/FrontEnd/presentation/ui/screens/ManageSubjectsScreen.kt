@@ -4,6 +4,8 @@ import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.CircleShape
@@ -27,6 +29,7 @@ import ApunteIA.FrontEnd.domain.model.Course
 import ApunteIA.FrontEnd.domain.util.FormatUtils
 import ApunteIA.FrontEnd.presentation.ui.theme.*
 import ApunteIA.FrontEnd.presentation.viewmodel.ManageSubjectsViewModel
+import ApunteIA.FrontEnd.presentation.ui.layout.ResponsiveContent
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -49,7 +52,10 @@ fun ManageSubjectsScreen(
             onDismissRequest = { showAddDialog = false },
             title = { Text("Añadir materia personalizada", fontWeight = FontWeight.Bold) },
             text = {
-                Column(verticalArrangement = Arrangement.spacedBy(12.dp)) {
+                Column(
+                    modifier = Modifier.verticalScroll(rememberScrollState()),
+                    verticalArrangement = Arrangement.spacedBy(12.dp)
+                ) {
                     OutlinedTextField(
                         value = newName,
                         onValueChange = { newName = it },
@@ -123,12 +129,14 @@ fun ManageSubjectsScreen(
                 .fillMaxSize()
                 .padding(paddingValues)
         ) {
-            LazyColumn(
-                modifier = Modifier
-                    .fillMaxSize()
-                    .padding(horizontal = 24.dp),
-                verticalArrangement = Arrangement.spacedBy(16.dp)
-            ) {
+            ResponsiveContent(maxWidth = 840.dp) {
+                LazyColumn(
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .imePadding()
+                        .padding(horizontal = 24.dp),
+                    verticalArrangement = Arrangement.spacedBy(16.dp)
+                ) {
                 item {
                     Spacer(modifier = Modifier.height(8.dp))
                     Button(
@@ -214,6 +222,7 @@ fun ManageSubjectsScreen(
             }
         }
     }
+}
 }
 
 @Composable

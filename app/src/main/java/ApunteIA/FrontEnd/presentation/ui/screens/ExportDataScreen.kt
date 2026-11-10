@@ -24,6 +24,7 @@ import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import ApunteIA.FrontEnd.R
 import ApunteIA.FrontEnd.presentation.viewmodel.ExportDataViewModel
+import ApunteIA.FrontEnd.presentation.ui.layout.ResponsiveContent
 
 @Composable
 fun ExportDataScreen(
@@ -85,14 +86,14 @@ fun ExportDataScreen(
             }
         }
     ) { paddingValues ->
-        Box(
-            modifier = Modifier
-                .fillMaxSize()
-                .padding(paddingValues)
+        ResponsiveContent(
+            modifier = Modifier.padding(paddingValues),
+            maxWidth = 760.dp
         ) {
             LazyColumn(
                 modifier = Modifier
                     .fillMaxSize()
+                    .imePadding()
                     .padding(horizontal = 24.dp),
                 verticalArrangement = Arrangement.spacedBy(16.dp)
             ) {

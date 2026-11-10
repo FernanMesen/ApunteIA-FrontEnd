@@ -19,6 +19,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import ApunteIA.FrontEnd.R
+import ApunteIA.FrontEnd.presentation.ui.layout.ResponsiveContent
 
 @Composable
 fun PrivacyScreen(
@@ -62,13 +63,17 @@ fun PrivacyScreen(
             }
         }
     ) { paddingValues ->
-        LazyColumn(
-            modifier = Modifier
-                .fillMaxSize()
-                .padding(paddingValues)
-                .padding(horizontal = 24.dp),
-            verticalArrangement = Arrangement.spacedBy(16.dp)
+        ResponsiveContent(
+            modifier = Modifier.padding(paddingValues),
+            maxWidth = 760.dp
         ) {
+            LazyColumn(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .imePadding()
+                    .padding(horizontal = 24.dp),
+                verticalArrangement = Arrangement.spacedBy(16.dp)
+            ) {
             item {
                 Spacer(modifier = Modifier.height(8.dp))
                 Text(
@@ -193,6 +198,7 @@ fun PrivacyScreen(
             }
         }
     }
+}
 }
 
 @Composable

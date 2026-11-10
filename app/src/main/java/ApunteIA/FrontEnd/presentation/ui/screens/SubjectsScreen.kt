@@ -1,6 +1,8 @@
 package ApunteIA.FrontEnd.presentation.ui.screens
 
 import androidx.compose.foundation.background
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.foundation.layout.*
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
@@ -40,6 +42,7 @@ fun SubjectsScreen(
     Column(
         modifier = Modifier
             .fillMaxSize()
+            .verticalScroll(rememberScrollState())
             .background(MaterialTheme.colorScheme.background)
             .padding(horizontal = 24.dp)
     ) {
@@ -89,7 +92,7 @@ fun SubjectsScreen(
             placeholder = stringResource(R.string.subject_placeholder, 3)
         )
 
-        Spacer(modifier = Modifier.weight(1f))
+        Spacer(modifier = Modifier.height(24.dp))
 
         ApuntesPrimaryButton(
             text = stringResource(R.string.next_button),

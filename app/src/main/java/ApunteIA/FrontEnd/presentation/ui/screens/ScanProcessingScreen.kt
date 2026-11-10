@@ -4,6 +4,8 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
@@ -32,6 +34,7 @@ import ApunteIA.FrontEnd.presentation.model.ProcessingStep
 import ApunteIA.FrontEnd.presentation.ui.theme.StatusRed
 import ApunteIA.FrontEnd.presentation.ui.theme.lightOr
 import ApunteIA.FrontEnd.presentation.viewmodel.ScanViewModel
+import ApunteIA.FrontEnd.presentation.ui.layout.ResponsiveContent
 
 @Composable
 fun ScanProcessingScreen(
@@ -49,24 +52,26 @@ fun ScanProcessingScreen(
         if (state.processingDone) onComplete()
     }
 
-    Column(
-        modifier = Modifier
-            .fillMaxSize()
-            .background(scanBackground())
-            .padding(horizontal = 20.dp)
-    ) {
-        ScanTopBar(onClose = onClose)
+    ResponsiveContent(maxWidth = 720.dp) {
+        Column(
+            modifier = Modifier
+                .fillMaxSize()
+                .background(scanBackground())
+                .padding(horizontal = 20.dp)
+        ) {
+            ScanTopBar(onClose = onClose)
 
-        Box(modifier = Modifier.weight(1f).fillMaxWidth(), contentAlignment = Alignment.Center) {
-            val error = state.processingError
-            if (error != null) {
-                ProcessingErrorContent(
-                    error = error,
-                    onRetry = { viewModel.confirmAndProcess() },
-                    onCancel = onClose
-                )
-            } else {
-                ProcessingChecklist(completedSteps = state.completedSteps)
+            Box(modifier = Modifier.weight(1f).fillMaxWidth(), contentAlignment = Alignment.Center) {
+                val error = state.processingError
+                if (error != null) {
+                    ProcessingErrorContent(
+                        error = error,
+                        onRetry = { viewModel.confirmAndProcess() },
+                        onCancel = onClose
+                    )
+                } else {
+                    ProcessingChecklist(completedSteps = state.completedSteps)
+                }
             }
         }
     }
@@ -74,7 +79,10 @@ fun ScanProcessingScreen(
 
 @Composable
 private fun ProcessingChecklist(completedSteps: Int) {
-    Column(horizontalAlignment = Alignment.CenterHorizontally) {
+    Column(
+        horizontalAlignment = Alignment.CenterHorizontally,
+        modifier = Modifier.verticalScroll(rememberScrollState()).padding(vertical = 16.dp)
+    ) {
         CircularProgressIndicator(color = scanAccent(), strokeWidth = 3.dp, modifier = Modifier.size(56.dp))
 
         Spacer(modifier = Modifier.height(40.dp))

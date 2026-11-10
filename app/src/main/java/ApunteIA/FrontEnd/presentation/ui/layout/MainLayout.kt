@@ -69,6 +69,8 @@ fun MainLayout(
         },
         floatingActionButtonPosition = FabPosition.Center,
         containerColor = MaterialTheme.colorScheme.background,
-        content = content
+        content = { paddingValues ->
+            ResponsiveContent { content(paddingValues) }
+        }
     )
 }

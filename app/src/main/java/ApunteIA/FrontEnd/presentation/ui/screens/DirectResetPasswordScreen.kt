@@ -3,6 +3,8 @@ package ApunteIA.FrontEnd.presentation.ui.screens
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
@@ -84,15 +86,20 @@ fun DirectResetPasswordScreen(
         Box(
             modifier = Modifier
                 .fillMaxSize()
-                .padding(paddingValues)
-                .padding(horizontal = 32.dp),
-            contentAlignment = Alignment.Center
+                .padding(paddingValues),
+            contentAlignment = Alignment.TopCenter
         ) {
-            if (uiState.isSuccess) {
-                Column(
-                    horizontalAlignment = Alignment.CenterHorizontally,
-                    modifier = Modifier.fillMaxWidth()
-                ) {
+            Column(
+                horizontalAlignment = Alignment.CenterHorizontally,
+                modifier = Modifier
+                    .widthIn(max = 500.dp)
+                    .fillMaxWidth()
+                    .fillMaxHeight()
+                    .imePadding()
+                    .verticalScroll(rememberScrollState())
+                    .padding(horizontal = 32.dp, vertical = 16.dp)
+            ) {
+                if (uiState.isSuccess) {
                     Box(
                         modifier = Modifier
                             .size(64.dp)
@@ -146,12 +153,7 @@ fun DirectResetPasswordScreen(
                             fontWeight = FontWeight.Bold
                         )
                     }
-                }
-            } else {
-                Column(
-                    horizontalAlignment = Alignment.CenterHorizontally,
-                    modifier = Modifier.fillMaxWidth()
-                ) {
+                } else {
                     Text(
                         text = stringResource(R.string.create_new_password_title),
                         fontSize = 24.sp,

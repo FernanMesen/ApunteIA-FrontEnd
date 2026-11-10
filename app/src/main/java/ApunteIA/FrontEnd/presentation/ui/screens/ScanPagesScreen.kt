@@ -38,6 +38,7 @@ import ApunteIA.FrontEnd.presentation.ui.theme.DarkDisabled
 import ApunteIA.FrontEnd.presentation.ui.theme.StatusRed
 import ApunteIA.FrontEnd.presentation.ui.theme.lightOr
 import ApunteIA.FrontEnd.presentation.viewmodel.ScanViewModel
+import ApunteIA.FrontEnd.presentation.ui.layout.ResponsiveContent
 
 @Composable
 fun ScanPagesScreen(
@@ -48,12 +49,13 @@ fun ScanPagesScreen(
 ) {
     val state by viewModel.uiState.collectAsState()
 
-    Column(
-        modifier = Modifier
-            .fillMaxSize()
-            .background(scanBackground())
-            .padding(horizontal = 20.dp)
-    ) {
+    ResponsiveContent(maxWidth = 900.dp) {
+        Column(
+            modifier = Modifier
+                .fillMaxSize()
+                .background(scanBackground())
+                .padding(horizontal = 20.dp)
+        ) {
         ScanTopBar(
             title = stringResource(R.string.captured_pages_title),
             onClose = onClose,
@@ -63,7 +65,7 @@ fun ScanPagesScreen(
         Spacer(modifier = Modifier.height(8.dp))
 
         LazyColumn(
-            modifier = Modifier.weight(1f),
+            modifier = Modifier.weight(1f).imePadding(),
             verticalArrangement = Arrangement.spacedBy(12.dp)
         ) {
             items(state.capturedPages, key = { it.id }) { page ->
@@ -122,6 +124,7 @@ fun ScanPagesScreen(
                 maxLines = 1,
                 overflow = TextOverflow.Ellipsis
             )
+            }
         }
     }
 }

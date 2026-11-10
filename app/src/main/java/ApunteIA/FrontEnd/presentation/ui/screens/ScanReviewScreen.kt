@@ -30,6 +30,7 @@ import ApunteIA.FrontEnd.presentation.ui.theme.lightOr
 import androidx.compose.foundation.horizontalScroll
 import ApunteIA.FrontEnd.presentation.viewmodel.ScanViewModel
 import androidx.compose.runtime.LaunchedEffect
+import ApunteIA.FrontEnd.presentation.ui.layout.ResponsiveContent
 
 @Composable
 fun ScanReviewScreen(
@@ -44,12 +45,13 @@ fun ScanReviewScreen(
         if (state.saved) onSaved()
     }
 
-    Column(
-        modifier = Modifier
-            .fillMaxSize()
-            .background(scanBackground())
-            .padding(horizontal = 20.dp)
-    ) {
+    ResponsiveContent(maxWidth = 960.dp) {
+        Column(
+            modifier = Modifier
+                .fillMaxSize()
+                .background(scanBackground())
+                .padding(horizontal = 20.dp)
+        ) {
         ScanTopBar(title = stringResource(R.string.review_note_title), onClose = onClose)
 
         Spacer(modifier = Modifier.height(4.dp))
@@ -80,7 +82,7 @@ fun ScanReviewScreen(
                 }
             }
         } else if (state.showingOriginal) {
-            Column(modifier = Modifier.weight(1f).verticalScroll(rememberScrollState())) {
+            Column(modifier = Modifier.weight(1f).imePadding().verticalScroll(rememberScrollState())) {
                 Surface(
                     shape = RoundedCornerShape(16.dp),
                     color = scanCard(),
@@ -97,7 +99,7 @@ fun ScanReviewScreen(
                 Spacer(modifier = Modifier.height(20.dp))
             }
         } else {
-            Column(modifier = Modifier.weight(1f).verticalScroll(rememberScrollState())) {
+            Column(modifier = Modifier.weight(1f).imePadding().verticalScroll(rememberScrollState())) {
                 SectionLabel(stringResource(R.string.note_title_header))
                 Spacer(modifier = Modifier.height(8.dp))
                 ScanTextField(
@@ -271,6 +273,7 @@ fun ScanReviewScreen(
             }
         }
     }
+}
 }
 
 @Composable

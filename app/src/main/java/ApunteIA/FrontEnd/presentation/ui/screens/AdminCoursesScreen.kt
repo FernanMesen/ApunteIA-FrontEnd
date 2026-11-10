@@ -26,6 +26,7 @@ import ApunteIA.FrontEnd.R
 import ApunteIA.FrontEnd.domain.model.CourseInfo
 import ApunteIA.FrontEnd.presentation.ui.theme.*
 import ApunteIA.FrontEnd.presentation.viewmodel.AdminCoursesViewModel
+import ApunteIA.FrontEnd.presentation.ui.layout.ResponsiveContent
 
 /** Administración: lista de todos los cursos. Solo se llega desde el Perfil si el usuario es ADMIN. */
 @Composable
@@ -57,24 +58,26 @@ fun AdminCoursesScreen(
             )
         }
     ) { paddingValues ->
-        if (uiState.isLoading && uiState.courses.isEmpty()) {
-            Box(
-                modifier = Modifier
-                    .fillMaxSize()
-                    .padding(paddingValues),
-                contentAlignment = Alignment.Center
-            ) {
-                CircularProgressIndicator()
-            }
-        } else {
-            LazyColumn(
-                modifier = Modifier
-                    .fillMaxSize()
-                    .padding(paddingValues)
-                    .padding(horizontal = 24.dp),
-                verticalArrangement = Arrangement.spacedBy(12.dp),
-                contentPadding = PaddingValues(bottom = 96.dp)
-            ) {
+        ResponsiveContent(
+            modifier = Modifier.padding(paddingValues),
+            maxWidth = 840.dp
+        ) {
+            if (uiState.isLoading && uiState.courses.isEmpty()) {
+                Box(
+                    modifier = Modifier.fillMaxSize(),
+                    contentAlignment = Alignment.Center
+                ) {
+                    CircularProgressIndicator()
+                }
+            } else {
+                LazyColumn(
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .imePadding()
+                        .padding(horizontal = 24.dp),
+                    verticalArrangement = Arrangement.spacedBy(12.dp),
+                    contentPadding = PaddingValues(bottom = 96.dp)
+                ) {
                 uiState.error?.let { message ->
                     item { AdminErrorCard(message = message, onRetry = { viewModel.load() }) }
                 }
@@ -90,6 +93,7 @@ fun AdminCoursesScreen(
                 }
                 items(uiState.courses, key = { it.id }) { course ->
                     AdminCourseRow(course = course, onClick = { onOpenCourse(course.id) })
+                    }
                 }
             }
         }

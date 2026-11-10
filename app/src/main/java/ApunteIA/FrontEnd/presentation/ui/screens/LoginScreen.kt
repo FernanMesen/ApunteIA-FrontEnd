@@ -1,5 +1,6 @@
 package ApunteIA.FrontEnd.presentation.ui.screens
 
+import android.content.res.Configuration
 import android.widget.Toast
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
@@ -18,6 +19,8 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.LocalConfiguration
+import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
@@ -47,6 +50,8 @@ fun LoginScreen(
 ) {
     val isDark = MaterialTheme.colorScheme.primary == SpaceCadet
     val primaryColor = MaterialTheme.colorScheme.primary
+    val fontScale = LocalDensity.current.fontScale
+    val isLandscape = LocalConfiguration.current.orientation == Configuration.ORIENTATION_LANDSCAPE
 
     val uiState by viewModel.uiState.collectAsState()
     val context = LocalContext.current
@@ -87,20 +92,25 @@ fun LoginScreen(
         }
     }
 
-    Column(
-        modifier = Modifier
-            .fillMaxSize()
-            .background(MaterialTheme.colorScheme.background)
-            .verticalScroll(rememberScrollState())
-            .statusBarsPadding()
-            .navigationBarsPadding()
-            .padding(horizontal = 32.dp),
-        horizontalAlignment = Alignment.CenterHorizontally
+    Box(
+        modifier = Modifier.fillMaxSize(),
+        contentAlignment = Alignment.TopCenter
     ) {
+        Column(
+            modifier = Modifier
+                .widthIn(max = 500.dp)
+                .fillMaxWidth()
+                .fillMaxHeight()
+                .background(MaterialTheme.colorScheme.background)
+                .imePadding()
+                .verticalScroll(rememberScrollState())
+                .statusBarsPadding()
+                .navigationBarsPadding()
+                .padding(horizontal = 32.dp),
+            horizontalAlignment = Alignment.CenterHorizontally
+        ) {
 
-        Spacer(
-            modifier = Modifier.height(20.dp)
-        )
+        Spacer(modifier = Modifier.height(if (isLandscape) 8.dp else 20.dp))
 
         // Idioma
 
@@ -129,9 +139,7 @@ fun LoginScreen(
             }
         }
 
-        Spacer(
-            modifier = Modifier.height(24.dp)
-        )
+        Spacer(modifier = Modifier.height(if (isLandscape) 8.dp else 24.dp))
 
         // Logo
 
@@ -140,45 +148,37 @@ fun LoginScreen(
                 id = R.drawable.apuntesia_logo
             ),
             contentDescription = null,
-            modifier = Modifier.size(100.dp),
+            modifier = Modifier.size(if (isLandscape) 56.dp else 100.dp),
             contentScale = ContentScale.Fit
         )
 
-        Spacer(
-            modifier = Modifier.height(12.dp)
-        )
+        Spacer(modifier = Modifier.height(if (isLandscape) 4.dp else 12.dp))
 
         // Nombre
 
         Text(
             text = "ApuntesIA",
             color = primaryColor,
-            fontSize = 30.sp,
+            fontSize = if (isLandscape) 24.sp else 30.sp,
             fontWeight = FontWeight.Bold
         )
 
-        Spacer(
-            modifier = Modifier.height(6.dp)
-        )
+        Spacer(modifier = Modifier.height(2.dp))
 
         Text(
             text = stringResource(
                 R.string.login_subtitle
             ),
             color = MaterialTheme.colorScheme.onSurfaceVariant,
-            fontSize = 16.sp
+            fontSize = if (isLandscape) 14.sp else 16.sp
         )
 
-        Spacer(
-            modifier = Modifier.height(26.dp)
-        )
+        Spacer(modifier = Modifier.height(if (isLandscape) 10.dp else 26.dp))
 
         // Rol
 
-        Row(
-            modifier = Modifier
+        val roleSelectorModifier = Modifier
                 .fillMaxWidth()
-                .height(54.dp)
                 .background(
                     color = if (isDark) {
                         MaterialTheme.colorScheme.surfaceVariant
@@ -197,34 +197,44 @@ fun LoginScreen(
                     shape = RoundedCornerShape(30.dp)
                 )
                 .padding(5.dp)
-        ) {
-
-            RoleButton(
-                text = stringResource(
-                    R.string.role_student
-                ),
-                selected = selectedRole == LoginRole.STUDENT,
-                onClick = {
-                    selectedRole = LoginRole.STUDENT
-                },
-                modifier = Modifier.weight(1f)
-            )
-
-            RoleButton(
-                text = stringResource(
-                    R.string.role_admin
-                ),
-                selected = selectedRole == LoginRole.ADMIN,
-                onClick = {
-                    selectedRole = LoginRole.ADMIN
-                },
-                modifier = Modifier.weight(1f)
-            )
+        if (fontScale >= 1.5f) {
+            Column(
+                modifier = roleSelectorModifier,
+                verticalArrangement = Arrangement.spacedBy(4.dp)
+            ) {
+                RoleButton(
+                    text = stringResource(R.string.role_student),
+                    selected = selectedRole == LoginRole.STUDENT,
+                    onClick = { selectedRole = LoginRole.STUDENT },
+                    modifier = Modifier.fillMaxWidth()
+                )
+                RoleButton(
+                    text = stringResource(R.string.role_admin),
+                    selected = selectedRole == LoginRole.ADMIN,
+                    onClick = { selectedRole = LoginRole.ADMIN },
+                    modifier = Modifier.fillMaxWidth()
+                )
+            }
+        } else {
+            Row(
+                modifier = roleSelectorModifier.heightIn(min = 54.dp)
+            ) {
+                RoleButton(
+                    text = stringResource(R.string.role_student),
+                    selected = selectedRole == LoginRole.STUDENT,
+                    onClick = { selectedRole = LoginRole.STUDENT },
+                    modifier = Modifier.weight(1f)
+                )
+                RoleButton(
+                    text = stringResource(R.string.role_admin),
+                    selected = selectedRole == LoginRole.ADMIN,
+                    onClick = { selectedRole = LoginRole.ADMIN },
+                    modifier = Modifier.weight(1f)
+                )
+            }
         }
 
-        Spacer(
-            modifier = Modifier.height(24.dp)
-        )
+        Spacer(modifier = Modifier.height(if (isLandscape) 10.dp else 24.dp))
 
         // Email
 
@@ -366,9 +376,7 @@ fun LoginScreen(
             )
         }
 
-        Spacer(
-            modifier = Modifier.height(24.dp)
-        )
+        Spacer(modifier = Modifier.height(if (isLandscape) 10.dp else 24.dp))
 
         // Login
 
@@ -574,6 +582,7 @@ fun LoginScreen(
             modifier = Modifier.height(24.dp)
         )
     }
+    }
 }
 
 @Composable
@@ -628,7 +637,7 @@ private fun RoleButton(
 
     Box(
         modifier = modifier
-            .fillMaxHeight()
+            .heightIn(min = 44.dp)
             .background(
                 color = if (selected) {
                     primaryColor

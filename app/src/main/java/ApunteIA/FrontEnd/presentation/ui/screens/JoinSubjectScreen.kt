@@ -25,6 +25,7 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import ApunteIA.FrontEnd.R
 import ApunteIA.FrontEnd.presentation.ui.theme.SpaceCadet
 import ApunteIA.FrontEnd.presentation.viewmodel.JoinSubjectViewModel
+import ApunteIA.FrontEnd.presentation.ui.layout.ResponsiveContent
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -49,12 +50,14 @@ fun JoinSubjectScreen(
                 .fillMaxSize()
                 .padding(paddingValues)
         ) {
-            LazyColumn(
-                modifier = Modifier
-                    .fillMaxSize()
-                    .padding(horizontal = 24.dp),
-                verticalArrangement = Arrangement.spacedBy(24.dp)
-            ) {
+            ResponsiveContent(maxWidth = 840.dp) {
+                LazyColumn(
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .imePadding()
+                        .padding(horizontal = 24.dp),
+                    verticalArrangement = Arrangement.spacedBy(24.dp)
+                ) {
                 item {
                     CodeJoinCard(
                         value = courseCode,
@@ -165,6 +168,7 @@ fun JoinSubjectScreen(
             }
         }
     }
+}
 }
 
 @Composable
