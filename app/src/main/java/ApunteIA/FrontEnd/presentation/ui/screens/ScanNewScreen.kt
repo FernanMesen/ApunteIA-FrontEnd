@@ -73,7 +73,6 @@ fun ScanNewScreen(
                         isSelected = state.subject == subject,
                         onClick = { viewModel.selectSubject(subject) }
                     )
-                    }
                 }
             }
             if (state.isLoadingSubjects) {
@@ -240,6 +239,7 @@ fun ScanNewScreen(
             )
         }
     }
+}
 }
 
 @Composable
