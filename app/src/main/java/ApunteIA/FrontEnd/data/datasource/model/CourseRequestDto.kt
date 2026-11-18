@@ -2,7 +2,7 @@ package ApunteIA.FrontEnd.data.datasource.model
 
 import com.google.gson.annotations.SerializedName
 
-/** Cuerpo de POST /courses y PUT /courses/{id} (solo ADMIN). */
+/** Cuerpo de POST /courses y PUT /courses/{id}. POST permite estudiantes; PUT requiere creador/ADMIN. */
 data class CourseRequestDto(
     @SerializedName("code")
     val code: String,

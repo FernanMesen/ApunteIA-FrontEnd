@@ -29,11 +29,14 @@ class CustomSubjectStore @Inject constructor(
         return list.map { CourseInfo(id = it.id, code = it.code, name = it.name, description = it.description) }
     }
 
-    fun addCustomCourse(name: String, code: String, description: String) {
-        val current = getCustomCourses().toMutableList()
-        val newId = 9000L + current.size
-        current.add(CourseInfo(id = newId, code = code.ifBlank { "SUB-$newId" }, name = name, description = description))
-        val dtos = current.map { CustomCourseDto(it.id, it.code, it.name, it.description) }
-        prefs?.edit()?.putString("custom_courses_list", gson.toJson(dtos))?.apply()
+    fun removeMigratedCourse(course: CourseInfo) {
+        val remaining = getCustomCourses()
+            .filterNot { it.id == course.id && it.code == course.code && it.name == course.name }
+        if (remaining.isEmpty()) {
+            prefs?.edit()?.remove("custom_courses_list")?.apply()
+        } else {
+            val dtos = remaining.map { CustomCourseDto(it.id, it.code, it.name, it.description) }
+            prefs?.edit()?.putString("custom_courses_list", gson.toJson(dtos))?.apply()
+        }
     }
 }

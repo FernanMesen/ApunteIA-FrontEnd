@@ -1,9 +1,14 @@
 package ApunteIA.FrontEnd.data.repository
 
+import ApunteIA.FrontEnd.R
 import ApunteIA.FrontEnd.data.datasource.CourseDataSource
 import ApunteIA.FrontEnd.data.datasource.model.CourseRequestDto
-import ApunteIA.FrontEnd.data.mapper.toDomain
-import ApunteIA.FrontEnd.util.CustomSubjectStore
+import ApunteIA.FrontEnd.domain.model.CourseInfo
+import ApunteIA.FrontEnd.domain.usecase.CreateCourseUseCase
+import ApunteIA.FrontEnd.domain.util.Resource
+import ApunteIA.FrontEnd.util.L10n
+import retrofit2.HttpException
+import kotlin.coroutines.cancellation.CancellationException
 import javax.inject.Inject
 import javax.inject.Singleton
 
@@ -12,41 +17,71 @@ class SubjectEnroller @Inject constructor(
     private val dataSource: CourseDataSource,
     private val catalog: CourseCatalog,
     private val loader: StudyDataLoader,
-    private val customSubjectStore: CustomSubjectStore
+    private val createCourseUseCase: CreateCourseUseCase
 ) {
-    suspend fun add(name: String, code: String, description: String): Boolean {
+    suspend fun add(name: String, code: String, description: String): Resource<CourseInfo> {
         val cleanName = name.trim()
-        val cleanCode = code.trim()
-        if (cleanName.isEmpty()) return false
+        val cleanCode = CreateCourseUseCase.normalizeCode(code)
+        if (cleanName.isEmpty()) return Resource.Error(L10n.get(R.string.course_name_required))
 
-        val known = runCatching { catalog.all(forceRefresh = true) }.getOrDefault(emptyList())
-        val existing = known.firstOrNull {
-            it.name.equals(cleanName, ignoreCase = true) ||
-                    (cleanCode.isNotEmpty() && it.code.equals(cleanCode, ignoreCase = true))
+        val known = try {
+            catalog.all(forceRefresh = true)
+        } catch (cancellation: CancellationException) {
+            throw cancellation
+        } catch (t: Throwable) {
+            return Resource.Error(t.message ?: L10n.get(R.string.error_loading_courses), t)
         }
-        val course = existing ?: runCatching {
-            dataSource.createCourse(
-                CourseRequestDto(
-                    code = cleanCode.ifBlank { "SUB-${System.currentTimeMillis() % 100000}" },
-                    name = cleanName,
-                    description = description.trim().ifBlank { null },
-                    syllabus = null
-                )
-            ).toDomain()
-        }.getOrNull()
 
+        val matches = if (cleanCode.isNotEmpty()) {
+            known.filter { CreateCourseUseCase.normalizeCode(it.code) == cleanCode }
+        } else {
+            known.filter { it.name.trim().equals(cleanName, ignoreCase = true) }
+        }
+
+        if (matches.size > 1) {
+            return Resource.Error(L10n.get(R.string.course_ambiguous_name))
+        }
+
+        val course = matches.firstOrNull()
         if (course == null) {
-            customSubjectStore.addCustomCourse(cleanName, cleanCode, description)
-            return false
+            if (cleanCode.isNotEmpty()) return Resource.Error(L10n.get(R.string.error_course_not_found, cleanCode))
+            val created = createCourseUseCase(cleanName, "", description)
+            if (created is Resource.Success) {
+                loader.invalidate()
+                try { catalog.all(forceRefresh = true) } catch (_: Throwable) {}
+            }
+            return created
         }
 
-        val alreadyEnrolled = runCatching { loader.myCourses().any { it.id == course.id } }.getOrDefault(false)
-        val enrolled = alreadyEnrolled ||
-                runCatching { dataSource.enroll(course.id, loader.requireUserId()) }.isSuccess
-        if (!enrolled) customSubjectStore.addCustomCourse(cleanName, cleanCode, description)
+        val mine = try {
+            loader.myCourses()
+        } catch (cancellation: CancellationException) {
+            throw cancellation
+        } catch (t: Throwable) {
+            return Resource.Error(t.message ?: L10n.get(R.string.error_loading_courses), t)
+        }
+        if (mine.any { it.id == course.id }) {
+            return Resource.Success(course)
+        }
 
-        loader.invalidate()
-        runCatching { catalog.all(forceRefresh = true) }
-        return enrolled
+        return try {
+            dataSource.enroll(course.id, loader.requireUserId())
+            loader.invalidate()
+            try { catalog.all(forceRefresh = true) } catch (_: Throwable) {}
+            Resource.Success(course)
+        } catch (cancellation: CancellationException) {
+            throw cancellation
+        } catch (e: HttpException) {
+            if (e.code() == 409) {
+                val confirmed = try { loader.myCourses().any { it.id == course.id } } catch (_: Throwable) { false }
+                if (confirmed) {
+                    loader.invalidate()
+                    return Resource.Success(course)
+                }
+            }
+            Resource.Error(e.message ?: L10n.get(R.string.error_enroll_course), e)
+        } catch (t: Throwable) {
+            Resource.Error(t.message ?: L10n.get(R.string.error_enroll_course), t)
+        }
     }
 }

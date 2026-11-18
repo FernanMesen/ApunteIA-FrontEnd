@@ -18,7 +18,6 @@ import ApunteIA.FrontEnd.data.datasource.model.UpdateNoteRequestDto
 import ApunteIA.FrontEnd.data.datasource.model.UserDto
 import ApunteIA.FrontEnd.data.repository.CourseCatalog
 import ApunteIA.FrontEnd.data.repository.StudyDataLoader
-import ApunteIA.FrontEnd.util.CustomSubjectStore
 import ApunteIA.FrontEnd.data.session.SessionStore
 import ApunteIA.FrontEnd.domain.model.AuthSession
 import kotlinx.coroutines.flow.MutableSharedFlow
@@ -101,6 +100,15 @@ class FakeCourseDataSource(
         savedCourses += null to request
         val created = CourseDto(100, request.code, request.name, request.description, request.syllabus)
         courses = courses + created
+        val userId = 2L
+        enrollments = enrollments + EnrollmentDto(
+            id = 100,
+            userId = userId,
+            courseId = created.id,
+            courseCode = created.code,
+            courseName = created.name,
+            enrolledAt = null
+        )
         return created
     }
 
@@ -238,9 +246,8 @@ class TestBackend(
     val session: FakeSessionStore = FakeSessionStore.loggedIn(),
     val notes: FakeNoteDataSource = FakeNoteDataSource(),
     val courses: FakeCourseDataSource = FakeCourseDataSource(),
-    val quizzes: FakeQuizDataSource = FakeQuizDataSource(),
-    customSubjects: CustomSubjectStore = CustomSubjectStore(null)
+    val quizzes: FakeQuizDataSource = FakeQuizDataSource()
 ) {
     val catalog = CourseCatalog(courses)
-    val loader = StudyDataLoader(session, notes, courses, quizzes, catalog, customSubjects)
+    val loader = StudyDataLoader(session, notes, courses, quizzes, catalog)
 }

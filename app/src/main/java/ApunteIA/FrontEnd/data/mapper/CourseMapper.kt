@@ -10,7 +10,10 @@ fun CourseDto.toDomain(): CourseInfo = CourseInfo(
     code = code.orEmpty(),
     name = name?.takeIf { it.isNotBlank() } ?: code.orEmpty().ifBlank { L10n.getString(R.string.fallback_course_id, id) },
     description = description.orEmpty(),
-    syllabus = syllabus.orEmpty()
+    syllabus = syllabus.orEmpty(),
+    createdById = createdById,
+    createdByName = createdByName.orEmpty(),
+    studentCount = studentCount.coerceAtLeast(0)
 )
 
 fun List<CourseDto>.toDomain(): List<CourseInfo> = map { it.toDomain() }

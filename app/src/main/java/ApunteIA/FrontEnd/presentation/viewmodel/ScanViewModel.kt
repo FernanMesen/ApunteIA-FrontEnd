@@ -36,9 +36,11 @@ import kotlin.coroutines.cancellation.CancellationException
 data class ScanUiState(
     // --- Paso 1: Nuevo escaneo ---
     /** Materias (cursos inscritos) disponibles para clasificar el apunte. */
-    val subjects: List<String> = emptyList(),
+    val subjects: List<CourseInfo> = emptyList(),
     val isLoadingSubjects: Boolean = false,
     val subjectsError: String? = null,
+    val selectedCourseId: Long? = null,
+    // Kept temporarily for UI compatibility; course selection is resolved by ID.
     val subject: String = "",
     val className: String = "",
     /** Fecha del apunte en ISO ("yyyy-MM-dd"); por defecto hoy. */
@@ -64,7 +66,8 @@ data class ScanUiState(
     val saved: Boolean = false
 ) {
     val canContinueFromNewScan: Boolean
-        get() = className.isNotBlank() && subject in subjects
+        get() = className.isNotBlank() && selectedCourseId != null &&
+            subjects.any { it.id == selectedCourseId }
 
     val hasCapturedPages: Boolean
         get() = capturedPages.isNotEmpty()
@@ -149,13 +152,15 @@ class ScanViewModel @Inject constructor(
             when (val result = getMyCourses()) {
                 is Resource.Success -> {
                     courses = result.data
-                    val names = result.data.map { it.name }
                     _uiState.update { state ->
+                        val selected = result.data.firstOrNull { it.id == state.selectedCourseId }
+                            ?: result.data.firstOrNull()
                         state.copy(
                             isLoadingSubjects = false,
-                            subjects = names,
-                            subject = state.subject.takeIf { it in names } ?: names.firstOrNull().orEmpty(),
-                            subjectsError = if (names.isEmpty()) {
+                            subjects = result.data,
+                            selectedCourseId = selected?.id,
+                            subject = selected?.name.orEmpty(),
+                            subjectsError = if (result.data.isEmpty()) {
                                 L10n.getString(R.string.scan_no_subjects)
                             } else {
                                 null
@@ -173,8 +178,11 @@ class ScanViewModel @Inject constructor(
 
     // ---------- Paso 1: Nuevo escaneo ----------
 
-    fun selectSubject(subject: String) {
-        _uiState.update { it.copy(subject = subject) }
+    fun selectSubject(courseId: Long) {
+        val course = courses.firstOrNull { it.id == courseId }
+        if (course != null) {
+            _uiState.update { it.copy(selectedCourseId = course.id, subject = course.name) }
+        }
     }
 
     fun onClassNameChange(value: String) {
@@ -244,7 +252,7 @@ class ScanViewModel @Inject constructor(
         _uiState.update { it.copy(isProcessing = true, processingError = null, completedSteps = 0, saveError = null) }
         processingJob = viewModelScope.launch {
             val state = _uiState.value
-            val course = courses.firstOrNull { it.name == state.subject }
+            val course = courses.firstOrNull { it.id == state.selectedCourseId }
             if (course == null) {
                 fail(ProcessingError.NO_COURSE)
                 return@launch
@@ -457,7 +465,7 @@ class ScanViewModel @Inject constructor(
             _uiState.update { it.copy(saveError = L10n.getString(R.string.scan_process_before_save)) }
             return
         }
-        val course = courses.firstOrNull { it.name == state.subject }
+        val course = courses.firstOrNull { it.id == state.selectedCourseId }
         if (course == null) {
             _uiState.update { it.copy(saveError = L10n.getString(R.string.scan_choose_subject)) }
             return

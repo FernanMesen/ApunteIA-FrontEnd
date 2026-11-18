@@ -77,7 +77,7 @@ interface ApiService {
     @GET("users/{id}/enrollments")
     suspend fun getUserEnrollments(@Path("id") userId: Long): List<EnrollmentDto>
 
-    // ---------- Administración de cursos (solo ADMIN) ----------
+    // Crear curso: autenticado. Actualizar/eliminar: creador o ADMIN.
 
     @POST("courses")
     suspend fun createCourse(@Body request: CourseRequestDto): CourseDto

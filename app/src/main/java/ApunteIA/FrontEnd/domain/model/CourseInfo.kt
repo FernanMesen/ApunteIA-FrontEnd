@@ -7,7 +7,10 @@ data class CourseInfo(
     val name: String,
     val description: String,
     /** Plan de estudios: un tema por línea ("" si el curso no tiene). */
-    val syllabus: String = ""
+    val syllabus: String = "",
+    val createdById: Long? = null,
+    val createdByName: String = "",
+    val studentCount: Int = 0
 ) {
     /** Temas del plan de estudios, sin líneas vacías ni viñetas. */
     val syllabusTopics: List<String>

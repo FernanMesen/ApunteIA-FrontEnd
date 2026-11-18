@@ -14,6 +14,7 @@ import ApunteIA.FrontEnd.domain.repository.CourseRepository
 import ApunteIA.FrontEnd.domain.util.Resource
 import ApunteIA.FrontEnd.util.L10n
 import javax.inject.Inject
+import retrofit2.HttpException
 
 import ApunteIA.FrontEnd.data.datasource.QuizDataSource
 import ApunteIA.FrontEnd.data.datasource.model.AssessmentDto
@@ -54,6 +55,36 @@ class CourseRepositoryImpl @Inject constructor(
         loader.invalidate()
         Unit
     }
+
+    override suspend fun createCourse(code: String, name: String, description: String): Resource<CourseInfo> =
+        safeApiCall(errorMapper) {
+            val saved = try {
+                dataSource.createCourse(
+                    CourseRequestDto(
+                        code = code.trim(),
+                        name = name.trim(),
+                        description = description.trim().ifBlank { null },
+                        syllabus = null
+                    )
+                )
+            } catch (e: HttpException) {
+                if (e.code() == 409) {
+                    throw IllegalStateException(
+                        e.backendMessage() ?: L10n.get(R.string.course_code_duplicate)
+                    )
+                }
+                throw e
+            }
+            val savedCourse = saved.toDomain()
+
+            loader.invalidate()
+            try {
+                catalog.all(forceRefresh = true)
+            } catch (_: Exception) {
+                // A successful 201 remains successful even if a secondary refresh fails.
+            }
+            savedCourse
+        }
 
     // ---------- Solo ADMIN ----------
 

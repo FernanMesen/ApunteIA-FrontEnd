@@ -2,7 +2,7 @@ package ApunteIA.FrontEnd.presentation.viewmodel
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import ApunteIA.FrontEnd.data.repository.SubjectEnroller
+import ApunteIA.FrontEnd.domain.usecase.CreateCourseUseCase
 import ApunteIA.FrontEnd.domain.model.Course
 import ApunteIA.FrontEnd.domain.model.Topic
 import ApunteIA.FrontEnd.domain.usecase.GetMyCoursesUseCase
@@ -13,13 +13,17 @@ import kotlinx.coroutines.async
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 data class CoursesUiState(
     val isLoading: Boolean = false,
     val courses: List<Course> = emptyList(),
-    val error: String? = null
+    val error: String? = null,
+    val isCreating: Boolean = false,
+    val createError: String? = null,
+    val createSuccess: Boolean = false
 )
 
 /** Colores fijos para distinguir los cursos (se asignan por id). */
@@ -32,7 +36,7 @@ fun courseColor(courseId: Long): String = COURSE_COLORS[(courseId % COURSE_COLOR
 class ManageSubjectsViewModel @Inject constructor(
     private val getMyCoursesUseCase: GetMyCoursesUseCase,
     private val getTopicsUseCase: GetTopicsUseCase,
-    private val subjectEnroller: SubjectEnroller
+    private val createCourseUseCase: CreateCourseUseCase
 ) : ViewModel() {
 
     private val _uiState = MutableStateFlow(CoursesUiState())
@@ -74,11 +78,20 @@ class ManageSubjectsViewModel @Inject constructor(
         loadCourses()
     }
 
-    fun addCustomSubject(name: String, code: String, description: String) {
+    fun createCourse(name: String, code: String, description: String) {
         if (name.isBlank()) return
         viewModelScope.launch {
-            subjectEnroller.add(name, code, description)
-            loadCourses()
+            _uiState.update { it.copy(isCreating = true, createError = null, createSuccess = false) }
+            when (val result = createCourseUseCase(name, code, description)) {
+                is Resource.Success -> {
+                    _uiState.update { it.copy(isCreating = false, createError = null, createSuccess = true) }
+                    loadCourses()
+                }
+                is Resource.Error -> _uiState.update {
+                    it.copy(isCreating = false, createError = result.message, createSuccess = false)
+                }
+                is Resource.Loading -> Unit
+            }
         }
     }
 }

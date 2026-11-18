@@ -9,7 +9,8 @@ interface CourseDataSource {
     suspend fun getEnrollments(userId: Long): List<EnrollmentDto>
     suspend fun enroll(courseId: Long, userId: Long): EnrollmentDto
 
-    // ---------- Solo ADMIN ----------
+    // Crear: cualquier autenticado (el creador queda matriculado).
+    // Actualizar/eliminar: limitado por backend al creador o ADMIN.
     suspend fun createCourse(request: CourseRequestDto): CourseDto
     suspend fun updateCourse(id: Long, request: CourseRequestDto): CourseDto
     suspend fun deleteCourse(id: Long)

@@ -13,6 +13,9 @@ interface CourseRepository {
 
     suspend fun enroll(courseId: Long): Resource<Unit>
 
+    /** Crea un curso real. El backend matricula automáticamente al creador. */
+    suspend fun createCourse(code: String, name: String, description: String): Resource<CourseInfo>
+
     // ---------- Solo ADMIN (el backend responde 403 a cualquier otro rol) ----------
 
     /** Crea el curso si [id] es null; si no, lo actualiza. */

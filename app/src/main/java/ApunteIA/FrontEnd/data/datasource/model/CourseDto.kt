@@ -13,7 +13,13 @@ data class CourseDto(
     val description: String?,
     /** Plan de estudios: un tema por línea (null si el curso no tiene). */
     @SerializedName("syllabus")
-    val syllabus: String? = null
+    val syllabus: String? = null,
+    @SerializedName("createdById")
+    val createdById: Long? = null,
+    @SerializedName("createdByName")
+    val createdByName: String? = null,
+    @SerializedName("studentCount")
+    val studentCount: Int = 0
 )
 
 data class EnrollmentDto(

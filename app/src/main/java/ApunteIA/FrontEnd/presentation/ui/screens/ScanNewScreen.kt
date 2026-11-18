@@ -67,11 +67,12 @@ fun ScanNewScreen(
                 horizontalArrangement = Arrangement.spacedBy(8.dp),
                 modifier = Modifier.horizontalScroll(rememberScrollState())
             ) {
-                state.subjects.forEach { subject ->
+                state.subjects.forEach { course ->
+                    val chipText = if (course.code.isBlank()) course.name else "${course.name} · ${course.code}"
                     SubjectChip(
-                        text = subject,
-                        isSelected = state.subject == subject,
-                        onClick = { viewModel.selectSubject(subject) }
+                        text = chipText,
+                        isSelected = state.selectedCourseId == course.id,
+                        onClick = { viewModel.selectSubject(course.id) }
                     )
                 }
             }
